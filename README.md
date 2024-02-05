@@ -1,4 +1,4 @@
-#Team GeoUnity
+# Team GeoUnity
 
 ## Team Members
 Bence Danko, Da Thao Trinh
