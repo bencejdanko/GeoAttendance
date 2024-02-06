@@ -28,8 +28,9 @@ Milestones:
 * Milestone 6 (4/8 - 4/16): Deployment
 
 ### Job Assignments
-* Bence: Setup APIs, Backend work.
-* Da Thao: UX/UI Design, Frontend work.
+* Bence: Setup APIs, Backend work, Deployment & Testing.
+* Da Thao: UX/UI Design, Frontend work, Deployment & Testing.
+
 ### Algorithms/AI Schemes
 GeoLib Library (https://github.com/manuelbieh/geolib)
 
