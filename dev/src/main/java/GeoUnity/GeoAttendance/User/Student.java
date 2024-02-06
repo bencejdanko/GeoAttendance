@@ -1,3 +1,11 @@
+package GeoUnity.GeoAttendance.User;
+
+import java.util.Objects;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -9,12 +17,12 @@ import java.util.Set;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Entity
-@Table(name = "user_student")
 public class Student {
     @Id
     @GeneratedValue
     private Long id;
     @NonNull
     private String firstName;
+    @NonNull
     private String lastName;
 }
