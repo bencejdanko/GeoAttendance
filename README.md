@@ -27,6 +27,8 @@ Milestones:
 * Milestone 5 (3/25 - 4/5): Complete prototype
 * Milestone 6 (4/8 - 4/16): Deployment
 
+### Job Assignments
+
 ### Algorithms/AI Schemes
 GeoLib Library (https://github.com/manuelbieh/geolib)
 
