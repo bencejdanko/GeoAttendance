@@ -1,5 +1,5 @@
 import React from "react";
-import logo from '../../../src/geo-fence.svg'
+import logo from '../../../src/icons/logoIcon.svg'
 
 const Header = () => {
 
@@ -11,12 +11,12 @@ const Header = () => {
                     <span className="ml-3 text-3xl">GeoAttendance</span>
                 </a>
                 <nav className="mx-auto md:ml-auto flex flex-wrap items-center text-base justify-end">
-                    <a className="mr-10 hover:text-white text-2xl">Home</a>
-                    <a className="mr-10 hover:text-white text-2xl">Profile</a>
-                    <a className="mr-10 hover:text-white text-2xl">Register</a>
-                    <a className="mr-10 hover:text-white text-2xl">Log In</a>
-                    <a className="mr-10 hover:text-white text-2xl">About Us</a>
-                    <a className="mr-10 hover:text-white text-2xl">Contact Us</a>
+                    <a className="mr-10 hover:text-white text-2xl" href="/">Home</a>
+                    <a className="mr-10 hover:text-white text-2xl" href="/profile">Profile</a>
+                    <a className="mr-10 hover:text-white text-2xl" href="/signup">Register</a>
+                    <a className="mr-10 hover:text-white text-2xl" href="/login">Log In</a>
+                    <a className="mr-10 hover:text-white text-2xl" href="aboutus">About Us</a>
+                    <a className="mr-10 hover:text-white text-2xl" href="contactus">Contact Us</a>
                 </nav>
             </div>
         </header>

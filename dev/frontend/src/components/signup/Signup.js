@@ -8,7 +8,7 @@ const Signup = () => {
             <div className="px-5 mx-auto">
                 <div className="flex flex-col text-center w-full">
                     <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-white">Sign-up to create an account</h1>
-                    <p className="lg:w-2/3 mx-auto pb-2 leading-relaxed text-xl">Already have an account? Login</p>
+                    <p className="lg:w-2/3 mx-auto pb-2 leading-relaxed text-xl">Already have an account? <a href=''>Login</a></p>
                 </div>
                 <div className="lg:w-1/2 md:w-2/3 mx-auto">
                     <div className="flex flex-wrap -m-2">
