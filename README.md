@@ -26,7 +26,7 @@ Milestones:
 
 ## E. Technologies Used
   #### [Frontend] HTML, CSS, React, JavaScript
-  #### [Backend] Java, Spring Boot, MySQL
+  #### [Backend] Nodejs, PostgreSQL
 
   
 ## F. Algorithms/AI Schemes
