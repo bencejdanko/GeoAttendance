@@ -1,6 +1,6 @@
 module.exports = {
     
-    initialize_schema: (sql) => sql`
+    initialize_schema: async (sql) => await sql`
         IF TABLE IF EXISTS users DROP;
 
         CREATE TABLE users (
