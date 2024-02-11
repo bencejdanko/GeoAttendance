@@ -1,9 +1,5 @@
 module.exports = {
 
-    get_users: async (sql) => await sql`
-        SELECT * FROM users ORDER BY id
-    `,
-
     get_user: async (sql, id) => await sql`
         SELECT * FROM users WHERE id = ${id}
     `,

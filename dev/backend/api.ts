@@ -1,19 +1,12 @@
-const express = require("express")
-const app = express()
-const postgres = require("postgres") //Pass postgresql.org enviroment variables via .env
-const sql = postgres({})
 const query = require('./query.ts')
 const schema = require('./schema.ts')
 
-const bodyParser = require('body-parser')
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}))
+const postgres = require("postgres") //Pass postgresql.org enviroment variables via .env
+const sql = postgres({})
 
 //const result = schema.initialize_schema(sql)
 
 module.exports = {
-
-    app: app,
 
     Get_Status: async (request, response) => {
         response.json({ info: "GeoAttendence API" })
