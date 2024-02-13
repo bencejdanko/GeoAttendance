@@ -16,12 +16,11 @@ https://github.com/bencejdanko/GeoAttendance
 ## D. Milestones
 Milestones: 
 * Milestone 1 (2/5 - 2/16): Initialize technology frontend, backend development environments.
-* Milestone 2 (2/12 - 2/23): Build User API, UI for Login and Registration Forms.
-* Milestone 3 (2/26 - 3/8): Implement Geolib library, UI for Attendance Check-ins & Testing.
-* Milestone 4 (3/11 - 3/22): Implement Attendance API & Testing. 
-* Milestone 5 (3/25 - 4/5): Complete prototype & Testing.
-* Milestone 6 (4/8 - 4/16): Deployment.
-* (Stretch) Milestone 7 (4/17 - End of semester): Integrate Facial Recognition Techonology.
+* Milestone 2 (2/19 - 3/22): Build User API, UI for Login and Registration Forms.
+* Milestone 3 (3/25 - 4/12): Implement Geolib library, UI for Attendance Check-ins & Testing.
+* Milestone 4 (4/15 - 4/26): Testing/Deployment
+* (Stretch) Milestone 5 (4/29 - 5/13):  Integrate Facial Recognition/AI Technology.
+
 
 
 ## E. Technologies Used
