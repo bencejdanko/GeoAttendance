@@ -23,11 +23,41 @@ module.exports = {
     },
 
     Register_New_User: async (request, response) => {
-        const { password, email } = request.body
-        //regex to check password complexity
-        //password encryption
+        const { email, password } = request.body
+        
+        if (!email) {
+            response.status(404).json({
+                "error": "No password provided.",
+            })
+        }
+        
+        if (!password) {
+            response.status(404).json({
+                "error": "No password provided."
+            })
+        }
+        
         const result = await query.signup(sql, email, password)
+        //need to check for duplicates; integrity error
         response.status(201).send(`${result}`)
+    },
+
+    Login_User: async (request, response) => {
+        const { email, password } = request.body
+
+        if (!email) {
+            response.status(404).json({
+                "error": "No email provided"
+            })
+        }
+
+        if (!password) {
+            response.status(404).json({
+                "error": "No password provided"
+            })
+        }
+
+        
     },
 
     Get_User: async (request, response) => {
