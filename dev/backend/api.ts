@@ -4,12 +4,22 @@ const schema = require('./schema.ts')
 const postgres = require("postgres") //Pass postgresql.org enviroment variables via .env
 const sql = postgres({})
 
-//const result = schema.initialize_schema(sql)
-
 module.exports = {
+
+    Initialize_Schema: async () => {
+        await schema.drop_user_table(sql)
+        await schema.create_user_table(sql)
+        await schema.insert_dummy_data(sql)
+        
+    },
 
     Get_Status: async (request, response) => {
         response.json({ info: "GeoAttendence API" })
+    },
+
+    Get_Users: async (request, response) => {
+        const result = await query.get_users(sql)
+        response.status(200).json(result)
     },
 
     Register_New_User: async (request, response) => {

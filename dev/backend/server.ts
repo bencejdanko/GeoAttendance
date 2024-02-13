@@ -6,7 +6,11 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 const api = require('./api.ts')
 
+api.Initialize_Schema()
+
 app.get('/', api.Get_Status)
+
+app.get('/users', api.Get_Users)
 
 app.get('/users/:id', api.Get_User)
 
