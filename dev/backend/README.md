@@ -1,3 +1,15 @@
+# Setup Instructions (Work in progress)
+Install postgresql on your device
+Create a user, database, and password
+
+Fill in .env file with:
+- PGUSER=
+- PGPASSWORD
+- PGDATABASE
+- PGPORT
+- PGHOST
+- PORT
+
 # GeoAttendance API
 
 ### Get Status
