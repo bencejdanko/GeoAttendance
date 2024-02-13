@@ -14,7 +14,9 @@ module.exports = {
 
     Register_New_User: async (request, response) => {
         const { password, email } = request.body
-        const result = query.signup(sql, email, password)
+        //regex to check password complexity
+        //password encryption
+        const result = await query.signup(sql, email, password)
         response.status(201).send(`${result}`)
     },
 
@@ -42,7 +44,7 @@ module.exports = {
 
     Delete_User: async (request, response) => {
         const id = parseInt(request.params.id)
-        const status = query.delete_user(sql, id)
+        const status = await query.delete_user(sql, id)
         response.status(200).send(`User deleted with ID: ${id}`)
     }
 

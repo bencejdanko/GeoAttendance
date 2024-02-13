@@ -4,6 +4,13 @@ module.exports = {
         SELECT * FROM users WHERE id = ${id}
     `,
 
+    get_users: async (sql, id) => await sql`
+        SELECT * FROM users
+    `,
+
+    check_duplicate_email: async (sql, email) => await sql`
+    `,
+
     signup: async (sql, email, password) => await sql`
         INSERT INTO users (email, password) VALUES (${email}, ${password})
     `,
