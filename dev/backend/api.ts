@@ -7,9 +7,7 @@ const sql = postgres({})
 module.exports = {
 
     Initialize_Schema: async () => {
-        await schema.drop_user_table(sql)
-        await schema.create_user_table(sql)
-        await schema.insert_dummy_data(sql)
+        const result = await schema.initialize_schema(sql)
         
     },
 
