@@ -4,6 +4,8 @@ const schema = require('./schema.ts')
 const postgres = require("postgres") //Pass postgresql.org enviroment variables via .env
 const sql = postgres({})
 
+const jwt = require('jsonwebtoken')
+
 module.exports = {
 
     Initialize_Schema: async () => {
@@ -47,14 +49,23 @@ module.exports = {
             response.status(404).json({
                 "error": "No email provided"
             })
+            return
         }
 
         if (!password) {
             response.status(404).json({
                 "error": "No password provided"
             })
+            return
         }
 
+        
+
+
+        /* JWT-based user authentication */
+        const jwtSecretKey = process.env.JWT_SECRET_KEY
+
+        
         
     },
 
