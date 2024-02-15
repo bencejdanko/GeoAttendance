@@ -31,7 +31,13 @@ Milestones:
 ## F. Algorithms/AI Schemes
 GeoLib Library (https://github.com/manuelbieh/geolib)
 
-## G. Market Space and Selling Point 
+## G. Market Space, Competitors, and Selling Point 
+
+### Competitors: Attendance Tracking
+
+source: https://timeular.com/blog/best-attendance-tracker-apps/#:~:text=Jibble,%2C%20and%20real%2Dtime%20reporting.
+
+
 * The application streamlines attendance tracking for professors and other hosts.
 * Geomarking and online maps allows attendees to easily find meeting spots through their phone, without the hassle of going through manual instructions.
 * An online application would easily allow the host to update events, or modify sign-ups. All attendees would simultaneously be able to track any changes or updates immediately, such as if a location were changed.
