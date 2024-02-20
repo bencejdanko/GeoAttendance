@@ -17,7 +17,7 @@ const schema_queries = [
     */
     `CREATE TABLE users (
         id SERIAL PRIMARY KEY, 
-        authentication, 
+        role smallint, 
         email varchar(30),
         password varchar(30),
     )`,

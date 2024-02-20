@@ -22,5 +22,4 @@ module.exports = {
     delete_user: async (sql, id) => await sql`
         DELETE FROM users WHERE id = ${id}
     `
-
 }
