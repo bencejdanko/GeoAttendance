@@ -1,5 +1,4 @@
 const api = require('./api.ts')
 
-api.Initialize_Schema()
-api.Initialize_Dummy_Data()
+api.Initialize_Tester_Schema()
 api.Start_Server()

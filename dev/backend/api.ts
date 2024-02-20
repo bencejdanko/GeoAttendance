@@ -59,14 +59,15 @@ const Login_User = async (request, response) => {
             return
         }
 
-        const result = await query.get_user(email, password)
-
-        response.status(200).json(result)
+        const result = await query.get_user(sql, email, password)
 
         /* JWT-based user authentication */
         const jwtSecretKey = process.env.JWT_SECRET_KEY
-
+        jwt.sign()
         
+        response.status(200).send({
+            "token": 
+        })
         
 }
 
@@ -104,9 +105,12 @@ module.exports = {
         await schema.initialize_schema(sql)
     },
 
-    Initialize_Dummy_Data: async () => {
+    Initialize_Tester_Schema: async () => {
+        await schema.initialize_schema(sql)
         await schema.insert_dummy_data(sql)
     },
+
+
 
     Start_Server: async () => {
         app.get(    '/',            Get_Status)
