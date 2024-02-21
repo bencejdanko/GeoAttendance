@@ -63,11 +63,13 @@ const Login_User = async (request, response) => {
 
         /* JWT-based user authentication */
         const jwtSecretKey = process.env.JWT_SECRET_KEY
-        jwt.sign()
+
+        const data = {
+            "date": Date.now(),
+            "id": result.id
+        }
         
-        response.status(200).send({
-            "token": 
-        })
+    
         
 }
 
