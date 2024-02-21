@@ -1,7 +1,7 @@
 module.exports = {
 
-    get_user: async (sql, id) => await sql`
-        SELECT * FROM users WHERE id = ${id}
+    get_user: async (sql, email, password) => await sql`
+        SELECT * FROM users WHERE email = ${email} AND password = ${password}
     `,
 
     get_users: async (sql, id) => await sql`

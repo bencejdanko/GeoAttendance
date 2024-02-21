@@ -1,3 +1,9 @@
+const express = require("express")
+const app = express()
+const bodyParser = require('body-parser')
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}))
+
 const query = require('./query.ts')
 const schema = require('./schema.ts')
 
@@ -6,23 +12,16 @@ const sql = postgres({})
 
 const jwt = require('jsonwebtoken')
 
-module.exports = {
-
-    Initialize_Schema: async () => {
-        const result = await schema.initialize_schema(sql)
-        
-    },
-
-    Get_Status: async (request, response) => {
+const Get_Status = async (request, response) => {
         response.json({ info: "GeoAttendence API" })
-    },
+}
 
-    Get_Users: async (request, response) => {
+const Get_Users = async (request, response) => {
         const result = await query.get_users(sql)
         response.status(200).json(result)
-    },
+}
 
-    Register_New_User: async (request, response) => {
+const Register_New_User = async (request, response) => {
         const { email, password } = request.body
         
         if (!email) {
@@ -40,11 +39,12 @@ module.exports = {
         const result = await query.signup(sql, email, password)
         //need to check for duplicates; integrity error
         response.status(201).send(`${result}`)
-    },
+}
 
-    Login_User: async (request, response) => {
+const Login_User = async (request, response) => {
         const { email, password } = request.body
 
+        console.log(request.body)
         if (!email) {
             response.status(404).json({
                 "error": "No email provided"
@@ -59,42 +59,66 @@ module.exports = {
             return
         }
 
-        
+        const result = await query.get_user(email, password)
 
+        response.status(200).json(result)
 
         /* JWT-based user authentication */
         const jwtSecretKey = process.env.JWT_SECRET_KEY
 
         
         
-    },
+}
 
-    Get_User: async (request, response) => {
+const Get_User = async (request, response) => {
         const id = parseInt(request.params.id)
         const result = await query.get_user(sql)
         response.status(200).json(result)
-    },
+}
 
-    List_Users: async (request, response) => {
+const List_Users = async (request, response) => {
         const result = await query.get_users(sql)
         response.status(200).json(result)
-    },
+}
 
-    Get_Public_User: async (request, response) => {
+const Get_Public_User = async (request, response) => {
 
-    },
+}
 
-    Modify_User: async (request, response) => {
+const Modify_User = async (request, response) => {
         const id = parseInt(request.params.id)
         const { name, email } = request.body
         const result = await query.update_user(sql, name, email, id)
         response.status(200).send(`User modified with ID: ${id}`)
-    },
+}
 
-    Delete_User: async (request, response) => {
+const Delete_User = async (request, response) => {
         const id = parseInt(request.params.id)
         const status = await query.delete_user(sql, id)
         response.status(200).send(`User deleted with ID: ${id}`)
     }
 
+module.exports = {
+
+    Initialize_Schema: async () => {
+        await schema.initialize_schema(sql)
+    },
+
+    Initialize_Dummy_Data: async () => {
+        await schema.insert_dummy_data(sql)
+    },
+
+    Start_Server: async () => {
+        app.get(    '/',            Get_Status)
+        app.get(    '/users',       Get_Users)
+        app.get(    '/users/:id',   Get_User)
+        app.post(   '/user',        Register_New_User)
+        app.put(    '/user/:id',    Modify_User)
+        app.delete( '/user/:id',    Delete_User)
+        app.post(   '/login',       Login_User)
+        app.listen(process.env.PORT, () => {
+            console.log(`User API running on ${process.env.PORT}`)
+        })
+    }
 }
+
