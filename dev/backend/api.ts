@@ -28,12 +28,14 @@ const Register_New_User = async (request, response) => {
             response.status(404).json({
                 "error": "No password provided.",
             })
+            return
         }
         
         if (!password) {
             response.status(404).json({
                 "error": "No password provided."
             })
+            return
         }
         
         const result = await query.signup(sql, email, password)
@@ -44,30 +46,37 @@ const Register_New_User = async (request, response) => {
 const Login_User = async (request, response) => {
         const { email, password } = request.body
 
-        console.log(request.body)
         if (!email) {
-            response.status(404).json({
+            response.status(400).json({
                 "error": "No email provided"
             })
             return
         }
 
         if (!password) {
-            response.status(404).json({
+            response.status(400).json({
                 "error": "No password provided"
             })
             return
         }
 
-        const result = await query.get_user(email, password)
+        
+        const result = await query.get_user(sql, email, password) 
+        const user = result[0]
 
-        response.status(200).json(result)
+        if (user === undefined) {
+            response.status(401).json({
+                "error": "Invalid credentials"
+            })
+            return
+        }
 
-        /* JWT-based user authentication */
         const jwtSecretKey = process.env.JWT_SECRET_KEY
+        const token = jwt.sign({
+            userID: user.id,
+        }, jwtSecretKey, { expiresIn: '1h' })
 
-        
-        
+        response.status(200).json({ token })
 }
 
 const Get_User = async (request, response) => {
@@ -104,7 +113,8 @@ module.exports = {
         await schema.initialize_schema(sql)
     },
 
-    Initialize_Dummy_Data: async () => {
+    Initialize_Schema__With_Dummy_Data: async () => {
+        await schema.initialize_schema(sql)
         await schema.insert_dummy_data(sql)
     },
 
