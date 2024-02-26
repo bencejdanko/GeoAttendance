@@ -68,7 +68,9 @@ PGPASSWORD=        #the password created
 PGDATABASE=        #the database name
 PGPORT=5432        #this is the default unless it is explicitly changed
 PGHOST=localhost    
-PORT=300           #the port you would like the API server to run on
+PORT=3000           #the port you would like the API server to run on
+
+JWT_SECRET_KEY=ga_secret_key #When user logs in, they recieve a key
 ```
 
 4. Navigate to `GeoAttendance/dev/backend` and start the API server with `npm start`
