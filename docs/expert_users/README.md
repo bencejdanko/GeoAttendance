@@ -68,7 +68,7 @@ PGPASSWORD=        #the password created
 PGDATABASE=        #the database name
 PGPORT=5432        #this is the default unless it is explicitly changed
 PGHOST=localhost    
-PORT=3000           #the port you would like the API server to run on
+PORT=3001           #the port you would like the API server to run on
 
 JWT_SECRET_KEY=ga_secret_key #When user logs in, they recieve a key
 ```
