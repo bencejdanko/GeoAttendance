@@ -113,7 +113,7 @@ module.exports = {
         await schema.initialize_schema(sql)
     },
 
-    Initialize_Schema__With_Dummy_Data: async () => {
+    Initialize_Schema_With_Dummy_Data: async () => {
         await schema.initialize_schema(sql)
         await schema.insert_dummy_data(sql)
     },
