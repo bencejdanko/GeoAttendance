@@ -73,8 +73,9 @@ const Register_New_User = async (request, response) => {
             return
         }
 
-        const result = await query.register_new_user(sql, email, password)
+        const result = await query.register_new_user(sql, 0, firstName, lastName, userName, email, password)
         console.log(result)
+        //need to use postgres documentation errors to check integrity errors (duplicates)
         response.status(201).send(`${result}`)
 }
 

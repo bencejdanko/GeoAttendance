@@ -13,8 +13,7 @@ module.exports = {
 
     register_new_user: async (sql, subscription, firstName, lastName, userName, email, password, ) => await sql`
         INSERT INTO users (subscription, username, email, password, firstname, lastname) VALUES (
-            
-            ${subscription}, ${username},  ${email}, ${password})
+            ${subscription}, ${userName}, ${email}, ${password}, ${firstName}, ${lastName})
     `,
 
     update_user: async (sql, email, password, id, ) => await sql`

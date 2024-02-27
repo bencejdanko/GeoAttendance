@@ -55,7 +55,7 @@ module.exports = {
 
     insert_dummy_data: async (sql) => {
         const result = await sql`
-            INSERT INTO users (role, email, password, firstName, lastName) 
+            INSERT INTO users (subscription, email, password, firstName, lastName) 
             VALUES (0, 'example@example.com', 'password', 'bence', 'danko');
         `.simple()
     }
