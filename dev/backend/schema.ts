@@ -12,11 +12,12 @@ module.exports = {
         
             CREATE TABLE users (
                 id SERIAL PRIMARY KEY, 
-                role smallint, 
+                subscription smallint, 
+                username varchar(30),
                 email varchar(30),
                 password varchar(30),
-                firstName varchar(30),
-                lastName varchar(30)
+                firstname varchar(30),
+                lastname varchar(30)
             );
         
             CREATE TABLE events (

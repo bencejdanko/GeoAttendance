@@ -22,24 +22,59 @@ const Get_Users = async (request, response) => {
 }
 
 const Register_New_User = async (request, response) => {
-        const { email, password } = request.body
+        const { firstName, lastName, userName, email, password, confirmPassword } = request.body
         
+        if (!firstName) {
+            response.status(404).json({
+                "error": "No first name provided"
+            })
+            return
+        }
+
+        if (!lastName) {
+            response.status(404).json({
+                "error": "No last name provided"
+            })
+            return
+        }
+
+        if (!userName) {
+            response.status(404).json({
+                "error": "No username provided"
+            })
+            return
+        }
+
         if (!email) {
             response.status(404).json({
-                "error": "No password provided.",
+                "error": "No password provided",
             })
             return
         }
         
         if (!password) {
             response.status(404).json({
-                "error": "No password provided."
+                "error": "No password provided"
             })
             return
         }
         
-        const result = await query.signup(sql, email, password)
-        //need to check for duplicates; integrity error
+        if (!confirmPassword) {
+            response.status(404).json({
+                "error": "No confirm password provided"
+            })
+            return
+        }
+
+        if (confirmPassword != password) {
+            response.status(404).json({
+                "error": "Your passwords do not match"
+            })
+            return
+        }
+
+        const result = await query.register_new_user(sql, email, password)
+        console.log(result)
         response.status(201).send(`${result}`)
 }
 
@@ -126,6 +161,7 @@ module.exports = {
         app.put(    '/user/:id',    Modify_User)
         app.delete( '/user/:id',    Delete_User)
         app.post(   '/login',       Login_User)
+        app.post(   '/signup',      Register_New_User)
         app.listen(process.env.PORT, () => {
             console.log(`User API running on ${process.env.PORT}`)
         })

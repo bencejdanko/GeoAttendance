@@ -1,7 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { redirect } from "react-router-dom"
 
 const Signup = () => {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [userName, setUserName] = useState('')
+    const [error, setError] = useState(null)
 
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        const response = await fetch('/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({ email, password })
+        })
+
+        const data = await response.json()
+
+        if (data.token) {
+            localStorage.setItem('token', data.token)
+            setError("Successful Login!")
+            return redirect("/home")
+        } else if (data.error) {
+            setError(data.error)
+        } else {
+            setError("An unrecoverable error occured")
+        }
+        
+    }
 
     return (
         <section className="text-gray-400 bg-gray-900 body-font relative py-12 flex-grow">
@@ -54,6 +86,7 @@ const Signup = () => {
                     </div>
                 </div>
             </div>
+            {error && <div className="error-message">{error}</div>}
         </section>
     )
 }

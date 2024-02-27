@@ -11,8 +11,10 @@ module.exports = {
     check_duplicate_email: async (sql, email) => await sql`
     `,
 
-    signup: async (sql, email, password, ) => await sql`
-        INSERT INTO users (email, password) VALUES (${email}, ${password})
+    register_new_user: async (sql, subscription, firstName, lastName, userName, email, password, ) => await sql`
+        INSERT INTO users (subscription, username, email, password, firstname, lastname) VALUES (
+            
+            ${subscription}, ${username},  ${email}, ${password})
     `,
 
     update_user: async (sql, email, password, id, ) => await sql`

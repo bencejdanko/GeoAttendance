@@ -19,10 +19,9 @@ const Login = () => {
 
         const data = await response.json()
 
-        if (data.token) {
-            localStorage.setItem('token', data.token)
-            setError("Successful Login!")
-            return redirect("/home")
+        if (response.ok) {
+            setError("Successful Registration!")
+            return redirect("/login")
         } else if (data.error) {
             setError(data.error)
         } else {
@@ -30,6 +29,7 @@ const Login = () => {
         }
         
     }
+
     return (
         <section className="text-gray-400 bg-gray-900 body-font relative py-48 flex-grow">
             <div className="px-5 mx-auto">
