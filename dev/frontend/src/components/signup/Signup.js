@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { redirect } from "react-router-dom"
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -21,12 +22,9 @@ const Signup = () => {
             body: JSON.stringify({ firstName, lastName, userName, email, password, confirmPassword })
         })
 
-        const data = await response.json()
-
         if (response.ok) {
-            setError("Successful Registration!")
-        } else if (data.error) {
-            setError(data.error)
+            localStorage.setItem("email", email);
+            navigate('/profile', {state: {email: email }});
         } else {
             setError("An unrecoverable error occured")
         }
@@ -111,7 +109,7 @@ const Signup = () => {
                             <div className="relative">
                                 <label for="confirmPassword" className="leading-7 text-md text-gray-400">Confirm Password</label>
                                 <input 
-                                    type="confirmPassword" 
+                                    type="password" 
                                     id="confirmPassword" 
                                     name="confirmPassword" 
                                     className="mt-3 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"

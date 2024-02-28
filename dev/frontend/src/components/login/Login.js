@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { redirect } from "react-router-dom"
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState(null)
@@ -20,8 +21,8 @@ const Login = () => {
         const data = await response.json()
 
         if (response.ok) {
-            setError("Successful Registration!")
-            return redirect("/login")
+            localStorage.setItem("email", email);
+            navigate('/profile', {state: {email: email }});
         } else if (data.error) {
             setError(data.error)
         } else {
