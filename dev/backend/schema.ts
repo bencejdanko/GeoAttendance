@@ -12,12 +12,12 @@ module.exports = {
         
             CREATE TABLE users (
                 id SERIAL PRIMARY KEY, 
-                subscription smallint, 
-                username varchar(30),
-                email varchar(30),
-                password varchar(30),
-                firstname varchar(30),
-                lastname varchar(30)
+                subscription smallint NOT NULL DEFAULT 0, 
+                username varchar(30) UNIQUE NOT NULL,
+                email varchar(30) UNIQUE NOT NULL,
+                password varchar(30) NOT NULL,
+                firstname varchar(30) NOT NULL,
+                lastname varchar(30) NOT NULL
             );
         
             CREATE TABLE events (
@@ -55,8 +55,8 @@ module.exports = {
 
     insert_dummy_data: async (sql) => {
         const result = await sql`
-            INSERT INTO users (subscription, email, password, firstName, lastName) 
-            VALUES (0, 'example@example.com', 'password', 'bence', 'danko');
+            INSERT INTO users (username, subscription, email, password, firstName, lastName) 
+            VALUES ('bdanko', 0, 'example@example.com', 'password', 'bence', 'danko');
         `.simple()
     }
 }

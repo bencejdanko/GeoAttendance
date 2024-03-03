@@ -73,10 +73,23 @@ const Register_New_User = async (request, response) => {
             return
         }
 
-        const result = await query.register_new_user(sql, 0, firstName, lastName, userName, email, password)
-        console.log(result)
-        //need to use postgres documentation errors to check integrity errors (duplicates)
-        response.status(201).send(`${result}`)
+        try {
+            const result = await query.register_new_user(sql, 0, firstName, lastName, userName, email, password)
+            response.status(201).send(`${result}`)
+        } catch (e) {
+            console.log(`ERROR: ${e.code}`)
+            switch (e.code) {
+                case '23505': //Unique violation
+                    response.status(400).json({
+                        "error": "Email already registered"
+                    })
+                    break
+                default:
+ 
+            }
+
+            response.status(400).send(`Error: ${e.message}`)
+        }
 }
 
 const Login_User = async (request, response) => {

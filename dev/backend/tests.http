@@ -1,11 +1,22 @@
 
 //Login API tests
 
-post http://localhost:3001/login
+# post http://localhost:3001/login
+# Content-Type: application/json
+# {
+#     "email": "example@example.com",
+#     "password": "password"
+# }
+
+post http://localhost:3001/signup
 Content-Type: application/json
 
 {
+    "firstName": "bence",
+    "lastName": "danko",
+    "userName": "bencedanko",
     "email": "example@example.com",
-    "password": "password"
+    "password": "password",
+    "confirmPassword": "password"
 }
 
