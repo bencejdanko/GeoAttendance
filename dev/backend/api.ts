@@ -77,18 +77,14 @@ const Register_New_User = async (request, response) => {
             const result = await query.register_new_user(sql, 0, firstName, lastName, userName, email, password)
             response.status(201).send(`${result}`)
         } catch (e) {
-            console.log(`ERROR: ${e.code}`)
             switch (e.code) {
-                case '23505': //Unique violation
+                case '23505': // Postgres Error Code: Unique violation
                     response.status(400).json({
                         "error": "Email already registered"
                     })
                     break
                 default:
- 
             }
-
-            response.status(400).send(`Error: ${e.message}`)
         }
 }
 

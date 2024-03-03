@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "node --env-file=.env test.js",
+    "test": "node --env-file=.env test.ts",
     "start": "node --env-file=.env server.ts"
   },
   "keywords": [],
