@@ -9,6 +9,7 @@ import {
 } from "react-geocode";
 
 const Dashboard = (props) => {
+    const API_KEY = process.env.REACT_APP_GEOCODER_API_KEY;
     const [lat, setLat] = useState(null);
     const [lng, setLng] = useState(null);
     const [startTime, setStartTime] = useState(props.formattedDate);
