@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
 import deleteIcon from "../../icons/delete.png"
 import pictureIcon from "../../icons/picture.png"
+import searchIcon from "../../icons/search.png"
+import {
+    setDefaults,
+    geocode,
+    RequestType,
+} from "react-geocode";
 
 const Dashboard = (props) => {
+    const API_KEY = "AIzaSyBgu7KSn-syoa9GD0zFIGPFc_XZa6DYiFs";
     const [lat, setLat] = useState(null);
     const [lng, setLng] = useState(null);
     const [startTime, setStartTime] = useState(props.formattedDate);
     const [endTime, setEndTime] = useState(props.formattedDate);
+    const [eventLocation, setEventLocation] = useState("");
+    const [eventLocationError, setEventLocationError] = useState("");
 
     useEffect = () => {
         navigator.geolocation.getCurrentPosition(
@@ -18,6 +27,29 @@ const Dashboard = (props) => {
         );
     }
 
+    const handleEventLocationClick = () => {
+        setEventLocationError("")
+        // Set default response language and region.
+        // This sets default values for language and region for geocoding requests.
+        setDefaults({
+            key: API_KEY, // Your API key here.
+            language: "en", // Default language for responses.
+            region: "es", // Default region for responses.
+        });
+
+        geocode(RequestType.ADDRESS, eventLocation)
+            .then(({ results }) => {
+                const { lat, lng } = results[0].geometry.location;
+                console.log(lat, lng);
+                setLat(lat);
+                setLng(lng);
+            })
+            .catch((error) => {
+                console.log(error);
+                setEventLocationError(error);
+            });
+
+    }
     const handleLocationClick = () => {
         const options = {
             enableHighAccuracy: true,
@@ -29,6 +61,10 @@ const Dashboard = (props) => {
         } else {
             console.log("Geolocation not supported")
         }
+    }
+
+    const handleEventLocationChange = (event) => {
+        setEventLocation(event.target.value);
     }
 
     const handleStartTimeChange = (event) => {
@@ -69,12 +105,27 @@ const Dashboard = (props) => {
                         <input type="code" id="code" name="code" className="w-full bg-gray-800 rounded border border-gray-700 mt-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                     </div>
                     <div className="relative mb-4">
+                        <label for="code" className="leading-7 text-lg text-gray-400">Event location</label>
+                        <div className="relative mb-4 flex items-center">
+                            <input type="code" id="code" name="code" className="w-5/6 bg-gray-800 rounded border border-gray-700 mt-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" onChange={handleEventLocationChange} />
+                            <span className="mt-4 mx-auto">
+                                <button onClick={handleEventLocationClick}>
+                                    <img className="object-cover object-center rounded" src={searchIcon} alt="searchIcon" width={30} />
+                                </button>
+                            </span>
+                        </div>
+                        {eventLocationError !== "" && (
+                            <p className="text-xs text-red-600 text-opacity-90 mt-3">Could not find the location based on the provided address.</p>
+                        )}
+
+                    </div>
+                    <div className="relative mb-4">
                         <label for="event-code" className="leading-7 text-lg text-gray-400">Event code</label>
                         <input type="event-code" id="event-code" name="event-code" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                     </div>
                     <div className="relative mb-4">
                         <label for="capacity" className="leading-7 text-lg text-gray-400">Capacity</label>
-                        <input type="capacity" id="capacity" name="capacity" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                        <input type="number" id="capacity" name="capacity" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                     </div>
                     <div className="relative mb-4">
                         <label for="radius" className="leading-7 text-lg text-gray-400">Radius</label>
@@ -82,7 +133,6 @@ const Dashboard = (props) => {
                     </div>
                     <div className="relative mb-4">
                         <label for="message" className="leading-7 text-lg text-gray-400">Check-in Time</label>
-                        {/* <textarea id="message" name="message" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 h-32 text-base outline-none text-gray-100 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea> */}
                         <input
                             id="start-time"
                             type="datetime-local"
@@ -99,19 +149,19 @@ const Dashboard = (props) => {
                             onChange={handleEndTimeChange} />
                     </div>
                     <button className="text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">Save</button>
-                    <p className="text-xs text-gray-400 text-opacity-90 mt-3">Chicharrones blog helvetica normcore iceland tousled brook viral artisan.</p>
+                    {/* <p className="text-xs text-gray-400 text-opacity-90 mt-3">Chicharrones blog helvetica normcore iceland tousled brook viral artisan.</p> */}
                 </div>
             </div>
-            <div class="lg:w-2/3 w-full mx-auto overflow-auto">
+            <div class="lg:w-5/6 w-full mx-auto overflow-auto">
                 <table class="table-auto w-full text-left whitespace-no-wrap">
                     <thead>
                         <tr>
                             <th class="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800 rounded-tl rounded-bl">Event Name</th>
                             <th class="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Event Code</th>
                             <th class="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Event Capacity</th>
-                            <th class="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Delete Event</th>
                             <th class="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Upload Picture</th>
-                            <th class="w-10 title-font tracking-wider font-medium text-white text-sm bg-gray-800 rounded-tr rounded-br"></th>
+                            <th class="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Delete Event</th>
+                            {/* <th class="w-10 title-font tracking-wider font-medium text-white text-sm bg-gray-800 rounded-tr rounded-br"></th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -121,12 +171,12 @@ const Dashboard = (props) => {
                             <td class="px-4 py-3 text-xl">15 GB</td>
                             <td class="px-4 py-3">
                                 <button onClick={handleSettingsClick}>
-                                    <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} />
+                                    <img className="object-cover object-center rounded" src={pictureIcon} alt="pictureIcon" width={30} />
                                 </button>
                             </td>
                             <td class="px-4 py-3">
                                 <button onClick={handleSettingsClick}>
-                                    <img className="object-cover object-center rounded" src={pictureIcon} alt="pictureIcon" width={30} />
+                                    <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} />
                                 </button>
                             </td>
                         </tr>
