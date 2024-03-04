@@ -9,7 +9,6 @@ import {
 } from "react-geocode";
 
 const Dashboard = (props) => {
-    const API_KEY = "AIzaSyBgu7KSn-syoa9GD0zFIGPFc_XZa6DYiFs";
     const [lat, setLat] = useState(null);
     const [lng, setLng] = useState(null);
     const [startTime, setStartTime] = useState(props.formattedDate);
