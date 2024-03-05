@@ -28,7 +28,7 @@ const Dashboard = (props) => {
     }
 
     const handleEventLocationClick = () => {
-        setEventLocationError("")
+        setEventLocationError("");
         // Set default response language and region.
         // This sets default values for language and region for geocoding requests.
         setDefaults({
@@ -166,7 +166,7 @@ const Dashboard = (props) => {
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="px-4 py-3 text-xl text-blue-600 underline cursor-pointer"><a>Name</a></td>
+                            <td class="px-4 py-3 text-xl text-blue-600 underline cursor-pointer"><a href="/">Name</a></td>
                             <td class="px-4 py-3 text-xl">5 Mb/s</td>
                             <td class="px-4 py-3 text-xl">15 GB</td>
                             <td class="px-4 py-3">
