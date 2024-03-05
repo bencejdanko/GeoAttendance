@@ -1,6 +1,9 @@
 import React from "react";
-import clockIcon from "../../icons/clock.png"
-import bookIcon from "../../icons/book.png"
+import clockIcon from "../../icons/clock.png";
+import bookIcon from "../../icons/book.png";
+import allIcon from "../../icons/all.png";
+import checkIcon from "../../icons/check.png";
+import removeIcon from "../../icons/remove.png";
 
 const Profile = (props) => {
     return (
@@ -22,7 +25,7 @@ const Profile = (props) => {
                         </div>
                     </div>
                     <div className="">
-                        <h1 class="text-white text-2xl title-font font-medium w-full mb-5">First Name</h1>
+                        <h1 class="text-white text-2xl title-font font-medium w-full mb-5">First Name Last Name</h1>
                         <div class="container py-10 mx-auto">
                             <div class="-my-8 divide-gray-800">
                                 <div class="py-4 flex flex-wrap md:flex-nowrap">
@@ -53,10 +56,10 @@ const Profile = (props) => {
                         </div>
                         <div class="flex flex-wrap -m-4  mt-4">
                             <div class="p-4 md:w-1/3 sm:w-full">
-                                <div class="flex rounded-lg bg-gray-800 bg-opacity-60 p-8 flex-col">
+                                <div class="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col">
                                     <div class="flex items-center mb-3">
                                         <div class="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-blue-500 text-white flex-shrink-0">
-                                            <img className="object-cover object-center rounded" src={clockIcon} alt="clockIcon" width={30} />
+                                            <img className="object-cover object-center rounded" src={allIcon} alt="allIcon" width={30} />
                                         </div>
                                         <div className="mr-20">
                                             <h2 className="text-white text-lg title-font font-medium w-full">102</h2>
@@ -66,23 +69,23 @@ const Profile = (props) => {
                                 </div>
                             </div>
                             <div class="p-4 md:w-1/3 sm:w-full">
-                                <div class="flex rounded-lg bg-gray-800 bg-opacity-60 p-8 flex-col px-auto">
+                                <div class="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col px-auto">
                                     <div class="flex items-center mb-3">
-                                        <div class="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-blue-500 text-white flex-shrink-0">
-                                            <img className="object-cover object-center rounded" src={clockIcon} alt="clockIcon" width={30} />
+                                        <div class="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
+                                            <img className="object-cover object-center rounded" src={checkIcon} alt="checkIcon" width={30} />
                                         </div>
                                         <div className="mr-20">
                                             <h2 className="text-white text-lg title-font font-medium w-full">102</h2>
-                                            <p className="text-lg whitespace-nowrap">Total On-Time</p>
+                                            <p className="text-lg whitespace-nowrap">Total Check-in</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="p-4 md:w-1/3 sm:w-full">
-                                <div class="flex rounded-lg bg-gray-800 bg-opacity-60 p-8 flex-col">
+                                <div class="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col">
                                     <div class="flex items-center mb-3">
-                                        <div class="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-blue-500 text-white flex-shrink-0">
-                                            <img className="object-cover object-center rounded" src={clockIcon} alt="clockIcon" width={30} />
+                                        <div class="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
+                                            <img className="object-cover object-center rounded" src={removeIcon} alt="removeIcon" width={30} />
                                         </div>
                                         <div className="mr-20">
                                             <h2 className="text-white text-lg title-font font-medium w-full">102</h2>
@@ -112,7 +115,7 @@ const Profile = (props) => {
                                         <img className="object-cover object-center rounded" src={clockIcon} alt="clockIcon" width={30} />
                                     </div>
                                     <h2 class="text-white text-lg title-font font-medium w-full">March 4th, 2024</h2>
-                                    <span class="inline-block py-1 px-2 rounded bg-gray-800 text-green-400 text-opacity-75 text-xs font-medium tracking-widest">OnTime</span>
+                                    <span class="inline-block py-1 px-2 rounded bg-gray-800 text-green-400 text-opacity-75 text-xs font-medium tracking-widest whitespace-nowrap">Check-in</span>
                                 </div>
                                 <div className="flex flex-grow mt-5">
                                     <div className="md:w-1/2 sm:w-1/2 flex flex-col items-start">
@@ -133,7 +136,7 @@ const Profile = (props) => {
                                         <img className="object-cover object-center rounded" src={clockIcon} alt="clockIcon" width={30} />
                                     </div>
                                     <h2 class="text-white text-lg title-font font-medium w-full">March 4th, 2024</h2>
-                                    <span class="inline-block py-1 px-2 rounded bg-gray-800 text-green-400 text-opacity-75 text-xs font-medium tracking-widest">OnTime</span>
+                                    <span class="inline-block py-1 px-2 rounded bg-gray-800 text-green-400 text-opacity-75 text-xs font-medium tracking-widest whitespace-nowrap">Check-in</span>
                                 </div>
                                 <div class="flex flex-grow mt-5">
                                     <div className="md:w-1/2 sm:w-1/2 flex flex-col items-start">

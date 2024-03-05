@@ -10,8 +10,8 @@ import {
 
 const Dashboard = (props) => {
     const API_KEY = process.env.REACT_APP_GEOCODER_API_KEY;
-    const [lat, setLat] = useState(null);
-    const [lng, setLng] = useState(null);
+    const [lat, setLat] = useState("");
+    const [lng, setLng] = useState("");
     const [startTime, setStartTime] = useState(props.formattedDate);
     const [endTime, setEndTime] = useState(props.formattedDate);
     const [eventLocation, setEventLocation] = useState("");
