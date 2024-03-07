@@ -22,7 +22,7 @@ const Get_Users = async (request, response) => {
 }
 
 const Register_New_User = async (request, response) => {
-        const { firstName, lastName, userName, email, password, confirmPassword } = request.body
+        const { subscription, firstName, lastName, userName, email, password, confirmPassword } = request.body
         
         if (!firstName) {
             response.status(404).json({
@@ -74,7 +74,7 @@ const Register_New_User = async (request, response) => {
         }
 
         try {
-            const result = await query.register_new_user(sql, 0, firstName, lastName, userName, email, password)
+            const result = await query.register_new_user(sql, subscription, firstName, lastName, userName, email, password)
             response.status(201).json({
                 "error": "Successful registration!"
             })

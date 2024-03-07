@@ -3,23 +3,26 @@ import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
     const navigate = useNavigate();
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [userName, setUserName] = useState('')
-    const [error, setError] = useState(null)
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [userName, setUserName] = useState('');
+    const [sub, setSub] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
+
+        const subscription = sub ? 1 : 0;
 
         const response = await fetch('/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ firstName, lastName, userName, email, password, confirmPassword })
+            body: JSON.stringify({ subscription, firstName, lastName, userName, email, password, confirmPassword })
         })
 
         const data = await response.json()
@@ -121,6 +124,15 @@ const Signup = () => {
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
                             </div>
+                        </div>
+                        <div class="flex items-center mt-4">
+                            <input 
+                            id="subscription" 
+                            type="checkbox" 
+                            value="0" 
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
+                            onChange={(e) => setSub(e.target.checked)}/>
+                            <label for="subscription" className="ml-2 leading-7 text-md text-gray-400">Register as a host</label>
                         </div>
                         <div className="p-2 mt-5 w-full">
                             {error && <p className="text-red-600 text-center mb-5">{error}</p>}
