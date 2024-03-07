@@ -14,7 +14,7 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        const response = await fetch('/signup', {
+        const response = await fetch('/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -23,7 +23,7 @@ const Signup = () => {
         })
 
         const data = await response.json()
-
+        
         if (response.ok) {
             localStorage.setItem("email", email);
             navigate('/profile', { state: { email: email } });

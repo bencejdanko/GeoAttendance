@@ -75,7 +75,9 @@ const Register_New_User = async (request, response) => {
 
         try {
             const result = await query.register_new_user(sql, 0, firstName, lastName, userName, email, password)
-            response.status(201).send(`${result}`)
+            response.status(201).json({
+                "error": "Successful registration!"
+            })
         } catch (e) {
             switch (e.code) {
                 case '23505': // Postgres Error Code: Unique violation
@@ -235,11 +237,10 @@ module.exports = {
         app.get(    '/',            Get_Status)
         app.get(    '/users',       Get_Users)
         app.get(    '/users/:id',   Get_User)
-        app.post(   '/user',        Register_New_User)
+        app.post(   '/register',    Register_New_User)
         app.put(    '/user/:id',    Modify_User)
         app.delete( '/user/:id',    Delete_User)
         app.post(   '/login',       Login_User)
-        app.post(   '/signup',      Register_New_User)
         app.listen(process.env.PORT, () => {
             console.log(`User API running on ${process.env.PORT}`)
         })

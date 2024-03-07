@@ -2,13 +2,7 @@ module.exports = {
 
     initialize_schema: async (sql) => {
         const result = await sql`
-            DROP TABLE IF EXISTS users;
-            DROP TABLE IF EXISTS events;
-            DROP TABLE IF EXISTS feedback;
-            DROP TABLE IF EXISTS event_history;
-            DROP TABLE IF EXISTS feedback_history;
-            DROP TABLE IF EXISTS location;
-            DROP TABLE IF EXISTS time;
+            DROP owned BY CURRENT_USER;
         
             CREATE TABLE users (
                 id SERIAL PRIMARY KEY, 
