@@ -22,9 +22,13 @@ const Signup = () => {
             body: JSON.stringify({ firstName, lastName, userName, email, password, confirmPassword })
         })
 
+        const data = await response.json()
+
         if (response.ok) {
             localStorage.setItem("email", email);
             navigate('/profile', { state: { email: email } });
+        } else if (data.error) {
+            setError(data.error)
         } else {
             setError("An unrecoverable error occured")
         }

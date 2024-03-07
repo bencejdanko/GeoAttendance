@@ -24,8 +24,16 @@ module.exports = {
                 id SERIAL PRIMARY KEY,
                 capacity integer,
                 name varchar(30),
-                created_date timestamp
+                created_date timestamp,
             );
+
+            CREATE TABLE event_history (
+                id serial primary key,
+                eid integer references events(id),
+                uid integer references users(id),
+                checkin_time timestamp,
+                checkout_time timestamp
+            )
         
             CREATE TABLE location (
                 longitude double precision,

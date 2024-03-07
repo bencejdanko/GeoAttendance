@@ -17,14 +17,16 @@ For API testing
 
 ## Frontend Instructions
 
-### Localhost testing
 1. Open the terminal and clone the repository: `git clone https://github.com/bencejdanko/GeoAttendance/`
 2. Navigate to GeoAttendance/dev/frontend
-3. Install NodeJS NPM packages: `npm i`
-4. Start the server: `npm start`
-5. The website should now be displayed at the url: `http://localhost:3000`
+3. Create a new .env file, and add a Google Maps API Key:
+    - Follow instructions at https://developers.google.com/maps/documentation/javascript/get-api-key
+    - Or, contact the developers for a key
+4. Install NodeJS NPM packages: `npm i`
+5. Start the server: `npm start`
+6. The website should now be displayed at the url: `http://localhost:3000`
 
-### Backend testing
+## Backend testing
 1. Clone the repository `git clone https://github.com/bencejdanko/GeoAttendance/`
 2. Setup a Postgres Database and Superuser with a password
 

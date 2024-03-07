@@ -88,6 +88,73 @@ const Register_New_User = async (request, response) => {
         }
 }
 
+const Register_New_Event = async (request, response) => {
+    const { firstName, lastName, userName, email, password, confirmPassword } = request.body
+    
+    if (!firstName) {
+        response.status(404).json({
+            "error": "No first name provided"
+        })
+        return
+    }
+
+    if (!lastName) {
+        response.status(404).json({
+            "error": "No last name provided"
+        })
+        return
+    }
+
+    if (!userName) {
+        response.status(404).json({
+            "error": "No username provided"
+        })
+        return
+    }
+
+    if (!email) {
+        response.status(404).json({
+            "error": "No password provided",
+        })
+        return
+    }
+    
+    if (!password) {
+        response.status(404).json({
+            "error": "No password provided"
+        })
+        return
+    }
+    
+    if (!confirmPassword) {
+        response.status(404).json({
+            "error": "No confirm password provided"
+        })
+        return
+    }
+
+    if (confirmPassword != password) {
+        response.status(404).json({
+            "error": "Your passwords do not match"
+        })
+        return
+    }
+
+    try {
+        const result = await query.register_new_user(sql, 0, firstName, lastName, userName, email, password)
+        response.status(201).send(`${result}`)
+    } catch (e) {
+        switch (e.code) {
+            case '23505': // Postgres Error Code: Unique violation
+                response.status(400).json({
+                    "error": "Email already registered"
+                })
+                break
+            default:
+        }
+    }
+}
+
 const Login_User = async (request, response) => {
         const { email, password } = request.body
 
@@ -123,6 +190,7 @@ const Login_User = async (request, response) => {
 
         response.status(200).json({ token })
 }
+
 
 const Get_User = async (request, response) => {
         const id = parseInt(request.params.id)
