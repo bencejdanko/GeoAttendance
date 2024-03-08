@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import deleteIcon from "../../icons/delete.png"
-import pictureIcon from "../../icons/picture.png"
 import searchIcon from "../../icons/search.png"
 import {
     setDefaults,
     geocode,
     RequestType,
 } from "react-geocode";
+import Event from "../event/Event";
 
 const Dashboard = (props) => {
     const API_KEY = process.env.REACT_APP_GEOCODER_API_KEY;
@@ -16,6 +15,12 @@ const Dashboard = (props) => {
     const [endTime, setEndTime] = useState(props.formattedDate);
     const [eventLocation, setEventLocation] = useState("");
     const [eventLocationError, setEventLocationError] = useState("");
+    const [events, setEvent] = useState([{
+        id: 1,
+        name: 'name',
+        capacity: 50,
+        code: "code"
+    }]);
 
     useEffect = () => {
         navigator.geolocation.getCurrentPosition(
@@ -75,10 +80,6 @@ const Dashboard = (props) => {
         setEndTime(event.target.value);
     }
 
-    const handleSettingsClick = () => {
-
-    }
-
     const errorCallback = () => {
         console.log("Cannot retrieve the current location")
     }
@@ -93,7 +94,7 @@ const Dashboard = (props) => {
 
     return (
         <section className="text-gray-400 bg-gray-900 body-font relative flex-grow">
-            <div className="container px-5 py-24 mx-auto flex sm:flex-nowrap flex-wrap">
+            <div className="container px-5 py-10 mx-auto flex sm:flex-nowrap flex-wrap">
                 <div className="lg:w-2/3 md:w-1/2 bg-gray-900 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
                     <iframe width="100%" height="100%" title="map" className="absolute inset-0" frameborder="0" marginheight="0" marginwidth="0" scrolling="no" allow="geolocation" src={`https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`} style={{ filter: '' }}></iframe>
                 </div>
@@ -165,21 +166,11 @@ const Dashboard = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="px-4 py-3 text-xl text-blue-600 underline cursor-pointer"><a href="/">Name</a></td>
-                            <td class="px-4 py-3 text-xl">5 Mb/s</td>
-                            <td class="px-4 py-3 text-xl">15 GB</td>
-                            <td class="px-4 py-3">
-                                <button onClick={handleSettingsClick}>
-                                    <img className="object-cover object-center rounded" src={pictureIcon} alt="pictureIcon" width={30} />
-                                </button>
-                            </td>
-                            <td class="px-4 py-3">
-                                <button onClick={handleSettingsClick}>
-                                    <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} />
-                                </button>
-                            </td>
-                        </tr>
+                        {
+                            events.map((event, idx) => (
+                                <Event events={events} key={event.id} index={idx} />
+                            ))
+                        }
                     </tbody>
                 </table>
             </div>

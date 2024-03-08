@@ -39,7 +39,7 @@ const Signup = () => {
     }
 
     return (
-        <section className="text-gray-400 bg-gray-900 body-font relative py-12 flex-grow">
+        <section className="text-gray-400 bg-gray-900 body-font relative py-10 flex-grow">
             <div className="px-5 mx-auto">
                 <div className="flex flex-col text-center w-full">
                     <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-white">Sign-up to create an account</h1>
