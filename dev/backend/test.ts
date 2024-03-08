@@ -15,13 +15,13 @@ function GetStatus() {
     return response
 }
 
-function PostRegisterNewUser(firstName, lastName, userName, email, password, confirmPassword) {
-    const response = fetch(url + '/signup', {
+function PostRegisterNewUser(subscription, firstName, lastName, userName, email, password, confirmPassword) {
+    const response = fetch(url + '/register', {
         method: 'POST',
         headers: {
                 'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ firstName, lastName, userName, email, password, confirmPassword })
+        body: JSON.stringify({subscription, firstName, lastName, userName, email, password, confirmPassword })
     })
     return response
 }
@@ -42,26 +42,27 @@ const tests = [
         const email = "test@test.com"
         const password = "password"
         const confirmPassword = "password"
+        const subscription = "0"
 
-        var response = await PostRegisterNewUser(firstName, lastName, userName, email, password, confirmPassword)
-        console.log(response.ok ? "Valid Register: Passed" : "RegisterNewUser: Failed")
+        var response = await PostRegisterNewUser(subscription, firstName, lastName, userName, email, password, confirmPassword)
+        console.log(response.ok ? "Valid Register: Passed" : `RegisterNewUser: Failed`)
 
-        response = await PostRegisterNewUser("", lastName, userName, email, password, confirmPassword)
+        response = await PostRegisterNewUser(subscription, "", lastName, userName, email, password, confirmPassword)
         console.log(response.ok ? "Missing first name: Failed" : "Missing first name: Passed")
 
-        response = await PostRegisterNewUser(firstName, "", userName, email, password, confirmPassword)
+        response = await PostRegisterNewUser(subscription, firstName, "", userName, email, password, confirmPassword)
         console.log(response.ok ? "Missing last name: Failed" : "Missing first name: Passed")
 
-        response = await PostRegisterNewUser(firstName, lastName, userName, "",  password, confirmPassword)
+        response = await PostRegisterNewUser(subscription, firstName, lastName, userName, "",  password, confirmPassword)
         console.log(response.ok ? "Missing email: Failed" : "Missing email: Passed")
 
-        response = await PostRegisterNewUser(firstName, lastName, userName, email, "",  confirmPassword)
+        response = await PostRegisterNewUser(subscription, firstName, lastName, userName, email, "",  confirmPassword)
         console.log(response.ok ? "Missing password: Failed" : "Missing password: Passed")
 
-        response = await PostRegisterNewUser(firstName, lastName, userName, email, password, "")
+        response = await PostRegisterNewUser(subscription, firstName, lastName, userName, email, password, "")
         console.log(response.ok ? "Missing confirmed password: Failed" : "Missing confirmed password: Passed")
 
-        response = await PostRegisterNewUser(firstName, lastName, userName, email, password, "wrongpassword")
+        response = await PostRegisterNewUser(subscription, firstName, lastName, userName, email, password, "wrongpassword")
         console.log(response.ok ? "Password mismatch: Failed" : "Password mismatch: Passed")
 
     },

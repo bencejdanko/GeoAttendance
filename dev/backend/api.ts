@@ -23,7 +23,13 @@ const Get_Users = async (request, response) => {
 
 const Register_New_User = async (request, response) => {
         const { subscription, firstName, lastName, userName, email, password, confirmPassword } = request.body
-        
+        if (!subscription) {
+            response.status(404).json({
+                "error": "No subscription provided"
+            })
+            return
+        }
+
         if (!firstName) {
             response.status(404).json({
                 "error": "No first name provided"
