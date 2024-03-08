@@ -153,16 +153,16 @@ const Dashboard = (props) => {
                     {/* <p className="text-xs text-gray-400 text-opacity-90 mt-3">Chicharrones blog helvetica normcore iceland tousled brook viral artisan.</p> */}
                 </div>
             </div>
-            <div class="lg:w-5/6 w-full mx-auto overflow-auto">
-                <table class="table-auto w-full text-left whitespace-no-wrap">
+            <div className="lg:w-5/6 w-full mx-auto overflow-auto">
+                <table className="table-auto w-full text-left whitespace-no-wrap">
                     <thead>
                         <tr>
-                            <th class="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800 rounded-tl rounded-bl">Event Name</th>
-                            <th class="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Event Code</th>
-                            <th class="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Event Capacity</th>
-                            <th class="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Upload Picture</th>
-                            <th class="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Delete Event</th>
-                            {/* <th class="w-10 title-font tracking-wider font-medium text-white text-sm bg-gray-800 rounded-tr rounded-br"></th> */}
+                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800 rounded-tl rounded-bl">Event Name</th>
+                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Event Code</th>
+                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Event Capacity</th>
+                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Upload Picture</th>
+                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Delete Event</th>
+                            {/* <th className="w-10 title-font tracking-wider font-medium text-white text-sm bg-gray-800 rounded-tr rounded-br"></th> */}
                         </tr>
                     </thead>
                     <tbody>
