@@ -3,7 +3,7 @@ import React from 'react';
 const ContactUs = () => {
     return (
         <section class="text-gray-400 bg-gray-900 body-font relative flex-grow">
-            <div class="px-5 py-24 mx-auto">
+            <div class="px-5 py-10 mx-auto">
                 <div class="flex flex-col text-center w-full mb-12">
                     <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-white tracking-widest">Contact Us</h1>
                     <p class="lg:w-2/3 mx-auto leading-relaxed text-lg">Whatever cardigan tote bag tumblr hexagon brooklyn asymmetrical gentrify.</p>

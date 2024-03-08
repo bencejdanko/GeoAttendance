@@ -12,6 +12,7 @@ import Home from './components/home/Home';
 import AboutUs from './components/aboutus/AboutUs';
 import ContactUs from './components/contactus/ContactUs';
 import Dashboard from './components/dashboard/Dashboard';
+import EventDetails from './components/eventdetails/EventDetails';
 
 function App() {
   const dateTimeCoverter = () => {
@@ -38,13 +39,11 @@ function App() {
           <Route exact path='/contactUs' Component={ContactUs} />
           <Route exact path='/aboutus' Component={AboutUs} />
           <Route exact path='/profile' Component={Profile} />
-          {/* <Route exact path='/dashboard' Component={Dashboard} /> */}
           <Route
             exact path='/dashboard'
             element={<Dashboard formattedDate={dateTimeCoverter()} />}
           />
-          {/* <Route exact path='/roommates' Component={RoommatesPage} /> */}
-          {/* <Route path="/users/:id" Component={RoommateProfile} /> */}
+          <Route path="/events/:id" Component={EventDetails} />
         </Routes>
       </Router>
       <Footer />
