@@ -97,70 +97,72 @@ const Register_New_User = async (request, response) => {
 }
 
 const Register_New_Event = async (request, response) => {
-    const { firstName, lastName, userName, email, password, confirmPassword } = request.body
+    const { lat, lng, radius, startTime, endTime, eventName, eventCode, capacity,  } = request.body
     
-    if (!firstName) {
+    if (!lat || !lng ) {
         response.status(404).json({
-            "error": "No first name provided"
+            "error": "No event location provided"
         })
         return
     }
 
-    if (!lastName) {
+    if (!radius) {
         response.status(404).json({
-            "error": "No last name provided"
+            "error": "No radius provided"
         })
         return
     }
 
-    if (!userName) {
+    if (!startTime) {
         response.status(404).json({
-            "error": "No username provided"
+            "error": "No start time provided"
         })
         return
     }
 
-    if (!email) {
+    if (!endTime) {
         response.status(404).json({
-            "error": "No password provided",
-        })
-        return
-    }
-    
-    if (!password) {
-        response.status(404).json({
-            "error": "No password provided"
+            "error": "No end time provided",
         })
         return
     }
     
-    if (!confirmPassword) {
+    if (!eventName) {
         response.status(404).json({
-            "error": "No confirm password provided"
+            "error": "No event name provided"
+        })
+        return
+    }
+    
+    if (!eventCode) {
+        response.status(404).json({
+            "error": "No event code provided"
         })
         return
     }
 
-    if (confirmPassword != password) {
+    if (!capacity) {
         response.status(404).json({
-            "error": "Your passwords do not match"
+            "error": "No capacity provided"
         })
         return
     }
 
-    try {
-        const result = await query.register_new_user(sql, 0, firstName, lastName, userName, email, password)
-        response.status(201).send(`${result}`)
-    } catch (e) {
-        switch (e.code) {
-            case '23505': // Postgres Error Code: Unique violation
-                response.status(400).json({
-                    "error": "Email already registered"
-                })
-                break
-            default:
-        }
+    
+    var result = await query.check_duplicate_event(sql, eventCode)
+    if (result.length > 0) {
+        response.status(400).json({
+            "error": "Event code already registered"
+        })
+        return
     }
+
+    
+    result = await query.register_new_event(sql, lat, lng, radius, startTime, endTime, eventName, eventCode, capacity)
+    response.status(201).json({
+        "error": "Successful event registration!"
+    })
+    
 }
 
 const Login_User = async (request, response) => {
