@@ -13,8 +13,17 @@ import AboutUs from './components/aboutus/AboutUs';
 import ContactUs from './components/contactus/ContactUs';
 import Dashboard from './components/dashboard/Dashboard';
 import EventDetails from './components/eventdetails/EventDetails';
+import React, { useEffect, useState } from "react";
 
 function App() {
+  const [userLogged, setUserLogged] = useState(
+    localStorage.getItem("token")
+  );
+
+  useEffect(() => {
+    localStorage.setItem("token", userLogged);
+  }, [userLogged]);
+
   const dateTimeCoverter = () => {
     const currentDate = new Date();
 
@@ -27,10 +36,10 @@ function App() {
     const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
     return formattedDate;
   }
-
+  
   return (
     <div class="flex flex-col h-screen">
-      <Header />
+      <Header isAuthenticated={userLogged} />
       <Router>
         <Routes>
           <Route exact path='/' Component={Home} />

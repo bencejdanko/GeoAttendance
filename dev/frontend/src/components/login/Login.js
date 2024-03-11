@@ -21,7 +21,7 @@ const Login = () => {
         const data = await response.json()
 
         if (response.ok) {
-            localStorage.setItem("email", email);
+            localStorage.setItem("token", data.token);
             navigate('/profile', { state: { email: email } });
         } else if (data.error) {
             setError(data.error)

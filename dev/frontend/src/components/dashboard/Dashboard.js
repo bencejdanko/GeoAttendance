@@ -21,6 +21,9 @@ const Dashboard = (props) => {
         capacity: 50,
         code: "code"
     }]);
+    const [groupOptionSelected, setGroupOptionSelected] = useState("");
+    const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
+    const [groupOptions, setGroupOptions] = useState(["None", "Add New Group"]);
 
     useEffect = () => {
         navigator.geolocation.getCurrentPosition(
@@ -31,6 +34,20 @@ const Dashboard = (props) => {
             error => console.log(error)
         );
     }
+
+    const handleSaveEvent = () => {
+
+    }
+
+    const handleOptionChange = (e) => {
+        if (e.target.value === "new_group") {
+            setIsCreateNewGroup(true);
+        } else {
+            setIsCreateNewGroup(false);
+        }
+        setGroupOptionSelected(e.target.value);
+    }
+
 
     const handleEventLocationClick = () => {
         setEventLocationError("");
@@ -122,8 +139,20 @@ const Dashboard = (props) => {
                     </div>
                     <div className="relative mb-4">
                         <label for="event-code" className="leading-7 text-lg text-gray-400">Event code</label>
-                        <input type="event-code" id="event-code" name="event-code" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                        <input type="text" id="event-code" name="event-code" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                     </div>
+                    {/* <div class="flex ml-6 items-center"> */}
+                    <div className="relative mb-4">Group</div>
+                    <select value={groupOptionSelected} onChange={handleOptionChange} className="w-full bg-gray-800 rounded border mb-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-3 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                        <option value="none">None</option>
+                        <option value="new_group">Add new group</option>
+                    </select>
+                    {isCreateNewGroup &&
+                        <div className="relative mb-4">
+                            <label for="new_group_name" className="leading-7 text-lg text-gray-400">New Group Name</label>
+                            <input type="text" id="new_group_nam" name="new_group_nam" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                        </div>
+                    }
                     <div className="relative mb-4">
                         <label for="capacity" className="leading-7 text-lg text-gray-400">Capacity</label>
                         <input type="number" id="capacity" name="capacity" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
@@ -149,7 +178,7 @@ const Dashboard = (props) => {
                             value={endTime}
                             onChange={handleEndTimeChange} />
                     </div>
-                    <button className="text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">Save</button>
+                    <button onClick={handleSaveEvent} className="text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">Save</button>
                     {/* <p className="text-xs text-gray-400 text-opacity-90 mt-3">Chicharrones blog helvetica normcore iceland tousled brook viral artisan.</p> */}
                 </div>
             </div>
@@ -160,9 +189,8 @@ const Dashboard = (props) => {
                             <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800 rounded-tl rounded-bl">Event Name</th>
                             <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Event Code</th>
                             <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Event Capacity</th>
-                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Upload Picture</th>
+                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Group Name</th>
                             <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Delete Event</th>
-                            {/* <th className="w-10 title-font tracking-wider font-medium text-white text-sm bg-gray-800 rounded-tr rounded-br"></th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -175,6 +203,7 @@ const Dashboard = (props) => {
                 </table>
             </div>
         </section>
+
     )
 }
 
