@@ -4,8 +4,6 @@ import {
   Route
 } from "react-router-dom";
 import Signup from './components/signup/Signup';
-import Header from './components/header/Header';
-import Footer from './components/footer/Footer';
 import Login from './components/login/Login';
 import Profile from './components/profile/Profile';
 import Home from './components/home/Home';
@@ -13,17 +11,9 @@ import AboutUs from './components/aboutus/AboutUs';
 import ContactUs from './components/contactus/ContactUs';
 import Dashboard from './components/dashboard/Dashboard';
 import EventDetails from './components/eventdetails/EventDetails';
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 function App() {
-  const [userLogged, setUserLogged] = useState(
-    localStorage.getItem("token")
-  );
-
-  useEffect(() => {
-    localStorage.setItem("token", userLogged);
-  }, [userLogged]);
-
   const dateTimeCoverter = () => {
     const currentDate = new Date();
 
@@ -39,7 +29,6 @@ function App() {
   
   return (
     <div class="flex flex-col h-screen">
-      <Header isAuthenticated={userLogged} />
       <Router>
         <Routes>
           <Route exact path='/' Component={Home} />
@@ -55,7 +44,6 @@ function App() {
           <Route path="/events/:id" Component={EventDetails} />
         </Routes>
       </Router>
-      <Footer />
     </div>
   );
 }

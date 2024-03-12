@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logo from '../../../src/icons/logoIcon.svg'
 
 const Header = (props) => {
