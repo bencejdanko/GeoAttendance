@@ -15,7 +15,8 @@ module.exports = {
             );
         
             CREATE TABLE events (
-                event_code SERIAL PRIMARY VARCHAR,
+                id SERIAL PRIMARY KEY,
+                event_code VARCHAR(30),
                 capacity integer,
                 name varchar(30),
                 created_date timestamp
