@@ -3,11 +3,14 @@ import logoIcon from '../../../src/icons/logoIcon.svg'
 import attendanceIcon from "../../../src/icons/attendanceIcon.png"
 import pinpointIcon from "../../../src/icons/pinpointIcon.png"
 import analyticsIcon from "../../../src/icons/analyticsIcon.png"
+import Header from "../header/Header";
+import Footer from "../footer/Footer";
 
 const Home = () => {
 
     return (
         <div>
+            <Header isAuthenticated={localStorage.getItem("token") ? true : false}/>
             <section className="text-gray-400 bg-gray-900 body-font flex-grow py-10">
                 <div className="container mx-auto flex px-40 md:flex-row flex-col items-center">
                     <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
@@ -56,13 +59,14 @@ const Home = () => {
                         <img className="object-cover object-center rounded" alt="analytics icon" src={analyticsIcon} />
                     </div>
                     <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center">
-                        <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-white">Effortless management and 
+                        <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-white">Effortless management and
                             <br className="lg:inline-block" />reporting
                         </h1>
                         <p className="mb-8 leading-relaxed text-2xl">With GeoAttendance, you can track attendance in real-time, ensuring accurate and up-to-date information. Say goodbye to manual attendance taking and enjoy the convenience of automated tracking.</p>
                     </div>
                 </div>
             </section>
+            <Footer />
         </div>
 
 
