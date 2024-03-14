@@ -1,49 +1,14 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {  } from 'react';
 import { useAuth } from '../auth/AuthProvider';
 import Footer from '../footer/Footer';
 import Header from '../header/Header';
 import { Link } from 'react-router-dom'
 
+import { useForm } from "react-hook-form";
+
 const Login = () => {
-    const navigate = useNavigate();
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState(null)
-    const {login} = useAuth();
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const response = await fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
-        })
-
-        const data = await response.json()
-        
-        if (response.ok) {
-            const dummyUser = {
-                firstName: 'Thao',
-                lastName: 'Trinh',
-                userName: 'thao_trinh', 
-                email: 'thao_trinh@gmail.com',
-                userid: '1',
-                subscription: 1
-            }
-            localStorage.setItem("token", data.token);
-            login(dummyUser);
-            navigate('/profile');
-        } else if (data.error) {
-            setError(data.error)
-        } else {
-            setError("An unrecoverable error occured")
-        }
-
-    }
+    const {authError, login} = useAuth();
+    const { register, handleSubmit } = useForm();
 
     return (
         <div className="flex flex-col h-screen">
@@ -55,7 +20,9 @@ const Login = () => {
                         <p className="lg:w-2/3 mx-auto pb-2 leading-relaxed text-lg">Need an account? <Link className="underline" to='/signup'>Register</Link></p>
                     </div>
                     <div className="lg:w-1/2 md:w-2/3 mx-auto">
-                        <div className="flex flex-wrap -m-2">
+                        <form 
+                            onSubmit={ handleSubmit(login) }
+                            className="flex flex-wrap -m-2">
                             <div className="p-2 w-full">
                                 <div className="relative">
                                     <label for="email" className="leading-7 text-xl text-gray-400">Email</label>
@@ -64,8 +31,7 @@ const Login = () => {
                                         id="email"
                                         name="email"
                                         className="mt-5 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        {...register("email", { required: true })}
                                     />
                                 </div>
                             </div>
@@ -77,22 +43,20 @@ const Login = () => {
                                         id="password"
                                         name="password"
                                         className="mt-5 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        {...register("password", { required: true })}
                                     />
                                 </div>
                             </div>
                             <div className="p-2 mt-5 w-full">
-                                {error && <p className="text-red-600 text-center mb-5">{error}</p>}
+                                {authError && <p className="text-red-600 text-center mb-5">{authError}</p>}
 
-                                <button
-                                    className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg"
-                                    onClick={handleSubmit}
-                                >
-                                    Sign in
-                                </button>
+                                <input 
+                                className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg"
+                                type="submit" 
+                                value="Submit" 
+                                />
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </section>
