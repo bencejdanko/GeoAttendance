@@ -8,9 +8,9 @@ const AboutUs = () => {
             <Header />
             <section className="text-gray-400 bg-gray-900 body-font flex-grow">
                 <div className="container px-5 py-10 mx-auto">
-                    <div className="flex flex-col text-center w-full mb-20">
+                    <div className="flex flex-col text-center w-full mb-8">
                         <h1 className="text-3xl font-medium title-font mb-4 text-white tracking-widest">Our Team</h1>
-                        <p className="lg:w-2/3 mx-auto leading-relaxed text-lg">Whatever cardigan tote bag tumblr hexagon brooklyn asymmetrical gentrify, subway tile poke farm-to-table. Franzen you probably haven't heard of them.</p>
+                        <p className="lg:w-2/3 mx-auto leading-relaxed text-lg">Meet the faces behind GeoAttendance. Our dedicated team is comprised of talented individuals who are passionate about what they do.</p>
                     </div>
                     <br />
                     <div className="flex flex-wrap -m-4">

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import * as XLSX from "xlsx";
 import deleteIcon from "../../icons/delete.png";
 import checkIcon from "../../icons/check.png";
+import blockIcon from "../../icons/blocked.png";
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import Header from "../header/Header";
@@ -94,7 +95,7 @@ const EventDetails = () => {
                     <div className="flex flex-col text-center w-full mb-10">
                         <h1 className="sm:text-4xl text-3xl font-medium title-font mb-2 text-white">Event {events[index].name}</h1>
                         <div className="flex pl-4 mt-4 lg:w-full w-full mx-auto">
-                            <button className="flex ml-auto text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded" onClick={() => fileInputRef.current.click()}>Add</button>
+                            <button className="flex ml-auto text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded" onClick={() => fileInputRef.current.click()}>Add Attendees</button>
                             <input onChange={handleFileUpload} accept=".xlsx, .xls" multiple={false} ref={fileInputRef} type='file' hidden />
                         </div>
                     </div>
@@ -127,7 +128,7 @@ const EventDetails = () => {
                                                     <td className="px-4 py-3">Not Check-in
                                                         <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
                                                             <button onClick={() => handleManualCheckIn(index)}>
-                                                                <img className="object-cover object-center rounded" src={checkIcon} alt="checkIcon" width={20} />
+                                                                <img className="object-cover object-center rounded" src={blockIcon} alt="checkblockIconIcon" width={20} />
                                                             </button>
                                                         </div>
                                                     </td>
@@ -136,6 +137,11 @@ const EventDetails = () => {
                                             {
                                                 attendee.Status === 1 && (
                                                     <td className="px-4 py-3">Checked-in
+                                                        <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
+                                                            <button>
+                                                                <img className="object-cover object-center rounded" src={checkIcon} alt="checkIcon" width={20} />
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 )
                                             }

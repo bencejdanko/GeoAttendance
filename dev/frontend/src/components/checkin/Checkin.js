@@ -10,6 +10,8 @@ const Checkin = () => {
 
         // Check if this user is registered for this event
 
+        // Check if the current location is within the radius
+        
         // confirm
     }
 

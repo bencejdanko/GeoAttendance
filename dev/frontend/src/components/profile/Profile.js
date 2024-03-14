@@ -14,7 +14,7 @@ const Profile = () => {
 
     return (
         <div className="flex flex-col h-screen">
-            <Header/>
+            <Header />
             <section className="text-gray-400 bg-gray-900 body-font flex-grow">
                 <div className="container px-5 bg-gray-800 bg-opacity-40 rounded-lg py-10 mx-auto">
                     <div className="flex items-center mb-3">
@@ -183,6 +183,22 @@ const Profile = () => {
                     </div>
                 </section>
                 }
+                {/* {
+                    user.subscription === 1 && <section className="text-gray-400 bg-gray-900 body-font mt-8">
+                        <div className="container px-5 bg-gray-800 bg-opacity-40 rounded-lg py-10 mx-auto">
+                            <div className="flex items-center mb-3">
+                                <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
+                                    <img className="object-cover object-center rounded" src={bookIcon} alt="bookIcon" width={30} />
+                                </div>
+                                <h1 className="text-white text-2xl title-font font-medium w-full">Event History</h1>
+                            </div>
+                            <div className="flex flex-wrap -m-4  mt-4">
+                                
+
+                            </div>
+                        </div>
+                    </section>
+                } */}
             </section >
             <Footer />
 

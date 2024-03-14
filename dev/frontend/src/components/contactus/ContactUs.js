@@ -8,9 +8,9 @@ const ContactUs = () => {
             <Header />
             <section className="text-gray-400 bg-gray-900 body-font relative flex-grow">
                 <div className="px-5 py-10 mx-auto">
-                    <div className="flex flex-col text-center w-full mb-12">
+                    <div className="flex flex-col text-center w-full mb-8">
                         <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-white tracking-widest">Contact Us</h1>
-                        <p className="lg:w-2/3 mx-auto leading-relaxed text-lg">Whatever cardigan tote bag tumblr hexagon brooklyn asymmetrical gentrify.</p>
+                        <p className="lg:w-2/3 mx-auto leading-relaxed text-lg">Please fill out the form below, and our team will get back to you as soon as possible.</p>
                     </div>
                     <div className="lg:w-1/2 md:w-2/3 mx-auto">
                         <div className="flex flex-wrap -m-2">

@@ -32,7 +32,7 @@ const Login = () => {
                 userName: 'thao_trinh', 
                 email: 'thao_trinh@gmail.com',
                 userid: '1',
-                subscription: 0
+                subscription: 1
             }
             localStorage.setItem("token", data.token);
             login(dummyUser);

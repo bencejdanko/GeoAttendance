@@ -26,10 +26,11 @@ const Dashboard = (props) => {
     }]);
     const [groupOptionSelected, setGroupOptionSelected] = useState("");
     const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
+    const [error, setError] = useState("");
     const [groupOptions, setGroupOptions] = useState(["None", "Add New Group"]);
 
-    const {user} = useAuth();
-    
+    const { user } = useAuth();
+
     useEffect = () => {
         navigator.geolocation.getCurrentPosition(
             position => {
@@ -41,6 +42,10 @@ const Dashboard = (props) => {
     }
 
     const handleSaveEvent = () => {
+        // get event detail
+
+        // post call to save event
+
 
     }
 
@@ -116,15 +121,14 @@ const Dashboard = (props) => {
 
     return (
         <div className="flex flex-col h-screen">
-            <Header/>
+            <Header />
             <section className="text-gray-400 bg-gray-900 body-font relative flex-grow">
                 <div className="container px-5 py-10 mx-auto flex sm:flex-nowrap flex-wrap">
                     <div className="lg:w-2/3 md:w-1/2 bg-gray-900 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
                         <iframe width="100%" height="100%" title="map" className="absolute inset-0" frameborder="0" marginheight="0" marginwidth="0" scrolling="no" allow="geolocation" src={`https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`} style={{ filter: '' }}></iframe>
                     </div>
                     <div className="lg:w-1/3 md:w-1/2 flex flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0">
-                        <h2 className="text-white text-2xl mb-1 font-medium title-font">Create New Event</h2>
-                        <p className="leading-relaxed mb-5 text-lg text-blue-600"><button onClick={handleLocationClick}>Get Current Location</button></p>
+                        <h2 className="text-white text-2xl mb-8 font-medium title-font">Create New Event</h2>
                         <div className="relative mb-4">
                             <label for="code" className="leading-7 text-lg text-gray-400">Event name</label>
                             <input type="code" id="code" name="code" className="w-full bg-gray-800 rounded border border-gray-700 mt-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
@@ -139,6 +143,8 @@ const Dashboard = (props) => {
                                     </button>
                                 </span>
                             </div>
+                            <p className="leading-relaxed text-lg text-blue-600"><button onClick={handleLocationClick}>Or get current location</button></p>
+
                             {eventLocationError !== "" && (
                                 <p className="text-xs text-red-600 text-opacity-90 mt-3">Could not find the location based on the provided address.</p>
                             )}
@@ -186,7 +192,7 @@ const Dashboard = (props) => {
                                 onChange={handleEndTimeChange} />
                         </div>
                         <button onClick={handleSaveEvent} className="text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">Save</button>
-                        {/* <p className="text-xs text-gray-400 text-opacity-90 mt-3">Chicharrones blog helvetica normcore iceland tousled brook viral artisan.</p> */}
+                        {error && <p className="text-xs text-red-600 text-opacity-90 mt-3">{error}</p>}
                     </div>
                 </div>
                 <div className="lg:w-5/6 w-full mx-auto overflow-auto">
