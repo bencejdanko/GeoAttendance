@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 
 const Signup = () => {
 
-    const { signup, authError } = useAuth();
+    const { signup, authSignupError, authSignupSuccess } = useAuth();
     const { register, handleSubmit } = useForm();
 
     return (
@@ -109,7 +109,7 @@ const Signup = () => {
                                 <label for="subscription" className="ml-2 leading-7 text-md text-gray-400">Register as a host</label>
                             </div>
                             <div className="p-2 mt-5 w-full">
-                                {authError && <p className="text-red-600 text-center mb-5">{authError}</p>}
+                                {authSignupError && <p className="text-red-600 text-center mb-5">{authSignupError}</p>}
 
                                 <input
                                     className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg"

@@ -4,4 +4,5 @@ dev/backend/node_modules
 dev/frontend/node_modules
 dev/node_modules
 
-dev/backend-pb/pocketbase
+dev/backend-pb/pocketbase.bin
+dev/backend-pb/pb_data

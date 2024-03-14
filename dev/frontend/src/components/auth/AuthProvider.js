@@ -7,15 +7,19 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [authError, setAuthError] = useState(null);
+  const [authLoginError, setAuthLoginError] = useState(null);
+  const [authSignupError, setAuthSignupError] = useState(null)
+  const [authLoginSuccess, setauthLoginSuccess] = useState(null)
+  const [authSignupSuccess, setauthSignupSuccess] = useState(null)
 
   const login = async (data) => {
     // Implement your login logic here, e.g., setting user data in state
     try {
       const authData = await pb.collection('users').authWithPassword(data.email, data.password)
       setUser(authData);
+      console.log("success")
     } catch (e) {
-      setAuthError("Invalid email or password");
+      setAuthLoginError("Invalid email or password");
     }
   };
 
@@ -30,17 +34,30 @@ export const AuthProvider = ({ children }) => {
       const authData = await pb.collection('users').create(data)
       setUser(authData);
     } catch (e) {
-      if (data.password !== data.confirmPassword) {
-        setAuthError("Passwords do not match");
+      if (data.password !== data.passwordConfirm) {
+        setAuthSignupError("Passwords do not match");
       } else {
-        setAuthError("An error occurred");
+        setAuthSignupError("An error occurred");
       }
     }
   
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, authError, signup, setAuthError }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      login, 
+      logout, 
+      authSignupError, 
+      authLoginError,
+      authLoginSuccess,
+      authSignupSuccess,
+
+      signup, 
+      setAuthLoginError,
+      setAuthSignupError 
+      
+      }}>
       {children}
     </AuthContext.Provider>
   );

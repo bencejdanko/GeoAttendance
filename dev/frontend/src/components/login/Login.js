@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { useForm } from "react-hook-form";
 
 const Login = () => {
-    const {authError, login} = useAuth();
+    const {authLoginError, authLoginSuccess, login} = useAuth();
     const { register, handleSubmit } = useForm();
 
     return (
@@ -48,7 +48,7 @@ const Login = () => {
                                 </div>
                             </div>
                             <div className="p-2 mt-5 w-full">
-                                {authError && <p className="text-red-600 text-center mb-5">{authError}</p>}
+                                {authLoginError && <p className="text-red-600 text-center mb-5">{authLoginError}</p>}
 
                                 <input 
                                 className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg"
