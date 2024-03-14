@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../footer/Footer';
 import Header from '../header/Header';
+import { Link } from 'react-router-dom'
+import { useAuth } from '../auth/AuthProvider';
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -13,6 +15,7 @@ const Signup = () => {
     const [userName, setUserName] = useState('');
     const [sub, setSub] = useState(false);
     const [error, setError] = useState(null);
+    const {login} = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,7 +34,8 @@ const Signup = () => {
 
         if (response.ok) {
             localStorage.setItem("email", email);
-            navigate('/profile', { state: { email: email } });
+            login({ subscription, firstName, lastName, userName, email, password, confirmPassword })
+            navigate('/profile');
         } else if (data.error) {
             setError(data.error)
         } else {
@@ -41,13 +45,13 @@ const Signup = () => {
     }
 
     return (
-        <div>
-            <Header isAuthenticated={localStorage.getItem("token") ? true : false} />
+        <div className="flex flex-col h-screen">
+            <Header/>
             <section className="text-gray-400 bg-gray-900 body-font relative py-10 flex-grow">
                 <div className="px-5 mx-auto">
                     <div className="flex flex-col text-center w-full">
                         <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-white">Sign-up to create an account</h1>
-                        <p className="lg:w-2/3 mx-auto pb-2 leading-relaxed text-lg">Already have an account? <a className="underline" href='/login'>Login</a></p>
+                        <p className="lg:w-2/3 mx-auto pb-2 leading-relaxed text-lg">Already have an account? <Link className="underline" to='/login'>Login</Link></p>
                     </div>
                     <div className="lg:w-1/2 md:w-2/3 mx-auto">
                         <div className="flex flex-wrap -m-2">

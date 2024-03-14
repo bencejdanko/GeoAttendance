@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthProvider';
 import Footer from '../footer/Footer';
 import Header from '../header/Header';
+import { Link } from 'react-router-dom'
 
 const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState(null)
+    const {login} = useAuth();
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         const response = await fetch('/login', {
             method: 'POST',
@@ -21,10 +24,19 @@ const Login = () => {
         })
 
         const data = await response.json()
-
+        
         if (response.ok) {
+            const dummyUser = {
+                firstName: 'Thao',
+                lastName: 'Trinh',
+                userName: 'thao_trinh', 
+                email: 'thao_trinh@gmail.com',
+                userid: '1',
+                subscription: 0
+            }
             localStorage.setItem("token", data.token);
-            navigate('/profile', { state: { email: email } });
+            login(dummyUser);
+            navigate('/profile');
         } else if (data.error) {
             setError(data.error)
         } else {
@@ -34,13 +46,13 @@ const Login = () => {
     }
 
     return (
-        <div>
-            <Header isAuthenticated={localStorage.getItem("token") ? true : false}/>
+        <div className="flex flex-col h-screen">
+            <Header/>
             <section className="text-gray-400 bg-gray-900 body-font relative py-10 flex-grow">
                 <div className="px-5 mx-auto">
                     <div className="flex flex-col text-center w-full">
                         <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-white">Sign in</h1>
-                        <p className="lg:w-2/3 mx-auto pb-2 leading-relaxed text-lg">Need an account? <a class="underline" href='/signup'>Register</a></p>
+                        <p className="lg:w-2/3 mx-auto pb-2 leading-relaxed text-lg">Need an account? <Link className="underline" to='/signup'>Register</Link></p>
                     </div>
                     <div className="lg:w-1/2 md:w-2/3 mx-auto">
                         <div className="flex flex-wrap -m-2">

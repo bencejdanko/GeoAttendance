@@ -7,24 +7,14 @@ import removeIcon from "../../icons/remove.png";
 import { useLocation } from "react-router-dom";
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
+import { useAuth } from "../auth/AuthProvider";
 
 const Profile = () => {
-    // const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-    // const location = useLocation();
-    // if (location.state.email) {
-    //     setIsAuthenticated(true);
-    // }
-
-    // useEffect(() => {
-    //     if (localStorage.getItem("token")) {
-    //         setIsAuthenticated(true);
-    //     }
-    // }, [isAuthenticated]);
+    const { user } = useAuth();
 
     return (
-        <div>
-            <Header isAuthenticated={localStorage.getItem("token") ? true : false} />
+        <div className="flex flex-col h-screen">
+            <Header/>
             <section className="text-gray-400 bg-gray-900 body-font flex-grow">
                 <div className="container px-5 bg-gray-800 bg-opacity-40 rounded-lg py-10 mx-auto">
                     <div className="flex items-center mb-3">
@@ -43,7 +33,7 @@ const Profile = () => {
                             </div>
                         </div>
                         <div className="">
-                            <h1 className="text-white text-2xl title-font font-medium w-full mb-5">First Name Last Name</h1>
+                            <h1 className="text-white text-2xl title-font font-medium w-full mb-5">{user.firstName} {user.lastName}</h1>
                             <div className="container py-10 mx-auto">
                                 <div className="-my-8 divide-gray-800">
                                     <div className="py-4 flex flex-wrap md:flex-nowrap">
@@ -51,7 +41,7 @@ const Profile = () => {
                                             <span className="font-semibold title-font text-white">Email Address</span>
                                         </div>
                                         <div className="md:flex-grow">
-                                            <p className="">example@example.com</p>
+                                            <p className="">{user.email}</p>
                                         </div>
                                     </div>
                                     <div className="py-4 flex border-gray-800 flex-wrap md:flex-nowrap">
@@ -59,7 +49,7 @@ const Profile = () => {
                                             <span className="font-semibold title-font text-white">Username</span>
                                         </div>
                                         <div className="md:flex-grow">
-                                            <p>username</p>
+                                            <p>{user.userName}</p>
                                         </div>
                                     </div>
                                     <div className="py-4 flex border-gray-800 flex-wrap md:flex-nowrap">
@@ -117,7 +107,7 @@ const Profile = () => {
                         </div>
                     </div>
                 </div>
-                <section className="text-gray-400 bg-gray-900 body-font mt-8">
+                {user.subscription === 0 && <section className="text-gray-400 bg-gray-900 body-font mt-8">
                     <div className="container px-5 bg-gray-800 bg-opacity-40 rounded-lg py-10 mx-auto">
                         <div className="flex items-center mb-3">
                             <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
@@ -192,6 +182,7 @@ const Profile = () => {
                         </div>
                     </div>
                 </section>
+                }
             </section >
             <Footer />
 

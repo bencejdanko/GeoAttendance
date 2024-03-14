@@ -4,8 +4,8 @@ import Header from '../header/Header';
 
 const ContactUs = () => {
     return (
-        <div>
-            <Header isAuthenticated={localStorage.getItem("token") ? true : false} />
+        <div className="flex flex-col h-screen">
+            <Header />
             <section className="text-gray-400 bg-gray-900 body-font relative flex-grow">
                 <div className="px-5 py-10 mx-auto">
                     <div className="flex flex-col text-center w-full mb-12">
