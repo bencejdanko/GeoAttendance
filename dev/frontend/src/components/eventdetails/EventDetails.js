@@ -9,10 +9,36 @@ import Header from "../header/Header";
 import Footer from "../footer/Footer";
 
 const EventDetails = () => {
+    const dummyAttendees = [
+        {
+            "No": 1,
+            "FirstName": "Thao",
+            "LastName": "Trinh",
+            "Username": "thao_trinh",
+            "Email": "thao_trinh@example.com",
+            "Status": 0
+        },
+        {
+            "No": 2,
+            "FirstName": "Truffle",
+            "LastName": "Le",
+            "Username": "truffle_le",
+            "Email": "truffle_le@example.com",
+            "Status": 0
+        },
+        {
+            "No": 3,
+            "FirstName": "Mocha",
+            "LastName": "Le",
+            "Username": "mocha_le",
+            "Email": "mocha_le@example.com",
+            "Status": 0
+        }
+    ];
     const fileInputRef = useRef();
     const location = useLocation();
     const { events, index } = location.state;
-    const [attendees, setAttendees] = useState([]);
+    const [attendees, setAttendees] = useState(dummyAttendees);
     const [isOpen, setIsOpen] = useState(-1);
 
     const closeModal = () => {
@@ -60,8 +86,8 @@ const EventDetails = () => {
 
     }
     return (
-        <div>
-            <Header isAuthenticated={localStorage.getItem("token") ? true : false} />
+        <div className="flex flex-col h-screen">
+            <Header />
             <section className="text-gray-400 bg-gray-900 body-font flex-grow">
 
                 <div className="container px-5 py-10 mx-auto">

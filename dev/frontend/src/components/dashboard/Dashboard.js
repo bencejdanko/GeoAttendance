@@ -8,6 +8,7 @@ import {
 import Event from "../event/Event";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
+import { useAuth } from "../auth/AuthProvider";
 
 const Dashboard = (props) => {
     const API_KEY = process.env.REACT_APP_GEOCODER_API_KEY;
@@ -27,6 +28,8 @@ const Dashboard = (props) => {
     const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
     const [groupOptions, setGroupOptions] = useState(["None", "Add New Group"]);
 
+    const {user} = useAuth();
+    
     useEffect = () => {
         navigator.geolocation.getCurrentPosition(
             position => {
@@ -112,8 +115,8 @@ const Dashboard = (props) => {
     }
 
     return (
-        <div>
-            <Header isAuthenticated={localStorage.getItem("token") ? true : false}/>
+        <div className="flex flex-col h-screen">
+            <Header/>
             <section className="text-gray-400 bg-gray-900 body-font relative flex-grow">
                 <div className="container px-5 py-10 mx-auto flex sm:flex-nowrap flex-wrap">
                     <div className="lg:w-2/3 md:w-1/2 bg-gray-900 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">

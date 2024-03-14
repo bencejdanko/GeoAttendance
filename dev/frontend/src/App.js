@@ -1,4 +1,5 @@
 import './App.css';
+import React from "react";
 import {
   BrowserRouter as Router, Routes,
   Route
@@ -11,7 +12,8 @@ import AboutUs from './components/aboutus/AboutUs';
 import ContactUs from './components/contactus/ContactUs';
 import Dashboard from './components/dashboard/Dashboard';
 import EventDetails from './components/eventdetails/EventDetails';
-import React from "react";
+import { AuthProvider } from './components/auth/AuthProvider';
+import Checkin from './components/checkin/Checkin';
 
 function App() {
   const dateTimeCoverter = () => {
@@ -26,25 +28,35 @@ function App() {
     const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
     return formattedDate;
   }
-  
+
   return (
-    <div class="flex flex-col h-screen">
-      <Router>
-        <Routes>
-          <Route exact path='/' Component={Home} />
-          <Route exact path='/login' Component={Login} />
-          <Route exact path='/signup' Component={Signup} />
-          <Route exact path='/contactUs' Component={ContactUs} />
-          <Route exact path='/aboutus' Component={AboutUs} />
-          <Route exact path='/profile' Component={Profile} />
-          <Route
-            exact path='/dashboard'
-            element={<Dashboard formattedDate={dateTimeCoverter()} />}
-          />
-          <Route path="/events/:id" Component={EventDetails} />
-        </Routes>
-      </Router>
-    </div>
+    <AuthProvider>
+
+      <div className="flex flex-col h-screen">
+        <Router>
+          <Routes>
+            <Route exact path='/' element={<Home />} />
+            <Route exact path='/login' element={<Login />} />
+            <Route exact path='/signup' element={<Signup />} />
+            <Route exact path='/contactus' element={<ContactUs />} />
+            <Route exact path='/aboutus'
+              element={<AboutUs />} />
+            <Route exact path='/profile' Component={Profile}
+              element={<Profile />} />
+            <Route
+              exact path='/dashboard'
+              element={<Dashboard formattedDate={dateTimeCoverter()} />}
+            />
+            <Route
+              exact path='/checkin'
+              element={<Checkin />}
+            />
+            <Route path="/events/:id" element={<EventDetails />} />
+          </Routes>
+        </Router>
+      </div>
+    </AuthProvider>
+
   );
 }
 
