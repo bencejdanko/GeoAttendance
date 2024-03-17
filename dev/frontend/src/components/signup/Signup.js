@@ -27,25 +27,25 @@ const Signup = () => {
                         className="flex flex-wrap -m-2">
                             <div className="p-2 w-full">
                                 <div className="relative">
-                                    <label for="firstname" className="leading-7 text-md text-gray-400">First Name</label>
+                                    <label for="first_name" className="leading-7 text-md text-gray-400">First Name</label>
                                     <input
                                         type="text"
-                                        id="firstname"
-                                        name="firstname"
+                                        id="first_name"
+                                        name="first_name"
                                         className="mt-3 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                        {...register("firstName", { required: true })}
+                                        {...register("first_name", { required: true })}
                                     />
                                 </div>
                             </div>
                             <div className="p-2 w-full">
                                 <div className="relative">
-                                    <label for="lastname" className="leading-7 text-md text-gray-400">Last Name</label>
+                                    <label for="last_name" className="leading-7 text-md text-gray-400">Last Name</label>
                                     <input
                                         type="text"
-                                        id="lastname"
-                                        name="lastname"
+                                        id="last_name"
+                                        name="last_name"
                                         className="mt-3 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                        {...register("lastName", { required: true })}
+                                        {...register("last_name", { required: true })}
                                     />
                                 </div>
                             </div>
@@ -57,7 +57,7 @@ const Signup = () => {
                                         id="username"
                                         name="username"
                                         className="mt-3 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                        {...register("userName", { required: true })}
+                                        {...register("username", { required: true })}
                                     />
                                 </div>
                             </div>
