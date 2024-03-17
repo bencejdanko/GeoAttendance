@@ -84,11 +84,22 @@ const registerGroup = async (event_id) => {
 
 }
 
+const viewEvents = async () => {
+    try {
+        let events = await pb.collection('events').getFullList({
+            host: pb.authStore.model.id
+        })
+        console.log(events)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 const run = async () => {
-    await register();
+    //await register();
     await login();
     let event_data = await registerEvent();
-    await registerGroup(event_data.id);
+    await viewEvents();
 }
 
 run();
