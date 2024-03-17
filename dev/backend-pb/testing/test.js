@@ -95,6 +95,8 @@ const viewEvents = async () => {
     }
 }
 
+//const register
+
 const run = async () => {
     //await register();
     await login();
