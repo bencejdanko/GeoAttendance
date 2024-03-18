@@ -9,6 +9,7 @@ import Event from "../event/Event";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import { useAuth } from "../auth/AuthProvider";
+import pb from "../../lib/pocketbase";
 
 const Dashboard = (props) => {
     const API_KEY = process.env.REACT_APP_GEOCODER_API_KEY;
@@ -42,9 +43,51 @@ const Dashboard = (props) => {
     }
 
     const handleSaveEvent = () => {
+
+        let start = new Date(startTime);
+        let end = new Date(endTime);
+
         // get event detail
+        let data = {
+            name: "name",
+            host: pb.authStore.model.id, //Current user ID
+            capacity: 50,
+            code: "123",
+            longitude: lng,
+            latitude: lat,
+            radius: 50,
+            start_time: start.toISOString(),
+            end_time: end.toISOString(),
+        }
 
         // post call to save event
+        pb.collection('events').create(data)
+            .then((response) => {
+                console.log(response);
+
+                // post call to save group (if isCreateNewGroup is true)
+                if (isCreateNewGroup) {
+                    // get group detail
+                    let group_data = {
+                        host: pb.authStore.model.id, //Current user ID
+                        name: "test_group",
+                        capacity: 50,
+                        code: "testing",
+                        event_id: response.id,
+                    }
+                    // post call to save group
+                    pb.collection('groups').create(group_data)
+                        .then((group) => {
+                            console.log(group);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        })
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
 
 
     }
