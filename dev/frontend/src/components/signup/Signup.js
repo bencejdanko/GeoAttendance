@@ -24,8 +24,15 @@ const Signup = () => {
             console.log(data)
             const authData = await pb.collection('users').create(data)
             if (authData && authData.id) {
-                signup(authData);
-                navigate('/profile');
+                try {
+                    const authData = await pb.collection('users').authWithPassword(data.email, data.password)
+                    signup(authData.record);
+                    navigate('/profile');
+
+                } catch (e) {
+                    setAuthSignupError("Invalid email or password");
+                }
+
             }
 
         } catch (e) {
