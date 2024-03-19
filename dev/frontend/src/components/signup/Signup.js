@@ -4,13 +4,19 @@ import Header from '../header/Header';
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider';
 
-import { useForm } from 'react-hook-form';
-
+import { set, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 
 const Signup = () => {
 
-    const { signup, authSignupError, authSignupSuccess } = useAuth();
+    const { signup, authSignupError, setAuthSignupError } = useAuth();
     const { register, handleSubmit } = useForm();
+
+    useEffect(() => {
+        return () => {
+            setAuthSignupError(null);
+        };
+    }, []);
 
     return (
         <div className="flex flex-col h-screen">

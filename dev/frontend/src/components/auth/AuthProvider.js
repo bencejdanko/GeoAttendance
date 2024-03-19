@@ -1,5 +1,5 @@
 // AuthContext.js
-import React, { createContext, useState, useContext, Redirect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import pb from "../../lib/pocketbase.js"
 
 
@@ -29,7 +29,6 @@ export const AuthProvider = ({ children }) => {
     // Implement your logout logic here, e.g., clearing user data from state
     pb.authStore.clear();
     setUser(null);
-    return <Redirect to="/" />
   };
 
   const signup = async (sent_data) => {
@@ -45,11 +44,13 @@ export const AuthProvider = ({ children }) => {
       }
       const authData = await pb.collection('users').create(data)
       setUser(authData);
-      return <Redirect to="/" />
       
     } catch (e) {
-      if (sent_data.password !== sent_data.passwordConfirm) {
-        setAuthSignupError("Passwords do not match");
+      console.log(e.response)
+      if (e.response.data.email.message !== undefined || e.response.data.email.username !== undefined) {
+        setAuthSignupError(e.response.data.email.message || e.response.data.email.username);
+      } else if (sent_data.password !== sent_data.passwordConfirm) {
+        setAuthSignupError("Passwords do not match.");
       } else {
         setAuthSignupError("An error occurred");
       }

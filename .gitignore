@@ -5,5 +5,5 @@ dev/frontend/node_modules
 dev/node_modules
 
 dev/backend-pb/pocketbase.bin
-dev/backend-pb/pb_data/*
+dev/backend-pb/pb_data
 dev/backend-pb/testing/node_modules
