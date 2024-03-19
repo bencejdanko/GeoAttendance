@@ -16,11 +16,17 @@ const Event = (props) => {
             <td className="px-4 py-3 text-xl text-blue-600 underline cursor-pointer"><Link to={'/events/' + event.id} state={props}>{event.name}</Link></td>
             <td className="px-4 py-3 text-xl">{event.code}</td>
             <td className="px-4 py-3 text-xl">{event.capacity}</td>
-            <td className="px-4 py-3">
+            {/* <td className="px-4 py-3">
                 <button onClick={handleUploadFileClick}>
                     <img className="object-cover object-center rounded" src={pictureIcon} alt="pictureIcon" width={30} />
                 </button>
-            </td>
+            </td> */}
+            {
+                event.group_id && (<td className="px-4 py-3 text-xl">{event.group_id}</td>)
+            }
+            {
+                !event.group_id && (<td className="px-4 py-3 text-xl">N/A</td>)
+            }
             <td className="px-4 py-3">
                 <button onClick={handleUploadFileClick}>
                     <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} />
