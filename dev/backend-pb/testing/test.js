@@ -94,6 +94,8 @@ const viewEvents = async () => {
         console.log(e)
     }
 }
+// total events that user has attended
+// individual user attendance rate in a group 
 
 //const register
 
