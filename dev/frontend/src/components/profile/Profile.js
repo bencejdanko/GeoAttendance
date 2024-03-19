@@ -4,7 +4,6 @@ import bookIcon from "../../icons/book.png";
 import allIcon from "../../icons/all.png";
 import checkIcon from "../../icons/check.png";
 import removeIcon from "../../icons/remove.png";
-import { useLocation } from "react-router-dom";
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
 import { useAuth } from "../auth/AuthProvider";
@@ -33,7 +32,7 @@ const Profile = () => {
                             </div>
                         </div>
                         <div className="">
-                            <h1 className="text-white text-2xl title-font font-medium w-full mb-5">{user.record.first_name} {user.record.last_name}</h1>
+                            <h1 className="text-white text-2xl title-font font-medium w-full mb-5">{user.first_name} {user.last_name}</h1>
                             <div className="container py-10 mx-auto">
                                 <div className="-my-8 divide-gray-800">
                                     <div className="py-4 flex flex-wrap md:flex-nowrap">
@@ -41,7 +40,7 @@ const Profile = () => {
                                             <span className="font-semibold title-font text-white">Email Address</span>
                                         </div>
                                         <div className="md:flex-grow">
-                                            <p className="">{user.record.email}</p>
+                                            <p className="">{user.email}</p>
                                         </div>
                                     </div>
                                     <div className="py-4 flex border-gray-800 flex-wrap md:flex-nowrap">
@@ -49,7 +48,7 @@ const Profile = () => {
                                             <span className="font-semibold title-font text-white">Username</span>
                                         </div>
                                         <div className="md:flex-grow">
-                                            <p>{user.record.username}</p>
+                                            <p>{user.username}</p>
                                         </div>
                                     </div>
                                     <div className="py-4 flex border-gray-800 flex-wrap md:flex-nowrap">

@@ -1,29 +1,62 @@
-import React, {  } from 'react';
+import React, { useState } from 'react';
 import Footer from '../footer/Footer';
 import Header from '../header/Header';
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
-import { set, useForm } from 'react-hook-form';
-import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import pb from "../../lib/pocketbase.js"
 
 const Signup = () => {
     const navigate = useNavigate();
-    const { signup, authSignupError, setAuthSignupError, user } = useAuth();
+    const { signup } = useAuth();
     const { register, handleSubmit } = useForm();
+    const [authSignupError, setAuthSignupError] = useState(null)
 
-    useEffect(() => {
-         if (user) {
-            navigate('/profile');
+    const handleSignup = async (sent_data) => {
+        try {
+            let data = sent_data;
+            if (data.subscription === true) {
+                data.subscription = 1
+            } else {
+                data.subscription = 0
+            }
+            console.log(data)
+            const authData = await pb.collection('users').create(data)
+            if (authData && authData.id) {
+                try {
+                    const authData = await pb.collection('users').authWithPassword(data.email, data.password)
+                    signup(authData.record);
+                    navigate('/profile');
+
+                } catch (e) {
+                    setAuthSignupError("Invalid email or password");
+                }
+
+            }
+
+        } catch (e) {
+            console.log(e.response)
+            if (e.response.data !== undefined) {
+
+                if (e.response.data.email !== undefined) {
+                    setAuthSignupError(e.response.data.email.message);
+                } else if (e.response.data.password !== undefined) {
+                    setAuthSignupError(e.response.data.password.message);
+                } else if (sent_data.password !== sent_data.passwordConfirm) {
+                    setAuthSignupError("Passwords do not match.");
+                } else {
+                    setAuthSignupError("An error occurred");
+                }
+
+            } else {
+                setAuthSignupError("An error occurred");
+            }
         }
-        return () => {
-            setAuthSignupError(null);
-        };
-    }, [user, navigate]);
-
+    }
     return (
         <div className="flex flex-col h-screen">
-            <Header/>
+            <Header />
             <section className="text-gray-400 bg-gray-900 body-font relative py-10 flex-grow">
                 <div className="px-5 mx-auto">
                     <div className="flex flex-col text-center w-full">
@@ -31,9 +64,9 @@ const Signup = () => {
                         <p className="lg:w-2/3 mx-auto pb-2 leading-relaxed text-lg">Already have an account? <Link className="underline" to='/login'>Login</Link></p>
                     </div>
                     <div className="lg:w-1/2 md:w-2/3 mx-auto">
-                        <form 
-                        onSubmit={ handleSubmit(signup) }
-                        className="flex flex-wrap -m-2">
+                        <form
+                            onSubmit={handleSubmit(handleSignup)}
+                            className="flex flex-wrap -m-2">
                             <div className="p-2 w-full">
                                 <div className="relative">
                                     <label for="first_name" className="leading-7 text-md text-gray-400">First Name</label>
@@ -102,7 +135,7 @@ const Signup = () => {
                                         id="passwordConfirm"
                                         name="passwordConfirm"
                                         className="mt-3 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                        {...register("passwordConfirm", { 
+                                        {...register("passwordConfirm", {
                                             required: true,
                                         })}
                                     />
@@ -124,7 +157,7 @@ const Signup = () => {
                                     type="submit"
                                     value="Register"
                                 />
-                                
+
                             </div>
                         </form>
                     </div>

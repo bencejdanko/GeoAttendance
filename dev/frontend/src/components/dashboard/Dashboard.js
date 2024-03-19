@@ -21,15 +21,28 @@ const Dashboard = (props) => {
     const [eventLocationError, setEventLocationError] = useState("");
     const [events, setEvent] = useState([{
         id: 1,
-        name: 'name',
+        name: 'hi',
         capacity: 50,
-        code: "code"
+        code: "code",
+        group_id: null
+    },
+    {
+        id: 2,
+        name: "name",
+        host: "pb.authStore.model.id", //Current user ID
+        capacity: 50,
+        code: "123",
+        longitude: lng,
+        latitude: lat,
+        radius: 50,
+        start_time:"start.toISOString()",
+        end_time: "end.toISOString()",
+        group_id: "group_id"
     }]);
     const [groupOptionSelected, setGroupOptionSelected] = useState("");
     const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
     const [error, setError] = useState("");
     const [groupOptions, setGroupOptions] = useState(["None", "Add New Group"]);
-
     const { user } = useAuth();
 
     useEffect = () => {

@@ -1,29 +1,32 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../auth/AuthProvider';
 import Footer from '../footer/Footer';
 import Header from '../header/Header';
 import { useNavigate } from 'react-router-dom';
-import { BrowserRouter, Link } from 'react-router-dom'
-
+import { Link } from 'react-router-dom'
+import pb from "../../lib/pocketbase.js"
 import { useForm } from "react-hook-form";
 
 const Login = () => {
-      const navigate = useNavigate();
-    const {authLoginError, authLoginSuccess, login, setAuthLoginError, user} = useAuth();
+    const navigate = useNavigate();
+    const [authLoginError, setAuthLoginError] = useState(null);
+    const { login } = useAuth();
     const { register, handleSubmit } = useForm();
 
-    useEffect(() => {
-         if (user) {
+    const handleLogin = async (data) => {
+        // Implement your login logic here, e.g., setting user data in state
+        try {
+            const authData = await pb.collection('users').authWithPassword(data.email, data.password)
+            login(authData.record);
             navigate('/profile');
+            console.log("success")
+        } catch (e) {
+            setAuthLoginError("Invalid email or password");
         }
-        return () => {
-          setAuthLoginError(null);
-        };
-    }, [user, navigate]);
-
+    }
     return (
         <div className="flex flex-col h-screen">
-            <Header/>
+            <Header />
             <section className="text-gray-400 bg-gray-900 body-font relative py-10 flex-grow">
                 <div className="px-5 mx-auto">
                     <div className="flex flex-col text-center w-full">
@@ -31,8 +34,8 @@ const Login = () => {
                         <p className="lg:w-2/3 mx-auto pb-2 leading-relaxed text-lg">Need an account? <Link className="underline" to='/signup'>Register</Link></p>
                     </div>
                     <div className="lg:w-1/2 md:w-2/3 mx-auto">
-                        <form 
-                            onSubmit={ handleSubmit(login) }
+                        <form
+                            onSubmit={handleSubmit(handleLogin)}
                             className="flex flex-wrap -m-2">
                             <div className="p-2 w-full">
                                 <div className="relative">
@@ -61,10 +64,10 @@ const Login = () => {
                             <div className="p-2 mt-5 w-full">
                                 {authLoginError && <p className="text-red-600 text-center mb-5">{authLoginError}</p>}
 
-                                <input 
-                                className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg"
-                                type="submit" 
-                                value="Submit" 
+                                <input
+                                    className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg"
+                                    type="submit"
+                                    value="Submit"
                                 />
                             </div>
                         </form>

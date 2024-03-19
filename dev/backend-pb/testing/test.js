@@ -2,7 +2,7 @@ import PocketBase from 'pocketbase';
 
 const pb = new PocketBase("http://127.0.0.1:8090");
 
-const register = () => {
+const register = async () => {
     let data = {
         username: "test",
         email: "bencejdanko@gmail.com",
@@ -14,16 +14,14 @@ const register = () => {
     }
 
     try {
-        let request = pb.collection('users').create(data)
-        authData = request.then((authData) => {
-            console.log(authData)
-        })
+        let authData = await pb.collection('users').create(data)
+        console.log(authData)
     } catch (e) {
-        console.log(e)
+        console.log("User already registered.")
     }
 }
 
-const login = () => {
+const login = async () => {
     //logout of any current authenticated user
     pb.authStore.clear();
 
@@ -33,37 +31,61 @@ const login = () => {
     }
 
     try {
-        let request = pb.collection('users').authWithPassword(data.email, data.password)
-        request.then((authData) => {
-            console.log(pb.authStore.isValid);
-            console.log(pb.authStore.token);
-            console.log(pb.authStore.model.id);
-        })
+        let request = await pb.collection('users').authWithPassword(data.email, data.password)
+
+        console.log("Authenticated: " + pb.authStore.isValid);
+        // console.log(pb.authStore.token);
+        // console.log(pb.authStore.model.id);
+
     } catch (e) {
         console.log(e)
     }
 }
 
 const registerEvent = async () => {
-    let currentDate = new Date();
 
-    let data = {
-        name: "test",
-        host: pb.authStore.model.id, //Current user ID
-        capacity: 50,
-        code: "testing",
-        longitude: 50,
-        latitude: 50,
-        radius: 50,
-        start_time: currentDate.toISOString(),
-        end_time: currentDate.toISOString(),
+    if (pb.authStore.isValid) {
+
+        let currentDate = new Date();
+
+        let data = {
+            name: "test",
+            host: pb.authStore.model.id, //Current user ID
+            capacity: 50,
+            code: "testing",
+            longitude: 50,
+            latitude: 50,
+            radius: 50,
+            registed_attendees: [],
+            checked_in_attendees: [],
+            start_time: currentDate.toISOString(),
+            end_time: currentDate.toISOString(),
+        }
+
+        try {
+            const response = await pb.collection('events').create(data)
+            console.log("Event created: " + response.id)
+            return response.id
+        } catch (e) {
+            console.log(e)
+        }
+    } else {
+        console.log("User not authenticated. Cannot create event.")
     }
+}
 
-    console.log(data.start_time)
-
+const registerUserToEventAttendees = async (event_id, user_id) => {
     try {
-        const response = await pb.collection('events').create(data)
-        return response
+        const event = await pb.collection('events').getOne(event_id)
+        const registed_attendees = event.registered_attendees
+        const updated_attendees = registed_attendees.push(user_id)
+
+        const response = await pb.collection('events').update(event_id, {
+            registered_attendees: updated_attendees
+        })
+
+        console.log("User registered to event: " + response.id)
+
     } catch (e) {
         console.log(e)
     }
@@ -94,6 +116,7 @@ const viewEvents = async () => {
             host: pb.authStore.model.id
         })
         console.log(events)
+        return events
     } catch (e) {
         console.log(e)
     }
@@ -131,8 +154,14 @@ const get_attendance_rate = async () => {
 }
 
 const run = () => {
-    register()
-    login()
+    register().then(() => {
+        login().then(() => {
+            registerEvent().then((event_id) => {
+                registerUserToEventAttendees(event_id, pb.authStore.model.id).then(() => {
+                })
+            })
+        })
+    })
 }
 
 run();
