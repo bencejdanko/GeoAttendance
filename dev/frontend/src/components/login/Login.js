@@ -2,19 +2,24 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../auth/AuthProvider';
 import Footer from '../footer/Footer';
 import Header from '../header/Header';
+import { useNavigate } from 'react-router-dom';
 import { BrowserRouter, Link } from 'react-router-dom'
 
 import { useForm } from "react-hook-form";
 
 const Login = () => {
-    const {authLoginError, authLoginSuccess, login, setAuthLoginError} = useAuth();
+      const navigate = useNavigate();
+    const {authLoginError, authLoginSuccess, login, setAuthLoginError, user} = useAuth();
     const { register, handleSubmit } = useForm();
 
     useEffect(() => {
+         if (user) {
+            navigate('/profile');
+        }
         return () => {
           setAuthLoginError(null);
         };
-    }, []);
+    }, [user, navigate]);
 
     return (
         <div className="flex flex-col h-screen">
