@@ -43,7 +43,10 @@ export const AuthProvider = ({ children }) => {
         data.subscription = 0
       }
       const authData = await pb.collection('users').create(data)
-      setUser(authData);
+      
+      if (authData && authData.id) {
+        setUser(authData);
+      }
       
     } catch (e) {
       console.log(e.response)
