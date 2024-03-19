@@ -47,10 +47,18 @@ export const AuthProvider = ({ children }) => {
       
     } catch (e) {
       console.log(e.response)
-      if (e.response.data.email.message !== undefined || e.response.data.email.username !== undefined) {
-        setAuthSignupError(e.response.data.email.message || e.response.data.email.username);
-      } else if (sent_data.password !== sent_data.passwordConfirm) {
-        setAuthSignupError("Passwords do not match.");
+      if (e.response.data !== undefined) {
+
+        if (e.response.data.email !== undefined) {
+          setAuthSignupError(e.response.data.email.message);
+        } else if (e.response.data.password !== undefined) {
+          setAuthSignupError(e.response.data.password.message);
+        } else if (sent_data.password !== sent_data.passwordConfirm) {
+          setAuthSignupError("Passwords do not match.");
+        } else {
+          setAuthSignupError("An error occurred");
+        }
+
       } else {
         setAuthSignupError("An error occurred");
       }
