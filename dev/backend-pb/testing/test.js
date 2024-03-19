@@ -99,6 +99,33 @@ const viewEvents = async () => {
 
 //const register
 
+//attendance rate
+const get_attendance_rate = async () => {
+    let total_events = 0;
+    let total_attended = 0;
+
+    try {
+        let events = await pb.collection('events').getFullList({
+            host: pb.authStore.model.id
+        })
+
+        total_events = events.length;
+
+        for (let event of events) {
+            let checked_in_attendees = await pb.collection('checked_in_attendees').getFullList()
+            for (let attendee_id of checked_in_attendees) {
+                if (attendee_id === pb.authStore.model.id) {
+                    total_attended += 1;
+                }
+            }
+        }
+
+        console.log(total_attended / total_events)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 const run = async () => {
     //await register();
     await login();
