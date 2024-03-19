@@ -2,7 +2,7 @@ import PocketBase from 'pocketbase';
 
 const pb = new PocketBase("http://127.0.0.1:8090");
 
-const register = async () => {
+const register = () => {
     let data = {
         username: "test",
         email: "bencejdanko@gmail.com",
@@ -14,14 +14,16 @@ const register = async () => {
     }
 
     try {
-        let authData = await pb.collection('users').create(data)
-        console.log(authData)
+        let request = pb.collection('users').create(data)
+        authData = request.then((authData) => {
+            console.log(authData)
+        })
     } catch (e) {
         console.log(e)
     }
 }
 
-const login = async () => {
+const login = () => {
     //logout of any current authenticated user
     pb.authStore.clear();
 
@@ -31,10 +33,12 @@ const login = async () => {
     }
 
     try {
-        let authData = await pb.collection('users').authWithPassword(data.email, data.password)
-        console.log(pb.authStore.isValid);
-        console.log(pb.authStore.token);
-        console.log(pb.authStore.model.id);
+        let request = pb.collection('users').authWithPassword(data.email, data.password)
+        request.then((authData) => {
+            console.log(pb.authStore.isValid);
+            console.log(pb.authStore.token);
+            console.log(pb.authStore.model.id);
+        })
     } catch (e) {
         console.log(e)
     }
@@ -94,14 +98,41 @@ const viewEvents = async () => {
         console.log(e)
     }
 }
+// total events that user has attended
+// individual user attendance rate in a group 
 
 //const register
 
-const run = async () => {
-    //await register();
-    await login();
-    let event_data = await registerEvent();
-    await viewEvents();
+//attendance rate
+const get_attendance_rate = async () => {
+    let total_events = 0;
+    let total_attended = 0;
+
+    try {
+        let events = await pb.collection('events').getFullList({
+            host: pb.authStore.model.id
+        })
+
+        total_events = events.length;
+
+        for (let event of events) {
+            let checked_in_attendees = await pb.collection('checked_in_attendees').getFullList()
+            for (let attendee_id of checked_in_attendees) {
+                if (attendee_id === pb.authStore.model.id) {
+                    total_attended += 1;
+                }
+            }
+        }
+
+        console.log(total_attended / total_events)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+const run = () => {
+    register()
+    login()
 }
 
 run();

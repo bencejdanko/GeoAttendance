@@ -14,6 +14,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (data) => {
     // Implement your login logic here, e.g., setting user data in state
+
+    setAuthLoginError(null);
     try {
       const authData = await pb.collection('users').authWithPassword(data.email, data.password)
       setUser(authData);
@@ -29,13 +31,37 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const signup = async (data) => {
+  const signup = async (sent_data) => {
+
+    setAuthSignupError(null);
+
     try {
+      let data = sent_data;
+      if (data.subscription === true) {
+        data.subscription = 1
+      } else {
+        data.subscription = 0
+      }
       const authData = await pb.collection('users').create(data)
-      setUser(authData);
+      
+      if (authData && authData.id) {
+        setUser(authData);
+      }
+      
     } catch (e) {
-      if (data.password !== data.passwordConfirm) {
-        setAuthSignupError("Passwords do not match");
+      console.log(e.response)
+      if (e.response.data !== undefined) {
+
+        if (e.response.data.email !== undefined) {
+          setAuthSignupError(e.response.data.email.message);
+        } else if (e.response.data.password !== undefined) {
+          setAuthSignupError(e.response.data.password.message);
+        } else if (sent_data.password !== sent_data.passwordConfirm) {
+          setAuthSignupError("Passwords do not match.");
+        } else {
+          setAuthSignupError("An error occurred");
+        }
+
       } else {
         setAuthSignupError("An error occurred");
       }

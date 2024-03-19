@@ -4,20 +4,23 @@ import Header from '../header/Header';
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-
+import { set, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 
 const Signup = () => {
     const navigate = useNavigate();
-    const { signup, authSignupError, authSignupSuccess, user } = useAuth();
+    const { signup, authSignupError, setAuthSignupError, user } = useAuth();
     const { register, handleSubmit } = useForm();
 
     useEffect(() => {
-        if (user) {
+         if (user) {
             navigate('/profile');
         }
+        return () => {
+            setAuthSignupError(null);
+        };
     }, [user, navigate]);
-    
+
     return (
         <div className="flex flex-col h-screen">
             <Header/>
@@ -109,7 +112,6 @@ const Signup = () => {
                                 <input
                                     id="subscription"
                                     type="checkbox"
-                                    value="0"
                                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                     {...register("subscription")} />
                                 <label for="subscription" className="ml-2 leading-7 text-md text-gray-400">Register as a host</label>
