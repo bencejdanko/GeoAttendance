@@ -77,11 +77,11 @@ const registerEvent = async () => {
 const registerUserToEventAttendees = async (event_id, user_id) => {
     try {
         const event = await pb.collection('events').getOne(event_id)
-        const registed_attendees = event.registered_attendees
-        const updated_attendees = registed_attendees.push(user_id)
+        const registered_attendees = event.registered_attendees
+        registered_attendees.push(user_id)
 
         const response = await pb.collection('events').update(event_id, {
-            registered_attendees: updated_attendees
+            registered_attendees: registered_attendees
         })
 
         console.log("User registered to event: " + response.id)
@@ -102,8 +102,8 @@ const registerGroup = async (event_id) => {
     }
 
     try {
-        group = await pb.collection('groups').create(group_data)
-        console.log(group)
+        const group = await pb.collection('groups').create(group_data)
+        console.log("Group created: " + group.id)
     } catch (e) {
         console.log(e)
     }
@@ -116,18 +116,30 @@ const viewEvents = async () => {
             host: pb.authStore.model.id
         })
         console.log(events)
-        return events
     } catch (e) {
         console.log(e)
     }
 }
-// total events that user has attended
-// individual user attendance rate in a group 
 
-//const register
+const markAttendance = async (event_id, user_id) => {
+    try {
+        const event = await pb.collection('events').getOne(event_id)
+        const checked_in_attendees = event.checked_in_attendees
+        checked_in_attendees.push(user_id)
+
+        const response = await pb.collection('events').update(event_id, {
+            checked_in_attendees: checked_in_attendees
+        })
+
+        console.log("User checked in to event: " + response.id)
+
+    } catch (e) {
+        console.log(e)
+    }
+}
 
 //attendance rate
-const get_attendance_rate = async () => {
+const getAttendanceRate = async () => {
     let total_events = 0;
     let total_attended = 0;
 
@@ -139,7 +151,7 @@ const get_attendance_rate = async () => {
         total_events = events.length;
 
         for (let event of events) {
-            let checked_in_attendees = await pb.collection('checked_in_attendees').getFullList()
+            let checked_in_attendees = event.checked_in_attendees
             for (let attendee_id of checked_in_attendees) {
                 if (attendee_id === pb.authStore.model.id) {
                     total_attended += 1;
@@ -153,15 +165,19 @@ const get_attendance_rate = async () => {
     }
 }
 
-const run = () => {
-    register().then(() => {
-        login().then(() => {
-            registerEvent().then((event_id) => {
-                registerUserToEventAttendees(event_id, pb.authStore.model.id).then(() => {
-                })
-            })
-        })
-    })
+const run = async () => {
+    try {
+        await register();
+        await login();
+        const event_id = await registerEvent();
+        await registerUserToEventAttendees(event_id, pb.authStore.model.id);
+        await registerGroup(event_id);
+        await viewEvents();
+        await markAttendance(event_id, pb.authStore.model.id);
+        await getAttendanceRate();
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 run();
