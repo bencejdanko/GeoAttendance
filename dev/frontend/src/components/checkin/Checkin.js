@@ -1,18 +1,77 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Footer from "../footer/Footer";
 import Header from "../header/Header";
+import * as geolib from 'geolib';
+import { useAuth } from "../auth/AuthProvider";
 
 const Checkin = () => {
     const [eventCode, setEventCode] = useState("");
+    const { currentLocation } = useAuth();
+    const [checkInError, setCheckInError] = useState("");
+    const [checkInSuccess, setCheckInSuccess] = useState("");
+    // fetch a list of all events associated with this user
+    const dummy_events_associated_with_this_user = [
+        {
+            name: "event1",
+            host: "host1",
+            capacity: 50,
+            code: "testing",
+            longitude: "-121.8821451",
+            latitude: "37.3323527",
+            radius: 50,
+            registed_attendees: [],
+            checked_in_attendees: [],
+            start_time: "currentDate.toISOString()",
+            end_time: "currentDate.toISOString()",
+        },
+        {
+            name: "event2",
+            host: "host2",
+            capacity: 50,
+            code: "testing2",
+            longitude: "-121.9062887",
+            latitude: "37.3607574",
+            radius: 50,
+            registed_attendees: [],
+            checked_in_attendees: [],
+            start_time: "currentDate.toISOString()",
+            end_time: "currentDate.toISOString()",
+        }
+    ]
+
+    const reset = () => {
+        setEventCode("");
+        setCheckInError("");
+        setCheckInSuccess("");
+    }
 
     const handleCheckIn = () => {
-        // Check if there is any event has this event code 
-
-        // Check if this user is registered for this event
-
-        // Check if the current location is within the radius
-        
-        // confirm
+        reset();
+        // check if we able to get the current location of the user
+        if (currentLocation) {
+            // Check if there is any event has this event code 
+            const event = dummy_events_associated_with_this_user.filter(e => e.code === eventCode);
+            if (event && event[0]) {
+                // Check if the current location is within the radius
+                const isAccepted = geolib.isPointWithinRadius(
+                    { latitude: Number(currentLocation.lat), longitude: Number(currentLocation.lng) },
+                    { latitude: Number(event[0].latitude), longitude: Number(event[0].longitude) },
+                    Number(event[0].radius)
+                );
+                // confirm
+                if (isAccepted) {
+                    setCheckInSuccess("Successfully check-in!");
+                    console.log("Successfully check-in!");
+                }
+                else {
+                    setCheckInError("Unable to check-in.");
+                }
+            } else {
+                setCheckInError("Unable to check-in.");
+            }
+        } else {
+            setCheckInError("Unable to check-in.");
+        }
     }
 
     return (
@@ -39,6 +98,12 @@ const Checkin = () => {
                                 </div>
                             </div>
                             <div className="p-2 mt-7 w-full">
+                                {
+                                    !checkInSuccess && <p className="text-red-600 text-center mb-9">{checkInError}</p>
+                                }
+                                {
+                                    checkInSuccess && <p className="text-red-600 text-center mb-9">{checkInSuccess}</p>
+                                }
                                 <button className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg" onClick={handleCheckIn}>Check-in</button>
                             </div>
                         </div>
