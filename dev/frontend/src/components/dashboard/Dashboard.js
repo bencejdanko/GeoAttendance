@@ -73,18 +73,28 @@ const Dashboard = (props) => {
                 let group_data = {
                     host: pb.authStore.model.id, //Current user ID
                     name: groupName,
-                    capacity: 50,
-                    code: "testing",
+                    code: groupCode,
                     event_id: response.id,
                 }
+                
     
                 try {
                     const group = await pb.collection('groups').create(group_data);
                     console.log("Group created: " + group.id);
+
+                    try {
+                        const event = await pb.collection('events').update(response.id, {group_id: group.id});
+                        console.log("Group created: " + group.id);
+                    } catch (e) {
+                        console.log(e);
+                        setError("Could not update the event with group");
+                    }
+
                 } catch (e) {
                     console.log(e);
                     setError("Could not create the group");
                 }
+
             }
 
         } catch (e) {
