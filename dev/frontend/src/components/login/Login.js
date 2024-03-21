@@ -10,40 +10,14 @@ import { useForm } from "react-hook-form";
 const Login = () => {
     const navigate = useNavigate();
     const [authLoginError, setAuthLoginError] = useState(null);
-    const { login, location } = useAuth();
+    const { login } = useAuth();
     const { register, handleSubmit } = useForm();
-
-    const errorCallback = () => {
-        console.log("Cannot retrieve the current location")
-        // setCheckInError("Cannot retrieve the current location");
-    }
-
-    const successCallback = (position) => {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        location({lat: latitude, lng: longitude})
-        console.log(`Latitude: ${latitude}, longitude: ${longitude}`)
-    }
-
-    const handleLocationClick = () => {
-        const options = {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0,
-        };
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(successCallback, errorCallback, options);
-        } else {
-            console.log("Geolocation not supported");
-        }
-    }
 
     const handleLogin = async (data) => {
         // Implement your login logic here, e.g., setting user data in state
         try {
             const authData = await pb.collection('users').authWithPassword(data.email, data.password)
             login(authData.record);
-            handleLocationClick();
             navigate('/profile');
             console.log("success")
         } catch (e) {

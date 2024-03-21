@@ -7,12 +7,6 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [currentLocation, setCurrentLocation] = useState(null);
-
-  const location = (userLocation) => {
-    console.log(userLocation)
-    setCurrentLocation(userLocation)
-  }
 
   const login = (userData) => {
     // Implement your login logic here, e.g., setting user data in state
@@ -33,8 +27,6 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{ 
       user, 
-      currentLocation,
-      location,
       login, 
       logout, 
       signup
