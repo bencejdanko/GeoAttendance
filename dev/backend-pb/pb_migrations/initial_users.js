@@ -1,10 +1,12 @@
-// migrate((db) => {
-//     const dao = new Dao(db)
-//     const collection = dao.findCollectionByNameOrId("users")
-//     const record = new Record(collection)
-//     record.setUsername("u_" + $security.randomStringWithAlphabet(5, "123456789"))
-//     record.setPassword("1234567890")
-//     record.set("name", "John Doe")
-//     record.set("email", "test@example.com")
-//     dao.saveRecord(record)
-// })
+migrate((db) => {
+    const dao = new Dao(db)
+    const collection = dao.findCollectionByNameOrId("users")
+    const record = new Record(collection)
+    record.setUsername("bdanko")
+    record.setPassword("123456789")
+    record.set("name", "Bence Danko")
+    record.set("email", "bencejdanko@gmail.com")
+    record.set("subscription", 1)
+    dao.saveRecord(record)
+
+})

@@ -17,35 +17,24 @@ const Dashboard = (props) => {
     const [lng, setLng] = useState("");
     const [startTime, setStartTime] = useState(props.formattedDate);
     const [endTime, setEndTime] = useState(props.formattedDate);
+    const [eventCode, setEventCode] = useState("");
+    const [capacity, setCapacity] = useState("");
+    const [radius, setRadius] = useState("");
+    const [groupCode, setGroupCode] = useState("");
+    const [eventName, setEventName] = useState("");
     const [eventLocation, setEventLocation] = useState("");
     const [eventLocationError, setEventLocationError] = useState("");
-    const [events, setEvent] = useState([{
-        id: 1,
-        name: 'hi',
-        capacity: 50,
-        code: "code",
-        group_id: null
-    },
-    {
-        id: 2,
-        name: "name",
-        host: "pb.authStore.model.id", //Current user ID
-        capacity: 50,
-        code: "123",
-        longitude: lng,
-        latitude: lat,
-        radius: 50,
-        start_time:"start.toISOString()",
-        end_time: "end.toISOString()",
-        group_id: "group_id"
-    }]);
+    const [groupName, setGroupName] = useState("");
+    const [events, setEvent] = useState([]);
     const [groupOptionSelected, setGroupOptionSelected] = useState("");
     const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
     const [error, setError] = useState("");
     const [groupOptions, setGroupOptions] = useState(["None", "Add New Group"]);
     const { user } = useAuth();
 
+
     useEffect = () => {
+
         navigator.geolocation.getCurrentPosition(
             position => {
                 setLat(position.coords.latitude);
@@ -55,53 +44,63 @@ const Dashboard = (props) => {
         );
     }
 
-    const handleSaveEvent = () => {
+    const handleSaveEvent = async () => {
 
         let start = new Date(startTime);
         let end = new Date(endTime);
 
         // get event detail
         let data = {
-            name: "name",
+            name: eventName,
             host: pb.authStore.model.id, //Current user ID
-            capacity: 50,
-            code: "123",
+            capacity: capacity,
+            code: eventCode,
             longitude: lng,
             latitude: lat,
-            radius: 50,
+            radius: radius,
             start_time: start.toISOString(),
             end_time: end.toISOString(),
+            registed_attendees: [],
+            checked_in_attendees: [],
         }
 
-        // post call to save event
-        pb.collection('events').create(data)
-            .then((response) => {
-                console.log(response);
+        try {
+            const response = await pb.collection('events').create(data);
+            console.log("Event created: " + response.id);
+            setEvent([...events, response]);
 
-                // post call to save group (if isCreateNewGroup is true)
-                if (isCreateNewGroup) {
-                    // get group detail
-                    let group_data = {
-                        host: pb.authStore.model.id, //Current user ID
-                        name: "test_group",
-                        capacity: 50,
-                        code: "testing",
-                        event_id: response.id,
-                    }
-                    // post call to save group
-                    pb.collection('groups').create(group_data)
-                        .then((group) => {
-                            console.log(group);
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                        })
+            if (groupOptionSelected === "new_group") {
+                let group_data = {
+                    host: pb.authStore.model.id, //Current user ID
+                    name: groupName,
+                    code: groupCode,
+                    event_id: response.id,
                 }
-            })
-            .catch((error) => {
-                console.log(error);
-            })
+                
+    
+                try {
+                    const group = await pb.collection('groups').create(group_data);
+                    console.log("Group created: " + group.id);
 
+                    try {
+                        const event = await pb.collection('events').update(response.id, {group_id: group.id});
+                        console.log("Group created: " + group.id);
+                    } catch (e) {
+                        console.log(e);
+                        setError("Could not update the event with group");
+                    }
+
+                } catch (e) {
+                    console.log(e);
+                    setError("Could not create the group");
+                }
+
+            }
+
+        } catch (e) {
+            console.log(e);
+            setError("Could not create the event");
+        }
 
     }
 
@@ -174,6 +173,15 @@ const Dashboard = (props) => {
         setLng(position.coords.longitude);
         console.log(`Latitude: ${latitude}, longitude: ${longitude}`)
     }
+    
+    const refreshEvents = async () => {
+        try {
+            const events = await pb.collection('events').getFullList()
+            setEvent(events);
+        } catch (e) {
+            setEvent([]);
+        }
+    }
 
     return (
         <div className="flex flex-col h-screen">
@@ -187,7 +195,13 @@ const Dashboard = (props) => {
                         <h2 className="text-white text-2xl mb-8 font-medium title-font">Create New Event</h2>
                         <div className="relative mb-4">
                             <label for="code" className="leading-7 text-lg text-gray-400">Event name</label>
-                            <input type="code" id="code" name="code" className="w-full bg-gray-800 rounded border border-gray-700 mt-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                            <input 
+                                value = {eventName}
+                                onChange = {(e) => setEventName(e.target.value)}
+                                type="text"
+                                id="event-name"
+                                name="event-name"
+                                className="w-full bg-gray-800 rounded border border-gray-700 mt-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                         </div>
                         <div className="relative mb-4">
                             <label for="code" className="leading-7 text-lg text-gray-400">Event location</label>
@@ -208,7 +222,13 @@ const Dashboard = (props) => {
                         </div>
                         <div className="relative mb-4">
                             <label for="event-code" className="leading-7 text-lg text-gray-400">Event code</label>
-                            <input type="text" id="event-code" name="event-code" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                            <input 
+                            value={eventCode}
+                            onChange={(e) => setEventCode(e.target.value)}
+                            type="text" 
+                            id="event-code" 
+                            name="event-code" 
+                            className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                         </div>
                         {/* <div class="flex ml-6 items-center"> */}
                         <div className="relative mb-4">Group</div>
@@ -219,16 +239,36 @@ const Dashboard = (props) => {
                         {isCreateNewGroup &&
                             <div className="relative mb-4">
                                 <label for="new_group_name" className="leading-7 text-lg text-gray-400">New Group Name</label>
-                                <input type="text" id="new_group_nam" name="new_group_nam" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                <input 
+                                value = {groupName}
+                                onChange = {(e) => setGroupName(e.target.value)}
+                                type="text" id="new_group_nam" name="new_group_nam" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                
+                                <label for="new_group_code" className="leading-7 text-lg text-gray-400">New Group Code</label>
+                                <input 
+                                value = {groupCode}
+                                onChange = {(e) => setGroupCode(e.target.value)}
+                                type="text" id="new_group_code" name="new_group_code" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                
                             </div>
                         }
                         <div className="relative mb-4">
                             <label for="capacity" className="leading-7 text-lg text-gray-400">Capacity</label>
-                            <input type="number" id="capacity" name="capacity" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                            <input 
+                            value={capacity}
+                            onChange={(e) => setCapacity(e.target.value)}
+                            type="number" 
+                            id="capacity" 
+                            name="capacity" 
+                            className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                         </div>
                         <div className="relative mb-4">
                             <label for="radius" className="leading-7 text-lg text-gray-400">Radius</label>
-                            <input type="radius" id="radius" name="radius" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                            <input 
+                            value={radius}
+                            onChange={(e) => setRadius(e.target.value)}
+                            
+                            type="radius" id="radius" name="radius" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                         </div>
                         <div className="relative mb-4">
                             <label for="message" className="leading-7 text-lg text-gray-400">Check-in Time</label>
@@ -252,6 +292,10 @@ const Dashboard = (props) => {
                     </div>
                 </div>
                 <div className="lg:w-5/6 w-full mx-auto overflow-auto">
+                    <button 
+                    onClick = {refreshEvents}
+                    className="text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">Refresh Events</button>
+                    
                     <table className="table-auto w-full text-left whitespace-no-wrap">
                         <thead>
                             <tr>
@@ -274,8 +318,8 @@ const Dashboard = (props) => {
             </section>
             <Footer />
         </div>
-
+        
     )
 }
 
-export default Dashboard;
+export default Dashboard
