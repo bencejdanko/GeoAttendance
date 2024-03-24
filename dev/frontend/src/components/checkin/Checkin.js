@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import Footer from "../footer/Footer";
 import Header from "../header/Header";
 import * as geolib from 'geolib';
-import { useAuth } from "../auth/AuthProvider";
 
 const Checkin = () => {
     const [eventCode, setEventCode] = useState("");
-    const { currentLocation } = useAuth();
     const [checkInError, setCheckInError] = useState("");
     const [checkInSuccess, setCheckInSuccess] = useState("");
+    const [isCheckInDisabled, setIsCheckInDisabled] = useState(true);
+    const [currentGeo, setCurrentGeo] = useState(null);
     // fetch a list of all events associated with this user
     const dummy_events_associated_with_this_user = [
         {
@@ -48,13 +48,13 @@ const Checkin = () => {
     const handleCheckIn = () => {
         reset();
         // check if we able to get the current location of the user
-        if (currentLocation) {
+        if (currentGeo) {
             // Check if there is any event has this event code 
             const event = dummy_events_associated_with_this_user.filter(e => e.code === eventCode);
             if (event && event[0]) {
                 // Check if the current location is within the radius
                 const isAccepted = geolib.isPointWithinRadius(
-                    { latitude: Number(currentLocation.lat), longitude: Number(currentLocation.lng) },
+                    { latitude: Number(currentGeo.lat), longitude: Number(currentGeo.lng) },
                     { latitude: Number(event[0].latitude), longitude: Number(event[0].longitude) },
                     Number(event[0].radius)
                 );
@@ -74,6 +74,32 @@ const Checkin = () => {
         }
     }
 
+    const handleGetCurrentLocation = () => {
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
+        };
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
+        } else {
+            console.log("Geolocation not supported")
+        }
+    }
+
+    const errorCallback = () => {
+        console.log("Cannot retrieve the current location")
+        setIsCheckInDisabled(true);
+    }
+
+    const successCallback = (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        setCurrentGeo({lat: position.coords.latitude, lng: position.coords.longitude});
+        setIsCheckInDisabled(false);
+        console.log(`Latitude: ${latitude}, longitude: ${longitude}`)
+    }
+
     return (
         <div className="flex flex-col h-screen">
             <Header />
@@ -81,6 +107,8 @@ const Checkin = () => {
                 <div className="px-5 py-10 mx-auto">
                     <div className="flex flex-col text-center w-full mb-12">
                         <h1 className="sm:text-3xl text-2xl font-medium title-font mb-5 text-white tracking-widest">Check-in</h1>
+                        <p className="leading-relaxed text-lg text-blue-500"><button onClick={handleGetCurrentLocation}>Get current location</button></p>
+
                         <p className="lg:w-2/3 mx-auto leading-relaxed text-lg">Enter the event code below to check in.</p>
                     </div>
                     <div className="lg:w-1/2 md:w-2/3 mx-auto">
@@ -104,7 +132,12 @@ const Checkin = () => {
                                 {
                                     checkInSuccess && <p className="text-red-600 text-center mb-9">{checkInSuccess}</p>
                                 }
-                                <button className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg" onClick={handleCheckIn}>Check-in</button>
+                                {
+                                    isCheckInDisabled && <button disabled className="flex mx-auto text-white disabled:bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg" onClick={handleCheckIn}>Check-in</button>
+                                }
+                                {
+                                    !isCheckInDisabled && <button className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg" onClick={handleCheckIn}>Check-in</button>
+                                }
                             </div>
                         </div>
                     </div>
