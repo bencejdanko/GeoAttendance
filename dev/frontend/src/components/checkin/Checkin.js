@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Footer from "../footer/Footer";
 import Header from "../header/Header";
-import * as geolib from 'geolib';
+import query from "../../lib/query.js";
 
 const Checkin = () => {
     const [eventCode, setEventCode] = useState("");
@@ -9,35 +9,6 @@ const Checkin = () => {
     const [checkInSuccess, setCheckInSuccess] = useState("");
     const [isCheckInDisabled, setIsCheckInDisabled] = useState(true);
     const [currentGeo, setCurrentGeo] = useState(null);
-    // fetch a list of all events associated with this user
-    const dummy_events_associated_with_this_user = [
-        {
-            name: "event1",
-            host: "host1",
-            capacity: 50,
-            code: "testing",
-            longitude: "-121.8821451",
-            latitude: "37.3323527",
-            radius: 50,
-            registed_attendees: [],
-            checked_in_attendees: [],
-            start_time: "currentDate.toISOString()",
-            end_time: "currentDate.toISOString()",
-        },
-        {
-            name: "event2",
-            host: "host2",
-            capacity: 50,
-            code: "testing2",
-            longitude: "-121.9062887",
-            latitude: "37.3607574",
-            radius: 50,
-            registed_attendees: [],
-            checked_in_attendees: [],
-            start_time: "currentDate.toISOString()",
-            end_time: "currentDate.toISOString()",
-        }
-    ]
 
     const reset = () => {
         setEventCode("");
@@ -45,32 +16,25 @@ const Checkin = () => {
         setCheckInSuccess("");
     }
 
-    const handleCheckIn = () => {
+    const handleCheckIn = async () => {
         reset();
         // check if we able to get the current location of the user
         if (currentGeo) {
-            // Check if there is any event has this event code 
-            const event = dummy_events_associated_with_this_user.filter(e => e.code === eventCode);
-            if (event && event[0]) {
-                // Check if the current location is within the radius
-                const isAccepted = geolib.isPointWithinRadius(
-                    { latitude: Number(currentGeo.lat), longitude: Number(currentGeo.lng) },
-                    { latitude: Number(event[0].latitude), longitude: Number(event[0].longitude) },
-                    Number(event[0].radius)
-                );
-                // confirm
-                if (isAccepted) {
-                    setCheckInSuccess("Successfully check-in!");
-                    console.log("Successfully check-in!");
-                }
-                else {
-                    setCheckInError("Unable to check-in.");
-                }
-            } else {
-                setCheckInError("Unable to check-in.");
+            let data = {
+                code: eventCode,
+                latitude: currentGeo.lat,
+                longitude: currentGeo.lng,
             }
+
+            const checkInData = await query.checkin(data);
+            if (checkInData instanceof Error) {
+                setCheckInError(checkInData.message);
+            } else {
+                setCheckInSuccess("Successfully checked-in.");
+            }
+
         } else {
-            setCheckInError("Unable to check-in.");
+            setCheckInError("Please update your location to check-in.");
         }
     }
 

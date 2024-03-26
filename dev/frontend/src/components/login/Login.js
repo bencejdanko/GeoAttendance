@@ -4,7 +4,7 @@ import Footer from '../footer/Footer';
 import Header from '../header/Header';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom'
-import pb from "../../lib/pocketbase.js"
+import query from "../../lib/query.js"
 import { useForm } from "react-hook-form";
 
 const Login = () => {
@@ -15,14 +15,13 @@ const Login = () => {
 
     const handleLogin = async (data) => {
         // Implement your login logic here, e.g., setting user data in state
-        try {
-            const authData = await pb.collection('users').authWithPassword(data.email, data.password)
-            login(authData.record);
-            navigate('/profile');
-            console.log("success")
-        } catch (e) {
-            setAuthLoginError("Invalid email or password");
+        const authData = await query.login(data); 
+        if (authData instanceof Error) {
+            setAuthLoginError(authData.message);
+            return;
         }
+        login(authData.record);
+        navigate('/profile');
     }
     return (
         <div className="flex flex-col h-screen">

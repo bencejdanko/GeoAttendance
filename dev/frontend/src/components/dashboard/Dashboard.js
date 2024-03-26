@@ -9,7 +9,9 @@ import Event from "../event/Event";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import { useAuth } from "../auth/AuthProvider";
-import pb from "../../lib/pocketbase";
+import pb from "../../lib/pocketbase.js";
+import query from "../../lib/query.js";
+import { set } from "react-hook-form";
 
 const Dashboard = (props) => {
     const API_KEY = process.env.REACT_APP_GEOCODER_API_KEY;
@@ -64,44 +66,35 @@ const Dashboard = (props) => {
             checked_in_attendees: [],
         }
 
-        try {
-            const response = await pb.collection('events').create(data);
-            console.log("Event created: " + response.id);
-            setEvent([...events, response]);
+        const response = await query.saveEvent(data);
 
-            if (groupOptionSelected === "new_group") {
-                let group_data = {
-                    host: pb.authStore.model.id, //Current user ID
-                    name: groupName,
-                    code: groupCode,
-                    event_id: response.id,
-                }
-                
+        if (response instanceof Error) {
+            setError(response.message);
+            return;
+        } 
+
+        setEvent([...events, response]);
+
+        if (groupOptionSelected === "new_group") {
+            let group_data = {
+                host: pb.authStore.model.id, //Current user ID
+                name: groupName,
+                code: groupCode,
+                event_id: response.id,
+            }
     
-                try {
-                    const group = await pb.collection('groups').create(group_data);
-                    console.log("Group created: " + group.id);
-
-                    try {
-                        const event = await pb.collection('events').update(response.id, {group_id: group.id});
-                        console.log("Group created: " + group.id);
-                    } catch (e) {
-                        console.log(e);
-                        setError("Could not update the event with group");
-                    }
-
-                } catch (e) {
-                    console.log(e);
-                    setError("Could not create the group");
-                }
-
+            const group = await query.createGroup(group_data);
+            if (group instanceof Error) {
+                setError(group.message);
+                return;
             }
 
-        } catch (e) {
-            console.log(e);
-            setError("Could not create the event");
+            const event = await query.updateEvent(response.id, {group_id: group.id});
+            if (event instanceof Error) {
+                setError(event.message);
+                return;
+            }
         }
-
     }
 
     const handleOptionChange = (e) => {
@@ -163,7 +156,7 @@ const Dashboard = (props) => {
     }
 
     const errorCallback = () => {
-        console.log("Cannot retrieve the current location")
+        setError("Unable to retrive current location.")
     }
 
     const successCallback = (position) => {
@@ -175,12 +168,8 @@ const Dashboard = (props) => {
     }
     
     const refreshEvents = async () => {
-        try {
-            const events = await pb.collection('events').getFullList()
-            setEvent(events);
-        } catch (e) {
-            setEvent([]);
-        }
+        const events = await query.getEvents();
+        setEvent(events);
     }
 
     return (

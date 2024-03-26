@@ -6,6 +6,7 @@ import { useAuth } from '../auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import pb from "../../lib/pocketbase.js"
+import query from '../../lib/query.js';
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -13,45 +14,25 @@ const Signup = () => {
     const { register, handleSubmit } = useForm();
     const [authSignupError, setAuthSignupError] = useState(null)
 
-    const handleSignup = async (sent_data) => {
-        try {
-            let data = sent_data;
-            if (data.subscription === true) {
-                data.subscription = 1
-            } else {
-                data.subscription = 0
-            }
-            console.log(data)
-            const authData = await pb.collection('users').create(data)
-            if (authData && authData.id) {
-                try {
-                    const authData = await pb.collection('users').authWithPassword(data.email, data.password)
-                    signup(authData.record);
-                    navigate('/profile');
+    const handleSignup = async (data) => {
+        
+        const authData = await query.signup(data);
 
-                } catch (e) {
-                    setAuthSignupError("Invalid email or password");
-                }
+        if (authData instanceof Error) {
+            setAuthSignupError(authData.message);
+            return;
+        }
 
+        if (authData && authData.id) {
+            const authData = await query.login(data);
+
+            if (authData instanceof Error) {
+                setAuthSignupError(authData.message);
+                return;
             }
 
-        } catch (e) {
-            console.log(e.response)
-            if (e.response.data !== undefined) {
-
-                if (e.response.data.email !== undefined) {
-                    setAuthSignupError(e.response.data.email.message);
-                } else if (e.response.data.password !== undefined) {
-                    setAuthSignupError(e.response.data.password.message);
-                } else if (sent_data.password !== sent_data.passwordConfirm) {
-                    setAuthSignupError("Passwords do not match.");
-                } else {
-                    setAuthSignupError("An error occurred");
-                }
-
-            } else {
-                setAuthSignupError("An error occurred");
-            }
+            signup(authData.record);
+            navigate('/profile');
         }
     }
     return (
