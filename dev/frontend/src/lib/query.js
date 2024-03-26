@@ -84,46 +84,61 @@ export default {
     },
 
     checkin: async (data) => {
+        
+        let events_pb = []
         try {
-
-            let event = await pb.collection('events').getFullList({
-                filter: `code="${data.code}"`
+            events_pb = await pb.collection('events').getFullList({
+                filter: `code='${data.code}'`
             })
-            event = event[0]
+        
+        } catch (e) { }
 
-            if (event === undefined) {
-                return new Error("No event found with that code.");
-            }
-
-            console.log("User lat: " + data.latitude)
-            console.log("User lon: " + data.longitude)
-            console.log("event lat: " + event.latitude)
-            console.log("Event long: " + event.longitude)
-
-            const isAccepted = geolib.isPointWithinRadius(
-                { latitude: Number(data.latitude), longitude: Number(data.longitude) },
-                { latitude: Number(event.latitude), longitude: Number(event.longitude) },
-                Number(event.radius)
-            );
-
-            if (!isAccepted) {
-                return new Error("Not within the radius of the event.");
-            }
-
-            const checked_in_attendees = event.checked_in_attendees
-
-            if (pb.authStore.model.id in checked_in_attendees) {
-                return new Error("Already checked in");
-            }
-
-            checked_in_attendees.push(pb.authStore.model.id)
-            const updated_event = await pb.collection('events').update(event.id, {
-                checked_in_attendees: checked_in_attendees
-            })
-            return updated_event.id;
-        } catch (e) {
+        if (events_pb.length === 0) {
             return new Error("No event found with that code.");
         }
+
+        let event = events_pb[0]
+        console.log(event.id)
+
+        console.log("User lat: " + data.latitude)
+        console.log("User lon: " + data.longitude)
+        console.log("event lat: " + event.latitude)
+        console.log("Event long: " + event.longitude)
+
+        const isAccepted = geolib.isPointWithinRadius(
+            { latitude: Number(data.latitude), longitude: Number(data.longitude) },
+            { latitude: Number(event.latitude), longitude: Number(event.longitude) },
+            Number(event.radius)
+        );
+
+        if (!isAccepted) {
+            return new Error("Not within the radius of the event.");
+        }
+
+        const checked_in_attendees = event.checked_in_attendees
+
+        if (pb.authStore.model.id in checked_in_attendees) {
+            return new Error("Already checked in");
+        }
+
+
+        checked_in_attendees.push(pb.authStore.model.id)
+        
+        let updated_event = null;
+        console.log("event id: " + event.id)
+        try {
+            updated_event = await pb.collection('events').update(event.id, {
+                checked_in_attendees: checked_in_attendees
+            })
+
+        } catch (e) { }
+
+        if (updated_event === null) {
+            return new Error("You are not authorized to check in.");
+        }
+
+        return updated_event.id;
+        
     },
 
     getEvents: async () => {
