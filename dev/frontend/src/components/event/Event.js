@@ -1,7 +1,8 @@
-import React from "react";
+import {React, useEffect, useState} from "react";
 import deleteIcon from "../../icons/delete.png";
 import pictureIcon from "../../icons/picture.png";
 import { Link } from 'react-router-dom';
+import query from "../../lib/query";
 
 const Event = (props) => {
     // const events = props.events;
@@ -10,6 +11,19 @@ const Event = (props) => {
     const handleUploadFileClick = () => {
 
     }
+
+    const [groupName, setGroupName] = useState("");
+
+    useEffect(() => {
+        function fetchGroupName() {
+            const name = query.getGroupName(event.group_id);
+            console.log(name)
+            setGroupName(name);
+        }
+
+        fetchGroupName();     
+
+    }, [event.group_id])
 
     return (
         <tr>
@@ -22,7 +36,7 @@ const Event = (props) => {
                 </button>
             </td> */}
             {
-                event.group_id && (<td className="px-4 py-3 text-xl">{event.group_id}</td>)
+                event.group_id && (<td className="px-4 py-3 text-xl">{ event.group_id }</td>)
             }
             {
                 !event.group_id && (<td className="px-4 py-3 text-xl">N/A</td>)

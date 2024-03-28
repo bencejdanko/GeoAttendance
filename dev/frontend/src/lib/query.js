@@ -150,6 +150,34 @@ export default {
         }
     },
 
+    getGroupName: (id) => {
+        try {
+            const group = pb.collection('groups').getOne(id, { requestKey: null })
+            group.then((group) => {
+                console.log(group.name)
+                return group.name;
+            })
+        } catch (e) {
+            return "N/A";
+        }
+    },
+
+    deleteEvent: async (id) => {
+        let events;
+
+        try {
+            events = await pb.collection('events').delete(id)
+        } catch (e) {
+            return [];
+        }
+
+        if (events.length === 0) {
+            return new Error("Unable to delete nonexistent event.");
+        }
+
+        return events;
+    },
+
     getAttendanceRate: async () => {
         let total_events = 0;
         let total_attended = 0;
