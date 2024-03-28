@@ -61,9 +61,10 @@ const Login = () => {
                                 </div>
                             </div>
                             <div className="p-2 mt-5 w-full">
-                                {authLoginError && <p className="text-red-600 text-center mb-5">{authLoginError}</p>}
+                                {authLoginError && <p id="error-message" className="text-red-600 text-center mb-5">{authLoginError}</p>}
 
                                 <input
+                                    id="submit-button"
                                     className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg"
                                     type="submit"
                                     value="Submit"
