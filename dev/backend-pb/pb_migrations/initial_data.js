@@ -118,6 +118,7 @@ migrate((db) => {
     dao.saveRecord(event2)
     dao.saveRecord(event3)
 
+
     group2.set("event_id", ["event1", "event2"])
     group1.set("event_id", ["event3"])
 

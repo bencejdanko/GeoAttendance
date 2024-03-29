@@ -15,7 +15,7 @@ const Signup = () => {
     const [authSignupError, setAuthSignupError] = useState(null)
 
     const handleSignup = async (data) => {
-        
+
         const authData = await query.signup(data);
 
         if (authData instanceof Error) {
@@ -131,9 +131,10 @@ const Signup = () => {
                                 <label for="subscription" className="ml-2 leading-7 text-md text-gray-400">Register as a host</label>
                             </div>
                             <div className="p-2 mt-5 w-full">
-                                {authSignupError && <p className="text-red-600 text-center mb-5">{authSignupError}</p>}
+                                {authSignupError && <p id="error-message" className="text-red-600 text-center mb-5">{authSignupError}</p>}
 
                                 <input
+                                    id="submit-button"
                                     className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg"
                                     type="submit"
                                     value="Register"
