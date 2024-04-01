@@ -11,7 +11,6 @@ import Footer from "../footer/Footer";
 import { useAuth } from "../auth/AuthProvider";
 import pb from "../../lib/pocketbase.js";
 import query from "../../lib/query.js";
-import { set } from "react-hook-form";
 
 const Dashboard = (props) => {
     const API_KEY = process.env.REACT_APP_GEOCODER_API_KEY;
@@ -27,16 +26,23 @@ const Dashboard = (props) => {
     const [eventLocation, setEventLocation] = useState("");
     const [eventLocationError, setEventLocationError] = useState("");
     const [groupName, setGroupName] = useState("");
-    const [events, setEvent] = useState([]);
+    const [events, setEvents] = useState([]);
+    const [groups, setGroups] = useState([]);
     const [groupOptionSelected, setGroupOptionSelected] = useState("");
     const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
     const [error, setError] = useState("");
-    const [groupOptions, setGroupOptions] = useState(["None", "Add New Group"]);
+    const [successMessage, setSuccessMessage] = useState("");
     const { user } = useAuth();
 
 
-    useEffect = () => {
+    useEffect(() => {
+        const getEvents = async () => {
+            const events = await query.getEvents(user.id);
+            setEvents(events);
+        }
 
+        getEvents()
+        
         navigator.geolocation.getCurrentPosition(
             position => {
                 setLat(position.coords.latitude);
@@ -44,7 +50,14 @@ const Dashboard = (props) => {
             },
             error => console.log(error)
         );
-    }
+
+        const getGroups = async () => {
+            const groups = await query.getGroups(user.id);
+            console.log(groups);
+            setGroups(groups);
+        }
+        getGroups()
+    }, [])
 
     const handleSaveEvent = async () => {
 
@@ -69,11 +82,12 @@ const Dashboard = (props) => {
         const response = await query.saveEvent(data);
 
         if (response instanceof Error) {
+            setSuccessMessage("");
             setError(response.message);
             return;
         } 
 
-        setEvent([...events, response]);
+        setEvents([...events, response]);
 
         if (groupOptionSelected === "new_group") {
             let group_data = {
@@ -85,16 +99,43 @@ const Dashboard = (props) => {
     
             const group = await query.createGroup(group_data);
             if (group instanceof Error) {
+                setSuccessMessage("");
                 setError(group.message);
                 return;
             }
 
             const event = await query.updateEvent(response.id, {group_id: group.id});
             if (event instanceof Error) {
+                setSuccessMessage("");
                 setError(event.message);
                 return;
             }
+        } else if(groupOptionSelected !== "none") {
+            const tempGroup = groups.filter(group => group.name === groupOptionSelected);
+
+            const event = await query.updateEvent(response.id, {group_id: tempGroup[0].id});
+            if (event instanceof Error) {
+                setSuccessMessage("");
+                setError(event.message);
+                return;
+            }
+
+            const eventData = tempGroup[0].event_id;
+            eventData.push(response.id);
+            const data = {
+                "event_id": eventData
+            };
+            
+            console.log(tempGroup[0].id);
+            const group = await query.updateGroup(tempGroup[0].id, data);
+            if (group instanceof Error) {
+                setSuccessMessage("");
+                setError(group.message);
+                return;
+            }
         }
+        setError("");
+        setSuccessMessage("Successfully created a new event!");
     }
 
     const handleOptionChange = (e) => {
@@ -166,11 +207,6 @@ const Dashboard = (props) => {
         setLng(position.coords.longitude);
         console.log(`Latitude: ${latitude}, longitude: ${longitude}`)
     }
-    
-    const refreshEvents = async () => {
-        const events = await query.getEvents();
-        setEvent(events);
-    }
 
     return (
         <div className="flex flex-col h-screen">
@@ -224,6 +260,11 @@ const Dashboard = (props) => {
                         <select value={groupOptionSelected} onChange={handleOptionChange} className="w-full bg-gray-800 rounded border mb-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-3 px-3 leading-8 transition-colors duration-200 ease-in-out">
                             <option value="none">None</option>
                             <option value="new_group">Add new group</option>
+                            {
+                                groups.map(group => (
+                                    <option key={group.id} value={group.name}>{group.name}</option>
+                                ))
+                            }
                         </select>
                         {isCreateNewGroup &&
                             <div className="relative mb-4">
@@ -278,13 +319,10 @@ const Dashboard = (props) => {
                         </div>
                         <button onClick={handleSaveEvent} className="text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">Save</button>
                         {error && <p className="text-xs text-red-600 text-opacity-90 mt-3">{error}</p>}
+                        {successMessage && <p className="text-xs text-green-600 text-opacity-90 mt-3">{successMessage}</p>}
                     </div>
                 </div>
                 <div className="lg:w-5/6 w-full mx-auto overflow-auto">
-                    <button 
-                    onClick = {refreshEvents}
-                    className="text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">Refresh Events</button>
-                    
                     <table className="table-auto w-full text-left whitespace-no-wrap">
                         <thead>
                             <tr>

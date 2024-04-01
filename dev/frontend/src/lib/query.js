@@ -74,6 +74,15 @@ export default {
         }
     },
 
+    updateGroup: async (id, data) => {
+        try {
+            const group = await pb.collection('groups').update(id, data)
+            return group;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
     updateEvent: async (id, data) => {
         try {
             const event = await pb.collection('events').update(id, data)
@@ -90,7 +99,6 @@ export default {
             events_pb = await pb.collection('events').getFullList({
                 filter: `code='${data.code}'`
             })
-        
         } catch (e) { }
 
         if (events_pb.length === 0) {
@@ -141,10 +149,23 @@ export default {
         
     },
 
-    getEvents: async () => {
+    getEvents: async (id) => {
         try {
-            const events = await pb.collection('events').getFullList()
+            const events = await pb.collection('events').getFullList({
+                filter: `host='${id}'`
+            })
             return events;
+        } catch (e) {
+            return [];
+        }
+    },
+
+    getGroups: async (id) => {
+        try {
+            const groups = await pb.collection('groups').getFullList({
+                filter: `host='${id}'`
+            })
+            return groups;
         } catch (e) {
             return [];
         }
