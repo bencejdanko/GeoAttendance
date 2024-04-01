@@ -16,9 +16,11 @@ const Event = (props) => {
 
     useEffect(() => {
         function fetchGroupName() {
-            const name = query.getGroupName(event.group_id);
-            console.log(name)
-            setGroupName(name);
+            if(event.group_id) {
+                const name = query.getGroupName(event.group_id);
+                console.log(name)
+                setGroupName(name);
+            }
         }
 
         fetchGroupName();     
