@@ -8,7 +8,10 @@ const Checkin = () => {
     const [checkInError, setCheckInError] = useState("");
     const [checkInSuccess, setCheckInSuccess] = useState("");
     const [isCheckInDisabled, setIsCheckInDisabled] = useState(true);
-    const [currentGeo, setCurrentGeo] = useState(null);
+    const [currentGeo, setCurrentGeo] = useState({
+        lat: "",
+        lng: ""
+    });
 
     const reset = () => {
         setEventCode("");
@@ -59,7 +62,7 @@ const Checkin = () => {
     const successCallback = (position) => {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
-        setCurrentGeo({lat: position.coords.latitude, lng: position.coords.longitude});
+        setCurrentGeo({ lat: position.coords.latitude, lng: position.coords.longitude });
         setIsCheckInDisabled(false);
         console.log(`Latitude: ${latitude}, longitude: ${longitude}`)
     }
@@ -69,27 +72,31 @@ const Checkin = () => {
             <Header />
             <section className="text-gray-400 bg-gray-900 body-font relative flex-grow">
                 <div className="px-5 py-10 mx-auto">
-                    <div className="flex flex-col text-center w-full mb-12">
+                    <div className="flex flex-col text-center w-full mb-6">
                         <h1 className="sm:text-3xl text-2xl font-medium title-font mb-5 text-white tracking-widest">Check-in</h1>
                         <p className="leading-relaxed text-lg text-blue-500"><button onClick={handleGetCurrentLocation}>Get current location</button></p>
-
-                        <p className="lg:w-2/3 mx-auto leading-relaxed text-lg">Enter the event code below to check in.</p>
                     </div>
+                    <div className="lg:w-full md:w-1/2 bg-gray-900 rounded-lg overflow-hidden sm:mr-10 p-10 flex relative" style={{ height: "400px" }}>
+                        <iframe width="100%" height="100%" title="map" className="absolute inset-0" frameborder="0" marginheight="0" marginwidth="0" scrolling="no" allow="geolocation" src={`https://maps.google.com/maps?q=${currentGeo.lat},${currentGeo.lng}&z=15&output=embed`} style={{ filter: '' }}></iframe>
+                    </div>
+
                     <div className="lg:w-1/2 md:w-2/3 mx-auto">
                         <div className="flex flex-wrap -m-2">
                             <div className="px-40 w-full">
+                                <p className="lg:w-full mt-10 leading-relaxed text-lg text-center">Enter the event code to check in.</p>
+
                                 <div className="relative">
                                     <input
                                         type="text"
                                         id="eventcode"
                                         name="eventcode"
-                                        className="my-5 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                        className="mt-5 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                                         value={eventCode}
                                         onChange={(e) => setEventCode(e.target.value)}
                                     />
                                 </div>
                             </div>
-                            <div className="p-2 mt-7 w-full">
+                            <div className="p-2 w-full">
                                 {
                                     !checkInSuccess && <p className="text-red-600 text-center mb-9">{checkInError}</p>
                                 }
