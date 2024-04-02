@@ -1,8 +1,8 @@
 import pb from './pocketbase.js'
 import * as geolib from 'geolib';
 
-export default { 
-    
+export default {
+
     login: async (data) => {
         try {
             const authData = await pb.collection('users').authWithPassword(data.email, data.password)
@@ -12,7 +12,7 @@ export default {
         }
     },
 
-    logout : async () => {
+    logout: async () => {
         try {
             await pb.authStore.clear()
             return true;
@@ -93,7 +93,7 @@ export default {
     },
 
     checkin: async (data) => {
-        
+
         let events_pb = []
         try {
             events_pb = await pb.collection('events').getFullList({
@@ -131,7 +131,7 @@ export default {
 
 
         checked_in_attendees.push(pb.authStore.model.id)
-        
+
         let updated_event = null;
         console.log("event id: " + event.id)
         try {
@@ -146,7 +146,7 @@ export default {
         }
 
         return updated_event.id;
-        
+
     },
 
     getEvents: async (id) => {
@@ -202,14 +202,14 @@ export default {
     getAttendanceRate: async () => {
         let total_events = 0;
         let total_attended = 0;
-    
+
         try {
             let events = await pb.collection('events').getFullList({
                 host: pb.authStore.model.id
             })
-    
+
             total_events = events.length;
-    
+
             for (let event of events) {
                 let checked_in_attendees = event.checked_in_attendees
                 for (let attendee_id of checked_in_attendees) {
@@ -218,8 +218,38 @@ export default {
                     }
                 }
             }
-    
-            console.log(total_attended / total_events)
+
+            console.log (total_attended / total_events)
+        } catch (e) {
+            console.log(e)
+        }
+    },
+
+    getAttendeeAttendance: async (attendeeId) => {
+        let total_events = 0;
+        let total_attended = 0;
+
+        try {
+            let events = await pb.collection('events').getFullList({
+                filter: 'registered_attendees~' + attendeeId,
+            })
+
+            total_events = events.length;
+
+            for (let event of events) {
+                let checked_in_attendees = event.checked_in_attendees
+                for (let attendee_id of checked_in_attendees) {
+                    if (attendee_id === attendeeId) {
+                        total_attended += 1;
+                    }
+                }
+            }
+
+            return {
+                total_attended: total_attended,
+                total_events: total_events,
+                events: events
+            }
         } catch (e) {
             console.log(e)
         }
