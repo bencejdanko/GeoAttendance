@@ -223,6 +223,22 @@ export default {
         } catch (e) {
             console.log(e)
         }
+    },
+
+    getTotalCheckIn: async() => {
+        let events = await pb.collection("events").getFullList()
+        let total = 0
+        for (e in events) {
+            total += e.checked_in_attendees.length
+        }
+    },
+
+    getTotalAbsent: async() => {
+        let events = await pb.collection("events").getFullList()
+        let total = 0
+        for (e in events) {
+            total += e.registered_attendees.length - e.checked_in_attendees.length
+        }
     }
 
 }
