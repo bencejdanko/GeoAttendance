@@ -226,19 +226,37 @@ export default {
     },
 
     getTotalCheckIn: async() => {
-        let events = await pb.collection("events").getFullList()
-        let total = 0
-        for (e in events) {
-            total += e.checked_in_attendees.length
+        let events = []
+        try {
+            events = await pb.collection("events").getFullList()
+        } catch (e) {
+            console.log(e)
         }
+        
+        
+        let total = 0
+        events.forEach(event => {
+            total += event.checked_in_attendees.length
+        })
+        return total
     },
 
     getTotalAbsent: async() => {
-        let events = await pb.collection("events").getFullList()
-        let total = 0
-        for (e in events) {
-            total += e.registered_attendees.length - e.checked_in_attendees.length
+
+        let events = []
+        
+        try {
+            events = await pb.collection("events").getFullList()
+        } catch (e) {
+            console.log(e)
         }
+        
+        
+        let total = 0
+        events.forEach(event => {
+            total += event.registered_attendees.length - event.checked_in_attendees.length
+        })
+        return total
     }
 
 }
