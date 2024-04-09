@@ -8,7 +8,32 @@ import Header from '../header/Header';
 import Footer from '../footer/Footer';
 import { useAuth } from "../auth/AuthProvider";
 
+import query from "../../lib/query";
+
 const Profile = () => {
+
+    const [totalAttendance, setTotalAttendance] = useState(0);
+    const [totalCheckIn, setTotalCheckIn] = useState(0);
+    const [totalAbsent, setTotalAbsent] = useState(0);
+
+    useEffect(() => {
+
+        const getCheckIns = async () => {
+            const checkIns = await query.getTotalCheckIn();
+            setTotalCheckIn(checkIns);
+        }
+
+        const getTotalAbsent = async () => {
+            const absent = await query.getTotalAbsent();
+            setTotalAbsent(absent);
+        }
+
+        getCheckIns();
+        getTotalAbsent();
+
+
+    }, []);
+
     const { user } = useAuth();
 
     return (
@@ -82,7 +107,7 @@ const Profile = () => {
                                                 <img className="object-cover object-center rounded" src={checkIcon} alt="checkIcon" width={30} />
                                             </div>
                                             <div className="mr-20">
-                                                <h2 className="text-white text-lg title-font font-medium w-full">102</h2>
+                                                <h2 className="text-white text-lg title-font font-medium w-full">{totalCheckIn}</h2>
                                                 <p className="text-lg whitespace-nowrap">Total Check-in</p>
                                             </div>
                                         </div>
@@ -95,7 +120,7 @@ const Profile = () => {
                                                 <img className="object-cover object-center rounded" src={removeIcon} alt="removeIcon" width={30} />
                                             </div>
                                             <div className="mr-20">
-                                                <h2 className="text-white text-lg title-font font-medium w-full">102</h2>
+                                                <h2 className="text-white text-lg title-font font-medium w-full">{totalAbsent}</h2>
                                                 <p className="text-lg whitespace-nowrap">Total Absent</p>
                                             </div>
                                         </div>
