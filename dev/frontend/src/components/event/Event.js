@@ -24,7 +24,7 @@ const Event = (props) => {
 
         fetchGroupName();     
 
-    }, [event.group_id])
+    }, [groupName])
 
     return (
         <tr>
