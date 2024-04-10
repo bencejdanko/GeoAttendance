@@ -21,7 +21,6 @@ const Dashboard = (props) => {
     const [eventCode, setEventCode] = useState("");
     const [capacity, setCapacity] = useState("");
     const [radius, setRadius] = useState("");
-    const [groupCode, setGroupCode] = useState("");
     const [eventName, setEventName] = useState("");
     const [eventLocation, setEventLocation] = useState("");
     const [eventLocationError, setEventLocationError] = useState("");
@@ -87,13 +86,10 @@ const Dashboard = (props) => {
             return;
         } 
 
-        setEvents([...events, response]);
-
         if (groupOptionSelected === "new_group") {
             let group_data = {
                 host: pb.authStore.model.id, //Current user ID
                 name: groupName,
-                code: groupCode,
                 event_id: response.id,
             }
     
@@ -133,7 +129,16 @@ const Dashboard = (props) => {
                 setError(group.message);
                 return;
             }
+
+
         }
+        const eventList = await query.getEvents(user.id);
+        if (eventList instanceof Error) {
+            setSuccessMessage("");
+            setError(eventList.message);
+            return;
+        } 
+        setEvents(eventList);
         setError("");
         setSuccessMessage("Successfully created a new event!");
     }
@@ -144,7 +149,9 @@ const Dashboard = (props) => {
         } else {
             setIsCreateNewGroup(false);
         }
+        console.log(e.target.value)
         setGroupOptionSelected(e.target.value);
+
     }
 
 
@@ -273,13 +280,6 @@ const Dashboard = (props) => {
                                 value = {groupName}
                                 onChange = {(e) => setGroupName(e.target.value)}
                                 type="text" id="new_group_nam" name="new_group_nam" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                                
-                                <label for="new_group_code" className="leading-7 text-lg text-gray-400">New Group Code</label>
-                                <input 
-                                value = {groupCode}
-                                onChange = {(e) => setGroupCode(e.target.value)}
-                                type="text" id="new_group_code" name="new_group_code" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                                
                             </div>
                         }
                         <div className="relative mb-4">
@@ -336,7 +336,7 @@ const Dashboard = (props) => {
                         <tbody>
                             {
                                 events.map((event, idx) => (
-                                    <Event events={events} key={event.id} index={idx} />
+                                    <Event events={events} key={event.id} index={idx} name={groupOptionSelected}/>
                                 ))
                             }
                         </tbody>

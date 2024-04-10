@@ -12,20 +12,6 @@ const Event = (props) => {
 
     }
 
-    const [groupName, setGroupName] = useState("");
-
-    useEffect(() => {
-        async function fetchGroupName() {
-            if(event.group_id) {
-                const name = await query.getGroupName(event.group_id);
-                setGroupName(name);
-            }
-        }
-
-        fetchGroupName();     
-
-    }, [groupName])
-
     return (
         <tr>
             <td className="px-4 py-3 text-xl text-blue-600 underline cursor-pointer"><Link to={'/events/' + event.id} state={props}>{event.name}</Link></td>
@@ -37,7 +23,7 @@ const Event = (props) => {
                 </button>
             </td> */}
             {
-                event.group_id && (<td className="px-4 py-3 text-xl">{ groupName }</td>)
+                event.group_id && (<td className="px-4 py-3 text-xl">{ event.expand?.group_id?.name ? event.expand.group_id.name : props.name }</td>)
             }
             {
                 !event.group_id && (<td className="px-4 py-3 text-xl">N/A</td>)
