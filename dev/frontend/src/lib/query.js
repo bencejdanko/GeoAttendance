@@ -1,8 +1,8 @@
 import pb from './pocketbase.js'
 import * as geolib from 'geolib';
 
-export default { 
-    
+export default {
+
     login: async (data) => {
         try {
             const authData = await pb.collection('users').authWithPassword(data.email, data.password)
@@ -12,7 +12,7 @@ export default {
         }
     },
 
-    logout : async () => {
+    logout: async () => {
         try {
             await pb.authStore.clear()
             return true;
@@ -93,7 +93,7 @@ export default {
     },
 
     checkin: async (data) => {
-        
+
         let events_pb = []
         try {
             events_pb = await pb.collection('events').getFullList({
@@ -131,7 +131,7 @@ export default {
 
 
         checked_in_attendees.push(pb.authStore.model.id)
-        
+
         let updated_event = null;
         console.log("event id: " + event.id)
         try {
@@ -146,7 +146,7 @@ export default {
         }
 
         return updated_event.id;
-        
+
     },
 
     getEvents: async (id) => {
@@ -171,13 +171,10 @@ export default {
         }
     },
 
-    getGroupName: (id) => {
+    getGroupName: async (id) => {
         try {
-            const group = pb.collection('groups').getOne(id, { requestKey: null })
-            group.then((group) => {
-                console.log(group.name)
-                return group.name;
-            })
+            const group = await pb.collection('groups').getOne(id, { requestKey: null }) //handle autocancellation
+            return group.name;
         } catch (e) {
             return "N/A";
         }
@@ -202,14 +199,14 @@ export default {
     getAttendanceRate: async () => {
         let total_events = 0;
         let total_attended = 0;
-    
+
         try {
             let events = await pb.collection('events').getFullList({
                 host: pb.authStore.model.id
             })
-    
+
             total_events = events.length;
-    
+
             for (let event of events) {
                 let checked_in_attendees = event.checked_in_attendees
                 for (let attendee_id of checked_in_attendees) {
@@ -218,8 +215,37 @@ export default {
                     }
                 }
             }
-    
-            console.log(total_attended / total_events)
+
+            console.log (total_attended / total_events)
+        } catch (e) {
+            console.log(e)
+        }
+    },
+
+    getAttendeeAttendance: async (attendeeId) => {
+        try {
+            let events = await pb.collection('events').getFullList({
+                filter: 'registered_attendees~' + attendeeId,
+            })
+
+            let total_events = events;
+            let total_check_ins = []
+            let total_absent = []
+            for (let event of events) {
+                let checked_in_attendees = event.checked_in_attendees
+                for (let attendee_id of checked_in_attendees) {
+                    if (attendee_id === attendeeId) {
+                        total_check_ins.push(event);
+                    }
+                }
+            }
+
+            total_absent = total_events.filter(event => !total_check_ins.includes(event));
+            return {
+                total_check_ins: total_check_ins,
+                total_events: total_events,
+                total_absent: total_absent
+            }
         } catch (e) {
             console.log(e)
         }

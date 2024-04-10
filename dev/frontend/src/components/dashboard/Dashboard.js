@@ -110,7 +110,7 @@ const Dashboard = (props) => {
                 setError(event.message);
                 return;
             }
-        } else if(groupOptionSelected !== "none") {
+        } else if(groupOptionSelected !== "none" && groupOptionSelected !== "") {
             const tempGroup = groups.filter(group => group.name === groupOptionSelected);
 
             const event = await query.updateEvent(response.id, {group_id: tempGroup[0].id});
