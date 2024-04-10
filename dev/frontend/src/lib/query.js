@@ -226,29 +226,28 @@ export default {
     },
 
     getAttendeeAttendance: async (attendeeId) => {
-        let total_events = 0;
-        let total_attended = 0;
-
         try {
             let events = await pb.collection('events').getFullList({
                 filter: 'registered_attendees~' + attendeeId,
             })
 
-            total_events = events.length;
-
+            let total_events = events;
+            let total_check_ins = []
+            let total_absent = []
             for (let event of events) {
                 let checked_in_attendees = event.checked_in_attendees
                 for (let attendee_id of checked_in_attendees) {
                     if (attendee_id === attendeeId) {
-                        total_attended += 1;
+                        total_check_ins.push(event);
                     }
                 }
             }
 
+            total_absent = total_events.filter(event => !total_check_ins.includes(event));
             return {
-                total_attended: total_attended,
+                total_check_ins: total_check_ins,
                 total_events: total_events,
-                events: events
+                total_absent: total_absent
             }
         } catch (e) {
             console.log(e)

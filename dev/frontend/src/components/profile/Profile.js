@@ -80,7 +80,7 @@ const Profile = () => {
                                                 <img className="object-cover object-center rounded" src={allIcon} alt="allIcon" width={30} />
                                             </div>
                                             <div className="mr-20">
-                                                <h2 className="text-white text-lg title-font font-medium w-full">{attedanceRate.total_events}</h2>
+                                                <h2 className="text-white text-lg title-font font-medium w-full">{attedanceRate.total_events.length}</h2>
                                                 <p className="text-lg whitespace-nowrap">Total Attendance</p>
                                             </div>
                                         </div>
@@ -93,7 +93,7 @@ const Profile = () => {
                                                 <img className="object-cover object-center rounded" src={checkIcon} alt="checkIcon" width={30} />
                                             </div>
                                             <div className="mr-20">
-                                                <h2 className="text-white text-lg title-font font-medium w-full">{attedanceRate.total_attended}</h2>
+                                                <h2 className="text-white text-lg title-font font-medium w-full">{attedanceRate.total_check_ins.length}</h2>
                                                 <p className="text-lg whitespace-nowrap">Total Check-in</p>
                                             </div>
                                         </div>
@@ -106,7 +106,7 @@ const Profile = () => {
                                                 <img className="object-cover object-center rounded" src={removeIcon} alt="removeIcon" width={30} />
                                             </div>
                                             <div className="mr-20">
-                                                <h2 className="text-white text-lg title-font font-medium w-full">{attedanceRate.total_events - attedanceRate.total_attended}</h2>
+                                                <h2 className="text-white text-lg title-font font-medium w-full">{attedanceRate.total_absent.length}</h2>
                                                 <p className="text-lg whitespace-nowrap">Total Absent</p>
                                             </div>
                                         </div>
@@ -118,7 +118,7 @@ const Profile = () => {
                         </div>
                     </div>
                 </div>
-                {user.subscription === 0 && <AttendanceHistory attendanceHistory={attedanceRate}/>
+                {user.subscription === 0 && attedanceRate && <AttendanceHistory attendanceHistory={attedanceRate} />
                 }
                 {/* {
                     user.subscription === 1 && <section className="text-gray-400 bg-gray-900 body-font mt-8">
