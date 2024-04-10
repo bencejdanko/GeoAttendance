@@ -14,6 +14,7 @@ import Dashboard from './components/dashboard/Dashboard';
 import EventDetails from './components/eventdetails/EventDetails';
 import { AuthProvider } from './components/auth/AuthProvider';
 import Checkin from './components/checkin/Checkin';
+import pb from "./lib/pocketbase.js";
 
 function App() {
   const dateTimeCoverter = () => {
@@ -28,6 +29,10 @@ function App() {
     const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
     return formattedDate;
   }
+
+  pb.authStore.onChange((token, model) => {
+    console.log('New store data:', token, model)
+  });
 
   return (
     <AuthProvider>

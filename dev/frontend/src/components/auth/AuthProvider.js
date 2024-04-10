@@ -13,9 +13,10 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
 
-  const logout = () => {
+  const logout = async () => {
     // Implement your logout logic here, e.g., clearing user data from state
-    pb.authStore.clear();
+    await pb.authStore.clear()
+
     setUser(null);
   };
 

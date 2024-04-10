@@ -42,7 +42,10 @@ const Header = () => {
                             }
                             <Link className="mr-10 hover:text-white text-lg" to="/aboutus">About Us</Link>
                             <Link className="mr-10 hover:text-white text-lg" to="/contactus">Contact Us</Link>
-                            <Link className="mr-10 hover:text-white text-lg" onClick={() => logout} to="/">Log Out</Link>
+                            <Link className="mr-10 hover:text-white text-lg" onClick={async () => {
+                                await logout()
+                                window.location.href = '/'
+                            }} to="/">Log Out</Link>
                         </nav>
                     )
                 }
