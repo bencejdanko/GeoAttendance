@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import clockIcon from "../../icons/clock.png";
 import bookIcon from "../../icons/book.png";
 import allIcon from "../../icons/all.png";
 import checkIcon from "../../icons/check.png";
@@ -11,9 +10,32 @@ import query from "../../lib/query.js";
 import AttendanceHistory from "../attendancehistory/AttdendanceHistory";
 
 const Profile = () => {
+
+    // const [totalAttendance, setTotalAttendance] = useState(0);
+    // const [totalCheckIn, setTotalCheckIn] = useState(0);
+    // const [totalAbsent, setTotalAbsent] = useState(0);
     const { user } = useAuth();
     const [attedanceRate, setAttendanceRate] = useState(null);
 
+    /*
+      useEffect(() => {
+  
+          const getCheckIns = async () => {
+              const checkIns = await query.getTotalCheckIn();
+              setTotalCheckIn(checkIns);
+          }
+  
+          const getTotalAbsent = async () => {
+              const absent = await query.getTotalAbsent();
+              setTotalAbsent(absent);
+          }
+  
+          getCheckIns();
+          getTotalAbsent();
+  
+  
+      }, []);
+  */
     useEffect(() => {
         const getAttendanceRate = async () => {
             const rate = await query.getAttendeeAttendance(user.id);
@@ -21,7 +43,7 @@ const Profile = () => {
         }
 
         getAttendanceRate()
-    }, [])
+    }, [user.id])
     return (
         <div className="flex flex-col h-screen">
             <Header />
@@ -118,7 +140,9 @@ const Profile = () => {
                         </div>
                     </div>
                 </div>
-                {user.subscription === 0 && attedanceRate && <AttendanceHistory attendanceHistory={attedanceRate} />
+                {user.subscription === 0 &&
+                    attedanceRate &&
+                    <AttendanceHistory attendanceHistory={attedanceRate} />
                 }
                 {/* {
                     user.subscription === 1 && <section className="text-gray-400 bg-gray-900 body-font mt-8">
