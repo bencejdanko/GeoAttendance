@@ -70,6 +70,14 @@ const Profile = () => {
                                 <div className="-my-8 divide-gray-800">
                                     <div className="py-4 flex flex-wrap md:flex-nowrap">
                                         <div className="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
+                                            <span className="font-semibold title-font text-white">ID</span>
+                                        </div>
+                                        <div className="md:flex-grow">
+                                            <p className="">{user.id}</p>
+                                        </div>
+                                    </div>
+                                    <div className="py-4 flex flex-wrap md:flex-nowrap">
+                                        <div className="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
                                             <span className="font-semibold title-font text-white">Email Address</span>
                                         </div>
                                         <div className="md:flex-grow">
