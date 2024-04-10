@@ -171,13 +171,10 @@ export default {
         }
     },
 
-    getGroupName: (id) => {
+    getGroupName: async (id) => {
         try {
-            const group = pb.collection('groups').getOne(id, { requestKey: null })
-            group.then((group) => {
-                console.log(group.name)
-                return group.name;
-            })
+            const group = await pb.collection('groups').getOne(id, { requestKey: null }) //handle autocancellation
+            return group.name;
         } catch (e) {
             return "N/A";
         }

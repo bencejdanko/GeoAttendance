@@ -15,10 +15,9 @@ const Event = (props) => {
     const [groupName, setGroupName] = useState("");
 
     useEffect(() => {
-        function fetchGroupName() {
+        async function fetchGroupName() {
             if(event.group_id) {
-                const name = query.getGroupName(event.group_id);
-                console.log(name)
+                const name = await query.getGroupName(event.group_id);
                 setGroupName(name);
             }
         }
@@ -38,7 +37,7 @@ const Event = (props) => {
                 </button>
             </td> */}
             {
-                event.group_id && (<td className="px-4 py-3 text-xl">{ event.group_id }</td>)
+                event.group_id && (<td className="px-4 py-3 text-xl">{ groupName }</td>)
             }
             {
                 !event.group_id && (<td className="px-4 py-3 text-xl">N/A</td>)
