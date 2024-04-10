@@ -9,6 +9,7 @@ import Footer from '../footer/Footer';
 import { useAuth } from "../auth/AuthProvider";
 import query from "../../lib/query.js";
 import AttendanceHistory from "../attendancehistory/AttdendanceHistory";
+import pb from "../../lib/pocketbase.js";
 
 const Profile = () => {
     const { user } = useAuth();
@@ -16,7 +17,7 @@ const Profile = () => {
 
     useEffect(() => {
         const getAttendanceRate = async () => {
-            const rate = await query.getAttendeeAttendance(user.id);
+            const rate = await query.getAttendeeAttendance(pb.authStore.model.id);
             setAttendanceRate(rate);
         }
 
@@ -43,7 +44,7 @@ const Profile = () => {
                             </div>
                         </div>
                         <div className="">
-                            <h1 className="text-white text-2xl title-font font-medium w-full mb-5">{user.first_name} {user.last_name}</h1>
+                            <h1 className="text-white text-2xl title-font font-medium w-full mb-5">{pb.authStore.model.first_name} {pb.authStore.model.last_name}</h1>
                             <div className="container py-10 mx-auto">
                                 <div className="-my-8 divide-gray-800">
                                     <div className="py-4 flex flex-wrap md:flex-nowrap">
@@ -51,7 +52,7 @@ const Profile = () => {
                                             <span className="font-semibold title-font text-white">Email Address</span>
                                         </div>
                                         <div className="md:flex-grow">
-                                            <p className="">{user.email}</p>
+                                            <p className="">{pb.authStore.model.email}</p>
                                         </div>
                                     </div>
                                     <div className="py-4 flex border-gray-800 flex-wrap md:flex-nowrap">
@@ -59,7 +60,7 @@ const Profile = () => {
                                             <span className="font-semibold title-font text-white">Username</span>
                                         </div>
                                         <div className="md:flex-grow">
-                                            <p>{user.username}</p>
+                                            <p>{pb.authStore.model.username}</p>
                                         </div>
                                     </div>
                                     <div className="py-4 flex border-gray-800 flex-wrap md:flex-nowrap">
@@ -72,7 +73,7 @@ const Profile = () => {
                                     </div>
                                 </div>
                             </div>
-                            {user.subscription === 0 && attedanceRate && <div className="flex flex-wrap -m-4  mt-4">
+                            {pb.authStore.model.subscription === 0 && attedanceRate && <div className="flex flex-wrap -m-4  mt-4">
                                 <div className="p-4 md:w-1/3 sm:w-full">
                                     <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col">
                                         <div className="flex items-center mb-3">
@@ -118,7 +119,7 @@ const Profile = () => {
                         </div>
                     </div>
                 </div>
-                {user.subscription === 0 && attedanceRate && <AttendanceHistory attendanceHistory={attedanceRate} />
+                {pb.authStore.model.subscription === 0 && attedanceRate && <AttendanceHistory attendanceHistory={attedanceRate} />
                 }
                 {/* {
                     user.subscription === 1 && <section className="text-gray-400 bg-gray-900 body-font mt-8">

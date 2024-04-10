@@ -2,6 +2,7 @@ import React from "react";
 import logo from '../../../src/icons/logoIcon.svg'
 import { useAuth } from "../auth/AuthProvider";
 import { Link } from 'react-router-dom'
+import pb from "../../lib/pocketbase.js";
 
 const Header = () => {
     const { user, logout } = useAuth();
@@ -14,7 +15,7 @@ const Header = () => {
                     <span className="ml-3 text-xl">GeoAttendance</span>
                 </Link>
                 {
-                    !user && (
+                    !pb.authStore.model && (
                         <nav className="mx-auto md:ml-auto flex flex-wrap items-center text-base justify-end">
                             <Link className="mr-10 hover:text-white text-lg" to="/">Home</Link>
                             <Link className="mr-10 hover:text-white text-lg" to="/aboutus">About Us</Link>
@@ -25,23 +26,23 @@ const Header = () => {
                     )
                 }
                 {
-                    user && (
+                    pb.authStore.model && (
                         <nav className="mx-auto md:ml-auto flex flex-wrap items-center text-base justify-end">
                             <Link className="mr-10 hover:text-white text-lg" to="/">Home</Link>
                             <Link className="mr-10 hover:text-white text-lg" to="/profile">Profile</Link>
                             {
-                                user.subscription === 1 && (
+                                pb.authStore.model.subscription === 1 && (
                                     <Link className="mr-10 hover:text-white text-lg" to="/dashboard">Dashboard</Link>
                                 )
                             }
                             {
-                                user.subscription === 0 && (
+                                pb.authStore.model.subscription === 0 && (
                                     <Link className="mr-10 hover:text-white text-lg" to="/checkin">Check-in</Link>
                                 )
                             }
                             <Link className="mr-10 hover:text-white text-lg" to="/aboutus">About Us</Link>
                             <Link className="mr-10 hover:text-white text-lg" to="/contactus">Contact Us</Link>
-                            <Link className="mr-10 hover:text-white text-lg" onClick={() => logout()} to="/">Log Out</Link>
+                            <Link className="mr-10 hover:text-white text-lg" onClick={() => logout} to="/">Log Out</Link>
                         </nav>
                     )
                 }

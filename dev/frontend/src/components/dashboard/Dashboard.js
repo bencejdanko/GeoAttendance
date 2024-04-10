@@ -11,6 +11,7 @@ import Footer from "../footer/Footer";
 import { useAuth } from "../auth/AuthProvider";
 import pb from "../../lib/pocketbase.js";
 import query from "../../lib/query.js";
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = (props) => {
     const API_KEY = process.env.REACT_APP_GEOCODER_API_KEY;
@@ -33,11 +34,12 @@ const Dashboard = (props) => {
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const { user } = useAuth();
+    const navigate = useNavigate();
 
 
     useEffect(() => {
         const getEvents = async () => {
-            const events = await query.getEvents(user.id);
+            const events = await query.getEvents(pb.authStore.model.id);
             setEvents(events);
         }
 
@@ -52,7 +54,7 @@ const Dashboard = (props) => {
         );
 
         const getGroups = async () => {
-            const groups = await query.getGroups(user.id);
+            const groups = await query.getGroups(pb.authStore.model.id);
             console.log(groups);
             setGroups(groups);
         }
@@ -136,6 +138,7 @@ const Dashboard = (props) => {
         }
         setError("");
         setSuccessMessage("Successfully created a new event!");
+        window.location.reload()
     }
 
     const handleOptionChange = (e) => {
