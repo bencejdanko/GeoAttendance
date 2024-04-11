@@ -182,6 +182,15 @@ export default {
         }
     },
 
+    getGroup: async (id) => {
+        try {
+            const group = await pb.collection('groups').getOne(id, { requestKey: null })
+            return group;
+        } catch (e) {
+            return new Error("An error occurred.");
+        }
+    },
+
     getGroupName: async (id) => {
         try {
             const group = await pb.collection('groups').getOne(id, { requestKey: null }) //handle autocancellation
@@ -294,6 +303,21 @@ export default {
             total += event.registered_attendees.length - event.checked_in_attendees.length
         })
         return total
+    },
+
+    removeGroupMember: async (groupId, memberId) => {
+    
+        try {
+            let group = await pb.collection('groups').getOne(groupId)
+            let registered_attendees = group.registered_attendees
+            let new_registered_attendees = registered_attendees.filter(attendee => attendee !== memberId)
+            let updated_group = await pb.collection('groups').update(groupId, {
+                registered_attendees: new_registered_attendees
+            })
+            return updated_group;
+        } catch (e) {
+            return new Error(e.message);
+        }
     }
 
 }

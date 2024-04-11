@@ -1,8 +1,8 @@
 import React from "react"
 import deleteIcon from "../../icons/delete.png";
+import query from "../../lib/query";
 
 const GroupHistoryDetail = (props) => {
-
 
     return (
         <div className="p-4 md:w-1/3 sm:w-full">
@@ -52,12 +52,15 @@ const GroupHistoryDetail = (props) => {
                     <div className="md:w-1/2 sm:w-1/2 flex flex-col items-start">
                         <p className="text-white text-lg">Group Members</p>
                         {
-                            props.group.expand.registered_attendees.map(attendee => (
+                            props.group.expand.registered_attendees?.map(attendee => (
                                 <div className="flex items-center">
-                                    <p className="leading-relaxed text-lg w-full">{attendee.first_name} {attendee.last_name}</p>
-                                    <button>
-                                        <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} />
-                                    </button>
+                                    <tr className=''>
+                                        <td className="px-4 py-3"><p className="leading-relaxed text-lg w-full">{attendee.first_name} {attendee.last_name}</p></td>
+
+                                        <td className="px-4 py-3"><button onClick={() => query.removeGroupMember(props.group.id, attendee.id)}>
+                                            <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} />
+                                        </button></td>
+                                    </tr>
                                 </div>
                             ))
                         }
