@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useLocation } from 'react-router-dom'
 import * as XLSX from "xlsx";
 import deleteIcon from "../../icons/delete.png";
@@ -8,39 +8,35 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
+import query from "../../lib/query";
 
 const EventDetails = () => {
-    const dummyAttendees = [
-        {
-            "No": 1,
-            "FirstName": "Thao",
-            "LastName": "Trinh",
-            "Username": "thao_trinh",
-            "Email": "thao_trinh@example.com",
-            "Status": 0
-        },
-        {
-            "No": 2,
-            "FirstName": "Truffle",
-            "LastName": "Le",
-            "Username": "truffle_le",
-            "Email": "truffle_le@example.com",
-            "Status": 0
-        },
-        {
-            "No": 3,
-            "FirstName": "Mocha",
-            "LastName": "Le",
-            "Username": "mocha_le",
-            "Email": "mocha_le@example.com",
-            "Status": 0
-        }
-    ];
     const fileInputRef = useRef();
     const location = useLocation();
     const { events, index } = location.state;
-    const [attendees, setAttendees] = useState(dummyAttendees);
+    console.log(events[index].checked_in_attendees)
+    // if event associted to a group, use group's registered attendees
+    // if not, use event's registered attendees
+    const [attendees, setAttendees] = useState(
+        events[index].expand?.group_id?.expand?.registered_attendees
+            ? events[index].expand.group_id.expand.registered_attendees
+            : (events[index].expand?.registered_attendees
+                ? events[index].expand.registered_attendees : [])
+    );
     const [isOpen, setIsOpen] = useState(-1);
+
+    useEffect(() => {
+        const updatedAttendees = attendees.map(attendee => ({
+            ...attendee,
+            Status: events[index].checked_in_attendees.includes(attendee.id)
+        }))
+        console.log(updatedAttendees)
+        setAttendees(updatedAttendees)
+        // setAttendees({
+        //     ...attendees,
+        //     Status: events[index].checked_in_attendees.includes(attendee.id)
+        // })
+    }, [])
 
     const closeModal = () => {
         setIsOpen(-1);
@@ -53,7 +49,7 @@ const EventDetails = () => {
     const handleDeactivate = () => {
         const deletedUserId = isOpen;
         closeModal();
-        const updatedAttendees = attendees.filter(attendee => attendee.No !== deletedUserId);
+        const updatedAttendees = attendees.filter(attendee => attendee.id !== deletedUserId);
         setAttendees(updatedAttendees);
     }
 
@@ -67,7 +63,7 @@ const EventDetails = () => {
         const reader = new FileReader();
         if (e.target.files[0]) {
             reader.readAsBinaryString(e.target.files[0]);
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 const data = e.target.result;
                 const workbook = XLSX.read(data, { type: "binary" });
                 const sheetName = workbook.SheetNames[0];
@@ -76,12 +72,54 @@ const EventDetails = () => {
                 console.log(parseData);
                 const updatedParseData = parseData.map(user => ({
                     ...user, // Spread the existing data
-                    Status: 0 // Add or update the status key
+                    Status: false // Add or update the status key
                 }));
 
                 console.log(updatedParseData);
-                setAttendees(updatedParseData);
+                console.log(events[index])
+                const attendeeIds = [];
+                updatedParseData.forEach(data => {
+                    attendeeIds.push(data.No)
+                })
+                const response = await query.updateEvent(events[index].id, {
+                    ...events[index],
+                    registered_attendees: attendeeIds
+                });
+
+                console.log(response)
+                console.log(updatedParseData)
+                // handle error 
+                if (response instanceof Error) {
+                    return;
+                }
+
+                const eventResponse = await query.getEvent(events[index].id);
+
+                if (eventResponse instanceof Error) {
+                    return;
+                }
+
+                const updatedAttendees = eventResponse[0].expand.registered_attendees.map(attendee => ({
+                    ...attendee,
+                    Status: response.checked_in_attendees.includes(attendee.id)
+                }))
+                console.log(updatedAttendees)
+                setAttendees(updatedAttendees)
+
                 // update group api
+                if (events[index].group_id !== "") {
+                    const newGroupData = {
+                        "event_id": events[index].expand.group_id.event_id,
+                        "host": events[index].expand.group_id.host,
+                        "name": events[index].expand.group_id.name,
+                        "registered_attendees": attendeeIds
+                    };
+                    const tempGroup = await query.updateGroup(events[index].group_id, newGroupData);
+                    // handle error 
+                    if (tempGroup instanceof Error) {
+                        return;
+                    }
+                }
             }
         }
 
@@ -109,7 +147,7 @@ const EventDetails = () => {
                                     <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800 rounded-tl rounded-bl">First Name</th>
                                     <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Last Name</th>
                                     <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Username</th>
-                                    <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Email</th>
+                                    {/* <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Email</th> */}
                                     <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Status</th>
                                     <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Delete</th>
                                 </tr>
@@ -118,13 +156,13 @@ const EventDetails = () => {
                                 {
                                     attendees.map((attendee, index) => (
                                         <tr key={index}>
-                                            <td className="px-4 py-3">{attendee.No}</td>
-                                            <td className="px-4 py-3">{attendee.FirstName}</td>
-                                            <td className="px-4 py-3">{attendee.LastName}</td>
-                                            <td className="px-4 py-3">{attendee.Username}</td>
-                                            <td className="px-4 py-3">{attendee.Email}</td>
+                                            <td className="px-4 py-3">{attendee.id}</td>
+                                            <td className="px-4 py-3">{attendee.first_name}</td>
+                                            <td className="px-4 py-3">{attendee.last_name}</td>
+                                            <td className="px-4 py-3">{attendee.username}</td>
+                                            {/* <td className="px-4 py-3">{attendee.Email}</td> */}
                                             {
-                                                attendee.Status === 0 && (
+                                                !attendee.Status && (
                                                     <td className="px-4 py-3">Not Check-in
                                                         <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
                                                             <button onClick={() => handleManualCheckIn(index)}>
@@ -135,7 +173,7 @@ const EventDetails = () => {
                                                 )
                                             }
                                             {
-                                                attendee.Status === 1 && (
+                                                attendee.Status && (
                                                     <td className="px-4 py-3">Checked-in
                                                         <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
                                                             <button>
@@ -147,7 +185,7 @@ const EventDetails = () => {
                                             }
 
                                             <td className="px-4 py-3">
-                                                <button onClick={() => openModal(attendee.No)}>
+                                                <button onClick={() => openModal(attendee.id)}>
                                                     <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={20} />
                                                 </button>
 

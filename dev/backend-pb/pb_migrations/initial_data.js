@@ -83,7 +83,7 @@ migrate((db) => {
     event1.set("radius", 50)
     event1.set("capacity", 50)
     event1.set("code", "testing")
-    event1.set("registered_attendees", [2, 4])
+    event1.set("registered_attendees", [4])
 
     let event2 = new Record(collection)
     event2.set("id", "event2")
@@ -96,7 +96,7 @@ migrate((db) => {
     event2.set("radius", 50)
     event2.set("capacity", 50)
     event2.set("code", "testing2")
-    event2.set("registered_attendees", [2, 4])
+    event2.set("registered_attendees", [4])
 
     let event3 = new Record(collection)
     event3.set("id", "event3")
@@ -109,7 +109,7 @@ migrate((db) => {
     event3.set("radius", 50)
     event3.set("capacity", 50)
     event3.set("code", "testing3")
-    event3.set("registered_attendees", [2, 4])
+    event3.set("registered_attendees", [2])
 
     event1.set("group_id", ["g2"])
     event2.set("group_id", ["g2"])

@@ -152,7 +152,8 @@ export default {
     getEvents: async (id) => {
         try {
             const events = await pb.collection('events').getFullList({
-                filter: `host='${id}'`
+                filter: `host='${id}'`,
+                expand: 'registered_attendees,group_id.registered_attendees'
             })
             return events;
         } catch (e) {
@@ -160,6 +161,17 @@ export default {
         }
     },
 
+    getEvent: async (eventId) => {
+        try {
+            const event = await pb.collection('events').getFullList({
+                filter: `id='${eventId}'`,
+                expand: 'registered_attendees'
+            })
+            return event;
+        } catch (e) {
+            return new Error("An error occurred.");
+        }
+    },
     getGroups: async (id) => {
         try {
             const groups = await pb.collection('groups').getFullList({

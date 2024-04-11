@@ -21,7 +21,6 @@ const Dashboard = (props) => {
     const [eventCode, setEventCode] = useState("");
     const [capacity, setCapacity] = useState("");
     const [radius, setRadius] = useState("");
-    const [groupCode, setGroupCode] = useState("");
     const [eventName, setEventName] = useState("");
     const [eventLocation, setEventLocation] = useState("");
     const [eventLocationError, setEventLocationError] = useState("");
@@ -42,7 +41,6 @@ const Dashboard = (props) => {
         }
 
         getEvents()
-        
         navigator.geolocation.getCurrentPosition(
             position => {
                 setLat(position.coords.latitude);
@@ -57,7 +55,7 @@ const Dashboard = (props) => {
             setGroups(groups);
         }
         getGroups()
-    }, [])
+    }, [user.id])
 
     const handleSaveEvent = async () => {
 
@@ -85,18 +83,15 @@ const Dashboard = (props) => {
             setSuccessMessage("");
             setError(response.message);
             return;
-        } 
-
-        setEvents([...events, response]);
+        }
 
         if (groupOptionSelected === "new_group") {
             let group_data = {
                 host: pb.authStore.model.id, //Current user ID
                 name: groupName,
-                code: groupCode,
                 event_id: response.id,
             }
-    
+
             const group = await query.createGroup(group_data);
             if (group instanceof Error) {
                 setSuccessMessage("");
@@ -104,16 +99,19 @@ const Dashboard = (props) => {
                 return;
             }
 
-            const event = await query.updateEvent(response.id, {group_id: group.id});
+            const event = await query.updateEvent(response.id, { group_id: group.id });
             if (event instanceof Error) {
                 setSuccessMessage("");
                 setError(event.message);
                 return;
             }
-        } else if(groupOptionSelected !== "none" && groupOptionSelected !== "") {
+        } else if (groupOptionSelected !== "none" && groupOptionSelected !== "") {
             const tempGroup = groups.filter(group => group.name === groupOptionSelected);
 
-            const event = await query.updateEvent(response.id, {group_id: tempGroup[0].id});
+            const event = await query.updateEvent(response.id, {
+                group_id: tempGroup[0].id,
+                registered_attendees: tempGroup[0].registered_attendees
+            });
             if (event instanceof Error) {
                 setSuccessMessage("");
                 setError(event.message);
@@ -125,7 +123,7 @@ const Dashboard = (props) => {
             const data = {
                 "event_id": eventData
             };
-            
+
             console.log(tempGroup[0].id);
             const group = await query.updateGroup(tempGroup[0].id, data);
             if (group instanceof Error) {
@@ -133,7 +131,16 @@ const Dashboard = (props) => {
                 setError(group.message);
                 return;
             }
+
+
         }
+        const eventList = await query.getEvents(user.id);
+        if (eventList instanceof Error) {
+            setSuccessMessage("");
+            setError(eventList.message);
+            return;
+        }
+        setEvents(eventList);
         setError("");
         setSuccessMessage("Successfully created a new event!");
     }
@@ -144,7 +151,9 @@ const Dashboard = (props) => {
         } else {
             setIsCreateNewGroup(false);
         }
+        console.log(e.target.value)
         setGroupOptionSelected(e.target.value);
+
     }
 
 
@@ -220,9 +229,9 @@ const Dashboard = (props) => {
                         <h2 className="text-white text-2xl mb-8 font-medium title-font">Create New Event</h2>
                         <div className="relative mb-4">
                             <label for="code" className="leading-7 text-lg text-gray-400">Event name</label>
-                            <input 
-                                value = {eventName}
-                                onChange = {(e) => setEventName(e.target.value)}
+                            <input
+                                value={eventName}
+                                onChange={(e) => setEventName(e.target.value)}
                                 type="text"
                                 id="event-name"
                                 name="event-name"
@@ -247,13 +256,13 @@ const Dashboard = (props) => {
                         </div>
                         <div className="relative mb-4">
                             <label for="event-code" className="leading-7 text-lg text-gray-400">Event code</label>
-                            <input 
-                            value={eventCode}
-                            onChange={(e) => setEventCode(e.target.value)}
-                            type="text" 
-                            id="event-code" 
-                            name="event-code" 
-                            className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                            <input
+                                value={eventCode}
+                                onChange={(e) => setEventCode(e.target.value)}
+                                type="text"
+                                id="event-code"
+                                name="event-code"
+                                className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                         </div>
                         {/* <div class="flex ml-6 items-center"> */}
                         <div className="relative mb-4">Group</div>
@@ -269,36 +278,29 @@ const Dashboard = (props) => {
                         {isCreateNewGroup &&
                             <div className="relative mb-4">
                                 <label for="new_group_name" className="leading-7 text-lg text-gray-400">New Group Name</label>
-                                <input 
-                                value = {groupName}
-                                onChange = {(e) => setGroupName(e.target.value)}
-                                type="text" id="new_group_nam" name="new_group_nam" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                                
-                                <label for="new_group_code" className="leading-7 text-lg text-gray-400">New Group Code</label>
-                                <input 
-                                value = {groupCode}
-                                onChange = {(e) => setGroupCode(e.target.value)}
-                                type="text" id="new_group_code" name="new_group_code" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                                
+                                <input
+                                    value={groupName}
+                                    onChange={(e) => setGroupName(e.target.value)}
+                                    type="text" id="new_group_nam" name="new_group_nam" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                             </div>
                         }
                         <div className="relative mb-4">
                             <label for="capacity" className="leading-7 text-lg text-gray-400">Capacity</label>
-                            <input 
-                            value={capacity}
-                            onChange={(e) => setCapacity(e.target.value)}
-                            type="number" 
-                            id="capacity" 
-                            name="capacity" 
-                            className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                            <input
+                                value={capacity}
+                                onChange={(e) => setCapacity(e.target.value)}
+                                type="number"
+                                id="capacity"
+                                name="capacity"
+                                className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                         </div>
                         <div className="relative mb-4">
                             <label for="radius" className="leading-7 text-lg text-gray-400">Radius</label>
-                            <input 
-                            value={radius}
-                            onChange={(e) => setRadius(e.target.value)}
-                            
-                            type="radius" id="radius" name="radius" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                            <input
+                                value={radius}
+                                onChange={(e) => setRadius(e.target.value)}
+
+                                type="radius" id="radius" name="radius" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                         </div>
                         <div className="relative mb-4">
                             <label for="message" className="leading-7 text-lg text-gray-400">Check-in Time</label>
@@ -336,7 +338,7 @@ const Dashboard = (props) => {
                         <tbody>
                             {
                                 events.map((event, idx) => (
-                                    <Event events={events} key={event.id} index={idx} />
+                                    <Event events={events} key={event.id} index={idx} name={groupOptionSelected} />
                                 ))
                             }
                         </tbody>
@@ -345,7 +347,7 @@ const Dashboard = (props) => {
             </section>
             <Footer />
         </div>
-        
+
     )
 }
 

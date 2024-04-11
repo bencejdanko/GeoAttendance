@@ -8,23 +8,9 @@ const Event = (props) => {
     // const events = props.events;
     const event = props.events[props.index];
 
-    const handleUploadFileClick = () => {
+    const handleDeleteEvent = () => {
 
     }
-
-    const [groupName, setGroupName] = useState("");
-
-    useEffect(() => {
-        async function fetchGroupName() {
-            if(event.group_id) {
-                const name = await query.getGroupName(event.group_id);
-                setGroupName(name);
-            }
-        }
-
-        fetchGroupName();     
-
-    }, [groupName])
 
     return (
         <tr>
@@ -37,13 +23,13 @@ const Event = (props) => {
                 </button>
             </td> */}
             {
-                event.group_id && (<td className="px-4 py-3 text-xl">{ groupName }</td>)
+                event.group_id && (<td className="px-4 py-3 text-xl">{ event.expand?.group_id?.name ? event.expand.group_id.name : props.name }</td>)
             }
             {
                 !event.group_id && (<td className="px-4 py-3 text-xl">N/A</td>)
             }
             <td className="px-4 py-3">
-                <button onClick={handleUploadFileClick}>
+                <button onClick={handleDeleteEvent}>
                     <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} />
                 </button>
             </td>
