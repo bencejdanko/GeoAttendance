@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import getLogInspectorInstance from "selenium-webdriver/bidi/logInspector";
 import pb from "../../lib/pocketbase";
 import query from "../../lib/query";
 import GroupHistoryDetail from "../grouphistorydetail/GroupHistoryDetail";
