@@ -153,7 +153,7 @@ export default {
         try {
             const events = await pb.collection('events').getFullList({
                 filter: `host='${id}'`,
-                expand: 'registered_attendees,group_id'
+                expand: 'registered_attendees,group_id.registered_attendees'
             })
             return events;
         } catch (e) {

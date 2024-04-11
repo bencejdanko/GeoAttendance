@@ -11,7 +11,7 @@ const AttendanceHistoryDetail = (props) => {
                     <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-blue-500 text-white flex-shrink-0">
                         <img className="object-cover object-center rounded" src={clockIcon} alt="clockIcon" width={30} />
                     </div>
-                    <h2 className="text-white text-lg title-font font-medium w-full">{new Date(props.detail.start_time).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h2>
+                    <h2 className="text-white text-lg title-font font-medium w-full">{new Date(props.detail.start_time).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</h2>
                     {
                         props.absent &&
                         <span className="inline-block py-1 px-2 rounded bg-gray-800 text-red-400 text-opacity-75 text-xs font-medium tracking-widest">Absent</span>

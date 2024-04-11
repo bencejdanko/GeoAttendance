@@ -8,7 +8,7 @@ const Event = (props) => {
     // const events = props.events;
     const event = props.events[props.index];
 
-    const handleUploadFileClick = () => {
+    const handleDeleteEvent = () => {
 
     }
 
@@ -29,7 +29,7 @@ const Event = (props) => {
                 !event.group_id && (<td className="px-4 py-3 text-xl">N/A</td>)
             }
             <td className="px-4 py-3">
-                <button onClick={handleUploadFileClick}>
+                <button onClick={handleDeleteEvent}>
                     <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} />
                 </button>
             </td>

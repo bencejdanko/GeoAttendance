@@ -15,7 +15,14 @@ const EventDetails = () => {
     const location = useLocation();
     const { events, index } = location.state;
     console.log(events[index].checked_in_attendees)
-    const [attendees, setAttendees] = useState(events[index].expand?.registered_attendees ? events[index].expand.registered_attendees : []);
+    // if event associted to a group, use group's registered attendees
+    // if not, use event's registered attendees
+    const [attendees, setAttendees] = useState(
+        events[index].expand?.group_id?.expand?.registered_attendees
+            ? events[index].expand.group_id.expand.registered_attendees
+            : (events[index].expand?.registered_attendees
+                ? events[index].expand.registered_attendees : [])
+    );
     const [isOpen, setIsOpen] = useState(-1);
 
     useEffect(() => {
@@ -100,6 +107,19 @@ const EventDetails = () => {
                 setAttendees(updatedAttendees)
 
                 // update group api
+                if (events[index].group_id !== "") {
+                    const newGroupData = {
+                        "event_id": events[index].expand.group_id.event_id,
+                        "host": events[index].expand.group_id.host,
+                        "name": events[index].expand.group_id.name,
+                        "registered_attendees": attendeeIds
+                    };
+                    const tempGroup = await query.updateGroup(events[index].group_id, newGroupData);
+                    // handle error 
+                    if (tempGroup instanceof Error) {
+                        return;
+                    }
+                }
             }
         }
 
