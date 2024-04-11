@@ -106,12 +106,10 @@ export default {
         }
 
         let event = events_pb[0]
-        console.log(event.id)
 
-        console.log("User lat: " + data.latitude)
-        console.log("User lon: " + data.longitude)
-        console.log("event lat: " + event.latitude)
-        console.log("Event long: " + event.longitude)
+        if (new Date(event.end_time).getTime() < new Date().getTime()) {
+            return new Error("Event has ended.");
+        }
 
         const isAccepted = geolib.isPointWithinRadius(
             { latitude: Number(data.latitude), longitude: Number(data.longitude) },
@@ -175,7 +173,8 @@ export default {
     getGroups: async (id) => {
         try {
             const groups = await pb.collection('groups').getFullList({
-                filter: `host='${id}'`
+                filter: `host='${id}'`,
+                expand: 'registered_attendees, event_id'
             })
             return groups;
         } catch (e) {

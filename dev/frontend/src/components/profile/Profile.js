@@ -8,6 +8,7 @@ import Footer from '../footer/Footer';
 import { useAuth } from "../auth/AuthProvider";
 import query from "../../lib/query.js";
 import AttendanceHistory from "../attendancehistory/AttdendanceHistory";
+import GroupHistory from "../grouphistory/GroupHistory";
 
 const Profile = () => {
 
@@ -151,6 +152,11 @@ const Profile = () => {
                 {user.subscription === 0 &&
                     attedanceRate &&
                     <AttendanceHistory attendanceHistory={attedanceRate} />
+                }
+
+                {
+                    user.subscription === 1 &&
+                    <GroupHistory />
                 }
                 {/* {
                     user.subscription === 1 && <section className="text-gray-400 bg-gray-900 body-font mt-8">
