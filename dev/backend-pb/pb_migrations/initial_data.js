@@ -82,7 +82,8 @@ migrate((db) => {
     event1.set("longitude", "37.3323527")
     event1.set("radius", 50)
     event1.set("capacity", 50)
-    event1.set("code", "testing")
+    event1.set("checkin_code", "testing")
+    event1.set("checkout_code", "testing_checkout")
     event1.set("registered_attendees", [4])
 
     let event2 = new Record(collection)
@@ -95,7 +96,8 @@ migrate((db) => {
     event2.set("longitude", "37.3607574")
     event2.set("radius", 50)
     event2.set("capacity", 50)
-    event2.set("code", "testing2")
+    event2.set("checkin_code", "testing2")
+    event2.set("checkout_code", "testing2_checkout")
     event2.set("registered_attendees", [4])
 
     let event3 = new Record(collection)
@@ -108,7 +110,8 @@ migrate((db) => {
     event3.set("longitude", "37.2344502")
     event3.set("radius", 50)
     event3.set("capacity", 50)
-    event3.set("code", "testing3")
+    event3.set("checkin_code", "testing3")
+    event3.set("checkout_code", "testing3_checkout")
     event3.set("registered_attendees", [2])
 
     event1.set("group_id", ["g2"])

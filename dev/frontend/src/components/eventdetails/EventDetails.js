@@ -28,14 +28,11 @@ const EventDetails = () => {
     useEffect(() => {
         const updatedAttendees = attendees.map(attendee => ({
             ...attendee,
-            Status: events[index].checked_in_attendees.includes(attendee.id)
+            check_in: events[index].checked_in_attendees.includes(attendee.id),
+            check_out: events[index].checked_out_attendees.includes(attendee.id)
         }))
         console.log(updatedAttendees)
         setAttendees(updatedAttendees)
-        // setAttendees({
-        //     ...attendees,
-        //     Status: events[index].checked_in_attendees.includes(attendee.id)
-        // })
     }, [])
 
     const closeModal = () => {
@@ -53,10 +50,17 @@ const EventDetails = () => {
         setAttendees(updatedAttendees);
     }
 
-    const handleManualCheckIn = (index) => {
-        const updatedAttendees = [...attendees];
-        updatedAttendees[index].Status = 1;
-        setAttendees(updatedAttendees);
+    const handleManualCheckIn = (index, option) => {
+        if (option === "check-in") {
+            const updatedAttendees = [...attendees];
+            updatedAttendees[index].check_in = 1;
+            setAttendees(updatedAttendees);
+        } else {
+            const updatedAttendees = [...attendees];
+            updatedAttendees[index].check_out = 1;
+            setAttendees(updatedAttendees);
+        }
+
     }
 
     const handleFileUpload = (e) => {
@@ -72,7 +76,8 @@ const EventDetails = () => {
                 console.log(parseData);
                 const updatedParseData = parseData.map(user => ({
                     ...user, // Spread the existing data
-                    Status: false // Add or update the status key
+                    check_in: false, // Add or update the check_in key
+                    check_out: false
                 }));
 
                 console.log(updatedParseData);
@@ -101,7 +106,8 @@ const EventDetails = () => {
 
                 const updatedAttendees = eventResponse[0].expand.registered_attendees.map(attendee => ({
                     ...attendee,
-                    Status: response.checked_in_attendees.includes(attendee.id)
+                    check_in: response.checked_in_attendees.includes(attendee.id),
+                    check_out: events[index].checked_out_attendees.includes(attendee.id)
                 }))
                 console.log(updatedAttendees)
                 setAttendees(updatedAttendees)
@@ -147,8 +153,8 @@ const EventDetails = () => {
                                     <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800 rounded-tl rounded-bl">First Name</th>
                                     <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Last Name</th>
                                     <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Username</th>
-                                    {/* <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Email</th> */}
-                                    <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Status</th>
+                                    <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Check-in</th>
+                                    <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Check-out</th>
                                     <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Delete</th>
                                 </tr>
                             </thead>
@@ -162,7 +168,7 @@ const EventDetails = () => {
                                             <td className="px-4 py-3">{attendee.username}</td>
                                             {/* <td className="px-4 py-3">{attendee.Email}</td> */}
                                             {
-                                                !attendee.Status && (
+                                                !attendee.check_in && (
                                                     <td className="px-4 py-3">Not Check-in
                                                         <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
                                                             <button onClick={() => handleManualCheckIn(index)}>
@@ -173,7 +179,7 @@ const EventDetails = () => {
                                                 )
                                             }
                                             {
-                                                attendee.Status && (
+                                                attendee.check_in && (
                                                     <td className="px-4 py-3">Checked-in
                                                         <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
                                                             <button>
@@ -183,7 +189,28 @@ const EventDetails = () => {
                                                     </td>
                                                 )
                                             }
-
+                                            {
+                                                !attendee.check_out && (
+                                                    <td className="px-4 py-3">Not Check-out
+                                                        <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
+                                                            <button onClick={() => handleManualCheckIn(index)}>
+                                                                <img className="object-cover object-center rounded" src={blockIcon} alt="checkblockIconIcon" width={20} />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                )
+                                            }
+                                            {
+                                                attendee.check_out && (
+                                                    <td className="px-4 py-3">Checked-out
+                                                        <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
+                                                            <button>
+                                                                <img className="object-cover object-center rounded" src={checkIcon} alt="checkIcon" width={20} />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                )
+                                            }
                                             <td className="px-4 py-3">
                                                 <button onClick={() => openModal(attendee.id)}>
                                                     <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={20} />

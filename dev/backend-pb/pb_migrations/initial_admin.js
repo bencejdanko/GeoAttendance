@@ -10,5 +10,4 @@ migrate((db) => {
     admin.email = "example@example.COM"
     admin.setPassword('123456789')
     dao.saveAdmin(admin)
-
 })
