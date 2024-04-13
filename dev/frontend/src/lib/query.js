@@ -1,6 +1,8 @@
 import pb from './pocketbase.js'
 import * as geolib from 'geolib';
 
+const url = process.env.REACT_APP_PB_URL
+
 export default {
 
     login: async (data) => {
@@ -318,6 +320,18 @@ export default {
         } catch (e) {
             return new Error(e.message);
         }
+    },
+
+    getGroupDetails: async (groupId) => {
+        console.log(url +  '/groups/' + groupId)
+        let data = await fetch(url +  '/groups/' + groupId, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': pb.authStore.token
+        }})
+        return data.json()
     }
+
 
 }

@@ -12,7 +12,6 @@ const GroupHistory = () => {
         const getGroups = async () => {
             let groups = await query.getGroups(pb.authStore.model.id)
             setGroups(groups)
-            console.log(groups)
         }
         
         getGroups()
