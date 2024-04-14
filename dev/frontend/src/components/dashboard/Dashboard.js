@@ -18,7 +18,8 @@ const Dashboard = (props) => {
     const [lng, setLng] = useState("");
     const [startTime, setStartTime] = useState(props.formattedDate);
     const [endTime, setEndTime] = useState(props.formattedDate);
-    const [eventCode, setEventCode] = useState("");
+    const [eventCheckinCode, setEventCheckinCode] = useState("");
+    const [eventCheckoutCode, setEventCheckoutCode] = useState("");
     const [capacity, setCapacity] = useState("");
     const [radius, setRadius] = useState("");
     const [eventName, setEventName] = useState("");
@@ -67,7 +68,8 @@ const Dashboard = (props) => {
             name: eventName,
             host: pb.authStore.model.id, //Current user ID
             capacity: capacity,
-            code: eventCode,
+            checkin_code: eventCheckinCode,
+            checkout_code: eventCheckoutCode,
             longitude: lng,
             latitude: lat,
             radius: radius,
@@ -255,13 +257,23 @@ const Dashboard = (props) => {
 
                         </div>
                         <div className="relative mb-4">
-                            <label for="event-code" className="leading-7 text-lg text-gray-400">Event code</label>
+                            <label for="event-checkin-code" className="leading-7 text-lg text-gray-400">Event checkin code</label>
                             <input
-                                value={eventCode}
-                                onChange={(e) => setEventCode(e.target.value)}
+                                value={eventCheckinCode}
+                                onChange={(e) => setEventCheckinCode(e.target.value)}
                                 type="text"
-                                id="event-code"
-                                name="event-code"
+                                id="event-checkin-code"
+                                name="event-checkin-code"
+                                className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                        </div>
+                        <div className="relative mb-4">
+                            <label for="event-checkout-code" className="leading-7 text-lg text-gray-400">Event checkout code</label>
+                            <input
+                                value={eventCheckoutCode}
+                                onChange={(e) => setEventCheckoutCode(e.target.value)}
+                                type="text"
+                                id="event-checkout-code"
+                                name="event-checkout-code"
                                 className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                         </div>
                         {/* <div class="flex ml-6 items-center"> */}
@@ -329,10 +341,11 @@ const Dashboard = (props) => {
                         <thead>
                             <tr>
                                 <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800 rounded-tl rounded-bl">Event Name</th>
-                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Event Code</th>
-                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Event Capacity</th>
+                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Checkin Code</th>
+                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Checkout Code</th>
+                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Capacity</th>
                                 <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Group Name</th>
-                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Delete Event</th>
+                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Delete</th>
                             </tr>
                         </thead>
                         <tbody>

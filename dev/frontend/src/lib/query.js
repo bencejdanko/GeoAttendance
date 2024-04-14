@@ -67,6 +67,40 @@ export default {
         }
     },
 
+    saveCheckinTime: async (event_id, user_id, checkin_time) => {
+        try {
+            const checkin = await pb.collection('checkins').create({
+                event_id: event_id,
+                user_id: user_id,
+                checkin_time: checkin_time
+            })
+            return checkin;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
+    saveCheckoutTime: async (event_id, user_id, checkout_time) => {
+        try {
+            const checkin = await pb.collection('checkins').getFullList({
+                filter: `event_id='${event_id}' && user_id='${user_id}'`
+            })
+
+            if (checkin.length > 0) {
+                const response = await pb.collection('checkins').update(checkin[0].id, {
+                    checkout_time: checkout_time
+                })
+
+                if (response) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
     createGroup: async (data) => {
         try {
             const group = await pb.collection('groups').create(data)
@@ -99,7 +133,7 @@ export default {
         let events_pb = []
         try {
             events_pb = await pb.collection('events').getFullList({
-                filter: `code='${data.code}'`
+                filter: `checkin_code='${data.code}'`
             })
         } catch (e) { }
 
@@ -125,7 +159,7 @@ export default {
 
         const checked_in_attendees = event.checked_in_attendees
 
-        if (pb.authStore.model.id in checked_in_attendees) {
+        if (checked_in_attendees.includes(pb.authStore.model.id)) {
             return new Error("Already checked in");
         }
 
@@ -143,6 +177,63 @@ export default {
 
         if (updated_event === null) {
             return new Error("You are not authorized to check in.");
+        }
+
+        return updated_event.id;
+
+    },
+
+    checkout: async (data) => {
+
+        let events_pb = []
+        try {
+            events_pb = await pb.collection('events').getFullList({
+                filter: `checkout_code='${data.code}'`
+            })
+        } catch (e) { }
+
+        if (events_pb.length === 0) {
+            return new Error("No event found with that code.");
+        }
+
+        let event = events_pb[0]
+        console.log(event.id)
+
+        console.log("User lat: " + data.latitude)
+        console.log("User lon: " + data.longitude)
+        console.log("event lat: " + event.latitude)
+        console.log("Event long: " + event.longitude)
+
+        const isAccepted = geolib.isPointWithinRadius(
+            { latitude: Number(data.latitude), longitude: Number(data.longitude) },
+            { latitude: Number(event.latitude), longitude: Number(event.longitude) },
+            Number(event.radius)
+        );
+
+        if (!isAccepted) {
+            return new Error("Not within the radius of the event.");
+        }
+
+        const checked_out_attendees = event.checked_out_attendees
+
+        if (checked_out_attendees.includes(pb.authStore.model.id)) {
+            return new Error("Already checked out");
+        }
+
+
+        checked_out_attendees.push(pb.authStore.model.id)
+
+        let updated_event = null;
+        console.log("event id: " + event.id)
+        try {
+            updated_event = await pb.collection('events').update(event.id, {
+                checked_out_attendees: checked_out_attendees
+            })
+
+        } catch (e) { }
+
+        if (updated_event === null) {
+            return new Error("You are not authorized to check out.");
         }
 
         return updated_event.id;
@@ -252,6 +343,7 @@ export default {
 
             let total_events = events;
             let total_check_ins = []
+            let total_check_outs = []
             let total_absent = []
             for (let event of events) {
                 let checked_in_attendees = event.checked_in_attendees
@@ -262,11 +354,21 @@ export default {
                 }
             }
 
+            for (let event of events) {
+                let checked_out_attendees = event.checked_out_attendees
+                for (let attendee_id of checked_out_attendees) {
+                    if (attendee_id === attendeeId) {
+                        total_check_outs.push(event);
+                    }
+                }
+            }
+
             total_absent = total_events.filter(event => !total_check_ins.includes(event));
             return {
                 total_check_ins: total_check_ins,
                 total_events: total_events,
-                total_absent: total_absent
+                total_absent: total_absent,
+                total_check_outs: total_check_outs
             }
         } catch (e) {
             console.log(e)

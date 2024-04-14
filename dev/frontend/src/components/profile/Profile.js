@@ -104,7 +104,7 @@ const Profile = () => {
                                 </div>
                             </div>
                             {user.subscription === 0 && attedanceRate && <div className="flex flex-wrap -m-4  mt-4">
-                                <div className="p-4 md:w-1/3 sm:w-full">
+                                <div className="p-4 md:w-1/4 sm:w-full">
                                     <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col">
                                         <div className="flex items-center mb-3">
                                             <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-blue-500 text-white flex-shrink-0">
@@ -117,7 +117,7 @@ const Profile = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="p-4 md:w-1/3 sm:w-full">
+                                <div className="p-4 md:w-1/4 sm:w-full">
                                     <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col px-auto">
                                         <div className="flex items-center mb-3">
                                             <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
@@ -130,7 +130,20 @@ const Profile = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="p-4 md:w-1/3 sm:w-full">
+                                <div className="p-4 md:w-1/4 sm:w-full">
+                                    <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col px-auto">
+                                        <div className="flex items-center mb-3">
+                                            <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
+                                                <img className="object-cover object-center rounded" src={checkIcon} alt="checkIcon" width={30} />
+                                            </div>
+                                            <div className="mr-20">
+                                                <h2 className="text-white text-lg title-font font-medium w-full">{attedanceRate.total_check_outs.length}</h2>
+                                                <p className="text-lg whitespace-nowrap">Total Check-out</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="p-4 md:w-1/4 sm:w-full">
                                     <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col">
                                         <div className="flex items-center mb-3">
                                             <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
