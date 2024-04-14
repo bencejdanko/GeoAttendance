@@ -30,7 +30,7 @@ For API testing
 1. Clone the repository `git clone https://github.com/bencejdanko/GeoAttendance/`
 2. Navigate to `cd dev/backend-pb`
 3. Download a pocketbase binary from https://github.com/pocketbase/pocketbase/releases, and you should see a `pocketbase` binary file
-4. Add `PB_URL=127.0.0.1:8090` to the enviroment variables in `dev/frontend/.env`
+4. Add `REACT_APP_PB_URL=http://127.0.0.1:8090` to the enviroment variables in `dev/frontend/.env`
 5. In `dev/backend-pb`, give permissions to the startup script, `chmod +x run.sh`
 6. Run with `./run.sh --clear`
 

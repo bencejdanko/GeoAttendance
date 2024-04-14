@@ -20,26 +20,13 @@ const GroupHistoryDetail = (props) => {
         }
 
         const getMembers = async () => {
-            let members = props.group.expand.registered_attendees
-            if (!members) {
-                setMembers([])
-            } else {
-
-                const data = await Promise.all(members.map(async member => {
-                    const numberCheckedIn = await query.getNumberMemberCheckedIn(props.group.id, member.id)
-                    return { ...member, numberCheckedIn }
-                }))
-                setMembers(data)
-            }
+            let members = await query.getGroupMemberDetails(props.group.id)
+            console.log(members)
+            setMembers(members)
         }
 
-        let data = query.getGroupDetails(props.group.id)
-        data.then(data => {
-
-            console.log("data: ")
-            console.log(data)
-        })
         getEvents()
+        getMembers()
 
     }, [members, events])
 
@@ -96,8 +83,8 @@ const GroupHistoryDetail = (props) => {
                         {
                             members.map(member => (
                                 <tr>
-                                    <td className="px-4 py-3">{member.first_name} {member.last_name}</td>
-                                    <td className="px-4 py-3">{member.numCheckedIn}</td>
+                                    <td className="px-4 py-3">{member.first_name} {member.member_name}</td>
+                                    <td className="px-4 py-3">{member.checked_in}</td>
                                     <td className="px-4 py-3">{member.absent ? "Yes" : "No"}</td>
                                 </tr>
                             ))

@@ -322,8 +322,7 @@ export default {
         }
     },
 
-    getGroupDetails: async (groupId) => {
-        console.log(url +  '/groups/' + groupId)
+    getGroupMemberDetails: async (groupId) => {
         let data = await fetch(url +  '/groups/' + groupId, {
             method: 'GET',
             headers: {
