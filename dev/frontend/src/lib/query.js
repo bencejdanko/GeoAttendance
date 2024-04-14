@@ -333,8 +333,35 @@ export default {
     },
 
     sendNotifyEmail: async (data) => {
-        
-    }
+        console.log(url + '/notify')
+        let response = await fetch(url + '/notify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': pb.authStore.token
+            },
+            body: {
+                users: data.users,
+            }
+        })
+        return response.json()
+    },
+
+    deleteGroup: async (id) => {
+        let groups;
+
+        try {
+            groups = await pb.collection('groups').delete(id)
+        } catch (e) {
+            return [];
+        }
+
+        if (groups.length === 0) {
+            return new Error("Unable to delete nonexistent group.");
+        }
+
+        return groups;
+    },
 
 
 }

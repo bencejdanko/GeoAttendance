@@ -7,11 +7,15 @@ const GroupHistoryDetail = (props) => {
     const [members, setMembers] = useState([])
     const [events, setEvents] = useState([])
 
+    const handleNotify = async () => {
+        let response = await query.sendNotifyEmail(props.group.id)
+        console.log(response)
+    }
+
     useEffect(() => {
 
         const getEvents = () => {
             let events = props.group.expand.event_id
-            console.log(JSON.stringify(events) )
             if (!events) {
                 setEvents([])
             } else {
@@ -22,7 +26,6 @@ const GroupHistoryDetail = (props) => {
 
         const getMembers = async () => {
             let members = await query.getGroupMemberDetails(props.group.id)
-            console.log(JSON.stringify(members.members) )
             setMembers(members.members)
         }
         getMembers()
@@ -91,6 +94,7 @@ const GroupHistoryDetail = (props) => {
                         }
                     </tbody>
                 </table>
+                <button onClick={handleNotify}>Click Me</button>
             </div>
         </div>
     )

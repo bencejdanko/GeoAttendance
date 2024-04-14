@@ -119,12 +119,17 @@ routerAdd("GET", "/groups/:group_id", (c) => {
 
 }, $apis.activityLogger($app))
 
-routerAdd("GET", "/notify/", (c) => {
-    let record = c.get("authRecord")
-    if (!record) {
-        return c.json(403, { "message": "Unauthorized" })
-    }
+// routerAdd("POST", "/notify/:group_id", (c) => {
+//     let record = c.get("authRecord")
+//     if (!record) {
+//         return c.json(403, { "message": "Unauthorized" })
+//     }
 
-    let user = $app.dao().findRecordById("users", record.get("id"))
-    return c.json(200, { "user": user })
-})
+//     let user = $app.dao().findRecordById("users", record.get("id"))
+//     return c.json(200, { "message": "Notification sent" })
+// })
+
+onModelAfterUpdate((e) => {
+    console.log("Model updated", JSON.stringify(e.model.data()))
+    console.log("Old copy: " + JSON.stringify(e.model.originalCopy()))
+}, "events")
