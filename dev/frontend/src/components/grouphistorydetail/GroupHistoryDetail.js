@@ -94,7 +94,6 @@ const GroupHistoryDetail = (props) => {
                         }
                     </tbody>
                 </table>
-                <button onClick={handleNotify}>Click Me</button>
             </div>
         </div>
     )

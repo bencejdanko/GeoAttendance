@@ -129,7 +129,28 @@ routerAdd("GET", "/groups/:group_id", (c) => {
 //     return c.json(200, { "message": "Notification sent" })
 // })
 
-onModelAfterUpdate((e) => {
-    console.log("Model updated", JSON.stringify(e.model.data()))
-    console.log("Old copy: " + JSON.stringify(e.model.originalCopy()))
-}, "events")
+// onModelAfterUpdate((e) => {
+//     let registered_attendees = e.model.get("registered_attendees")
+//     let old_registered_attendees = e.model.originalCopy().get("registered_attendees")
+//     let newly_added = registered_attendees.filter(x => !old_registered_attendees.includes(x))
+
+//     let newly_added_emails = []
+//     for (let user_id of newly_added) {
+//         let user = $app.dao().findRecordById("users", user_id)
+//         newly_added_emails.push(user.get("email"))
+//     }
+
+//     for (let email of newly_added_emails) {
+//         const message = new MailerMessage({
+//             from: {
+//                 address: $app.settings().meta.senderAddress,
+//                 name: $app.settings().meta.senderName,
+//             },
+//             to: [{address: email}],
+//             subject: "You've been added to an event",
+//             html: "<p>You've been added to an event</p>",
+//         })
+
+//         $app.newMailClient().send(message)
+//     }
+// }, "events")
