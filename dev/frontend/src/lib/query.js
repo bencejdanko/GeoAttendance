@@ -330,6 +330,10 @@ export default {
                 'Authorization': pb.authStore.token
         }})
         return data.json()
+    },
+
+    sendNotifyEmail: async (data) => {
+        
     }
 
 

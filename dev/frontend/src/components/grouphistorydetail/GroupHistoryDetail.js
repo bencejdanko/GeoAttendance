@@ -11,6 +11,7 @@ const GroupHistoryDetail = (props) => {
 
         const getEvents = () => {
             let events = props.group.expand.event_id
+            console.log(JSON.stringify(events) )
             if (!events) {
                 setEvents([])
             } else {
@@ -21,14 +22,13 @@ const GroupHistoryDetail = (props) => {
 
         const getMembers = async () => {
             let members = await query.getGroupMemberDetails(props.group.id)
-            console.log(members)
-            setMembers(members)
+            console.log(JSON.stringify(members.members) )
+            setMembers(members.members)
         }
-
-        getEvents()
         getMembers()
+        getEvents()
 
-    }, [members, events])
+    }, [])
 
     return (
         <div className="p-4 md:w-1/3 sm:w-full flex flex-1">
@@ -85,7 +85,7 @@ const GroupHistoryDetail = (props) => {
                                 <tr>
                                     <td className="px-4 py-3">{member.first_name} {member.member_name}</td>
                                     <td className="px-4 py-3">{member.checked_in}</td>
-                                    <td className="px-4 py-3">{member.absent ? "Yes" : "No"}</td>
+                                    <td className="px-4 py-3">{member.absent}</td>
                                 </tr>
                             ))
                         }

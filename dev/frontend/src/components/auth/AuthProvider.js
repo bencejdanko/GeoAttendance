@@ -6,7 +6,7 @@ import pb from "../../lib/pocketbase.js"
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(pb.authStore);
 
   const login = (userData) => {
     // Implement your login logic here, e.g., setting user data in state
