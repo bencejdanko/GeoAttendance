@@ -434,20 +434,20 @@ export default {
         return data.json()
     },
 
-    sendNotifyEmail: async (data) => {
-        console.log(url + '/notify')
-        let response = await fetch(url + '/notify', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': pb.authStore.token
-            },
-            body: {
-                users: data.users,
-            }
-        })
-        return response.json()
-    },
+    // sendNotifyEmail: async (data) => {
+    //     console.log(url + '/notify')
+    //     let response = await fetch(url + '/notify', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': pb.authStore.token
+    //         },
+    //         body: {
+    //             users: data.users,
+    //         }
+    //     })
+    //     return response.json()
+    // },
 
     deleteGroup: async (id) => {
         let groups;

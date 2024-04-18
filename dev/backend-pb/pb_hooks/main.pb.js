@@ -94,9 +94,10 @@ routerAdd("GET", "/groups/:group_id", (c) => {
         for (let event of events) {
             let registered_attendees = event.registered_attendees || []
             if (registered_attendees.includes(member_id)) {
+                //let checkins = $app.dao().findRecordById()
+                //console.log($app.dao().findRecordById('checkins', member.get('')))
                 total_registered += 1
             }
-            total_registered += 1
 
             let checked_in_attendees = event.checked_in_attendees || []
             for (let attendee_id of checked_in_attendees) {
@@ -109,6 +110,7 @@ routerAdd("GET", "/groups/:group_id", (c) => {
         member_data.push({
             "member_name": member.get("first_name") + " " + member.get("last_name"),
             "checked_in": total_attended,
+            "checked_out": null,
             "absent": total_registered - total_attended,
         })
     }
@@ -129,28 +131,31 @@ routerAdd("GET", "/groups/:group_id", (c) => {
 //     return c.json(200, { "message": "Notification sent" })
 // })
 
-// onModelAfterUpdate((e) => {
-//     let registered_attendees = e.model.get("registered_attendees")
-//     let old_registered_attendees = e.model.originalCopy().get("registered_attendees")
-//     let newly_added = registered_attendees.filter(x => !old_registered_attendees.includes(x))
+onModelAfterUpdate((e) => {
+    let registered_attendees = e.model.get("registered_attendees")
+    let old_registered_attendees = e.model.originalCopy().get("registered_attendees")
+    let newly_added = registered_attendees.filter(x => !old_registered_attendees.includes(x))
 
-//     let newly_added_emails = []
-//     for (let user_id of newly_added) {
-//         let user = $app.dao().findRecordById("users", user_id)
-//         newly_added_emails.push(user.get("email"))
-//     }
+    let newly_added_emails = []
+    for (let user_id of newly_added) {
+        let user = $app.dao().findRecordById("users", user_id)
+        newly_added_emails.push(user.get("email"))
+    }
 
-//     for (let email of newly_added_emails) {
-//         const message = new MailerMessage({
-//             from: {
-//                 address: $app.settings().meta.senderAddress,
-//                 name: $app.settings().meta.senderName,
-//             },
-//             to: [{address: email}],
-//             subject: "You've been added to an event",
-//             html: "<p>You've been added to an event</p>",
-//         })
+    let event_name = e.model.get("name") || "_error_"
 
-//         $app.newMailClient().send(message)
-//     }
-// }, "events")
+    for (let email of newly_added_emails) {
+        console.log("Sending test email")
+        const message = new MailerMessage({
+            from: {
+                address: $app.settings().meta.senderAddress,
+                name: $app.settings().meta.senderName,
+            },
+            to: [{address: email}],
+            subject: "GeoAttendance - You've been added to an event.",
+            html: `<p>You've been added to the ${event_name} event at GeoAttendance.</p>`
+        })
+
+        $app.newMailClient().send(message)
+    }
+}, "events")
