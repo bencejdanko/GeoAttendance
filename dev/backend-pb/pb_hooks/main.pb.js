@@ -121,16 +121,6 @@ routerAdd("GET", "/groups/:group_id", (c) => {
 
 }, $apis.activityLogger($app))
 
-// routerAdd("POST", "/notify/:group_id", (c) => {
-//     let record = c.get("authRecord")
-//     if (!record) {
-//         return c.json(403, { "message": "Unauthorized" })
-//     }
-
-//     let user = $app.dao().findRecordById("users", record.get("id"))
-//     return c.json(200, { "message": "Notification sent" })
-// })
-
 onModelAfterUpdate((e) => {
     let registered_attendees = e.model.get("registered_attendees")
     let old_registered_attendees = e.model.originalCopy().get("registered_attendees")
@@ -151,7 +141,7 @@ onModelAfterUpdate((e) => {
                 address: $app.settings().meta.senderAddress,
                 name: $app.settings().meta.senderName,
             },
-            to: [{address: email}],
+            to: [{ address: email }],
             subject: "GeoAttendance - You've been added to an event.",
             html: `<p>You've been added to the ${event_name} event at GeoAttendance.</p>`
         })
@@ -159,3 +149,38 @@ onModelAfterUpdate((e) => {
         $app.newMailClient().send(message)
     }
 }, "events")
+
+
+/*
+* https://developers.google.com/maps/documentation/geocoding/requests-geocoding
+*/
+routerAdd("POST", "/geocode", async (c) => {
+    const address = $apis.requestInfo(c).data.address
+    const REACT_APP_GEOCODER_API_KEY = "AIzaSyBgu7KSn-syoa9GD0zFIGPFc_XZa6DYiFs"
+    console.log("ADDRESS " + address)
+    try {
+        let res = $http.send({
+            method: "GET",
+            url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${REACT_APP_GEOCODER_API_KEY}`,
+        })
+
+        if (!res.json) {
+            return c.json(500, {
+                "error": "Failed to fetch location"
+            })
+        }
+
+        let data = res.json
+        let location = data.results[0].geometry.location
+        let lat = location.lat
+        let lon = location.lng
+        return c.json(200, {
+            "lat": lat,
+            "lng": lon,
+        })
+    } catch (e) {
+        return c.json(500, {
+            "error": "Failed to fetch location",
+        })
+    }
+})
