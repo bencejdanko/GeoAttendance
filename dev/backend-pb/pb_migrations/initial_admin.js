@@ -3,11 +3,11 @@ migrate((db) => {
 
     let admin = new Admin()
     admin.email = "BENCEJDANKO@GMAIL.COM"
-    admin.setPassword('123456789')
+    admin.setPassword('}N;9q$9P&3>l')
     dao.saveAdmin(admin)
 
     admin = new Admin()
     admin.email = "example@example.COM"
-    admin.setPassword('123456789')
+    admin.setPassword('&J$3R-h9*m3u')
     dao.saveAdmin(admin)
 })
