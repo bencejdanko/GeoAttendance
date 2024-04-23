@@ -156,12 +156,12 @@ onModelAfterUpdate((e) => {
 */
 routerAdd("POST", "/geocode", async (c) => {
     const address = $apis.requestInfo(c).data.address
-    const REACT_APP_GEOCODER_API_KEY = "AIzaSyBgu7KSn-syoa9GD0zFIGPFc_XZa6DYiFs"
-    console.log("ADDRESS " + address)
+    const GEOCODER_API_KEY = process.env.GEOCODER_API_KEY || "Error!"
+    console.log("KEY: " + GEOCODER_API_KEY)
     try {
         let res = $http.send({
             method: "GET",
-            url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${REACT_APP_GEOCODER_API_KEY}`,
+            url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GEOCODER_API_KEY}`,
         })
 
         if (!res.json) {
