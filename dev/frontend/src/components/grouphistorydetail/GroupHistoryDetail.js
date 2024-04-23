@@ -34,7 +34,7 @@ const GroupHistoryDetail = (props) => {
     }, [])
 
     return (
-        <div className="p-4 md:w-1/3 sm:w-full flex flex-1">
+        <div className="p-4 lg:w-1/2 md:w-full sm:w-full">
             <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-5 flex-col items-center ">
                 <div className="flex items-center mb-3">
                     <h2 className="text-white text-lg title-font font-medium w-full p-2">{props.group.name}</h2>
