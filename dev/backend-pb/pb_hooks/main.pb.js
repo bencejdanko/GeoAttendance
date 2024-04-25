@@ -1,45 +1,3 @@
-// collection = new Collection({
-//     name: "events",
-//     type: "base",
-//     listRule: null,
-//     viewRule:   "@request.auth.id != ''",
-//     createRule: "",
-//     updateRule: "@request.auth.id != ''",
-//     deleteRule: null,
-
-//     schema: [
-//         {
-//             name: "event_name",
-//             type: "text",
-//             required: true,
-//             options: {
-//                 min: 3,
-//                 max: 100
-//             }
-//         },
-
-//         {
-//             name: "users",
-//             type: "relation",
-//             required: false,
-//             options: {
-//                 maxSelection: 1,
-//                 collectionId: "_pb_users_auth_",
-
-//             }
-            
-//         }
-//     ],
-
-//     indexes: [
-//         "CREATE UNIQUE INDEX idx_user ON example (user)"
-//     ],
-
-//     options: {}
-// })
-
-// $app.dao().saveCollection(collection)
-
 routerAdd("GET", "/hello/:name", (c) => {
     let name = c.pathParam("name")
     return c.json(200, { "message": "Hello " + name })
@@ -48,18 +6,18 @@ routerAdd("GET", "/hello/:name", (c) => {
 routerAdd("GET", "/users", (c) => {
 
     const result = arrayOf(new DynamicModel({
-        "id":    "",
+        "id": "",
         "email": "",
     }))
 
 
     $app.dao().db()
-    .select("id", "email")
-    .from("users")
-    .all(result)
+        .select("id", "email")
+        .from("users")
+        .all(result)
 
     return c.json(200, result)
-    
+
 })
 
 /**
@@ -89,5 +47,140 @@ routerAdd("POST", "/events/:event_id/attendees/:user_id", (c) => {
  */
 routerAdd("GET", "/users/:user_id/", (c) => {
     let user_id = c.pathParam("user_id")
-    
+
+})
+
+/**
+ * Host retrieves the group members, total rate of attendance, and the rate of attendance of each member
+ */
+routerAdd("GET", "/groups/:group_id", (c) => {
+
+    let record = c.get("authRecord")
+    if (!record) {
+        return c.json(403, { "message": "Unauthorized" })
+    }
+
+    let group = $app.dao().findRecordById("groups", c.pathParam("group_id"))
+    if (!group) {
+        return c.json(404, { "message": "Group not found" })
+    }
+
+    if (group.get("host") !== record.get("id")) {
+        return c.json(403, { "message": "Unauthorized" })
+    }
+
+    let members = group.get("registered_attendees") || []
+
+    let events = arrayOf(new DynamicModel({
+        "registered_attendees": [],
+        "checked_in_attendees": [],
+    }))
+
+    $app.dao().db()
+        .newQuery(`SELECT registered_attendees, checked_in_attendees FROM events WHERE group_id = '${group.id}'`)
+        .all(events)
+
+    /**
+     * Get the times a member was attended to events they were registered to
+     */
+
+    let member_data = []
+    for (let member_id of members) {
+        let member = $app.dao().findRecordById("users", member_id)
+
+        let total_registered = 0
+        let total_attended = 0
+
+        for (let event of events) {
+            let registered_attendees = event.registered_attendees || []
+            if (registered_attendees.includes(member_id)) {
+                //let checkins = $app.dao().findRecordById()
+                //console.log($app.dao().findRecordById('checkins', member.get('')))
+                total_registered += 1
+            }
+
+            let checked_in_attendees = event.checked_in_attendees || []
+            for (let attendee_id of checked_in_attendees) {
+                if (attendee_id === member_id) {
+                    total_attended += 1
+                }
+            }
+        }
+
+        member_data.push({
+            "member_name": member.get("first_name") + " " + member.get("last_name"),
+            "checked_in": total_attended,
+            "checked_out": null,
+            "absent": total_registered - total_attended,
+        })
+    }
+
+    return c.json(200, {
+        "members": member_data,
+    })
+
+}, $apis.activityLogger($app))
+
+onModelAfterUpdate((e) => {
+    let registered_attendees = e.model.get("registered_attendees")
+    let old_registered_attendees = e.model.originalCopy().get("registered_attendees")
+    let newly_added = registered_attendees.filter(x => !old_registered_attendees.includes(x))
+
+    let newly_added_emails = []
+    for (let user_id of newly_added) {
+        let user = $app.dao().findRecordById("users", user_id)
+        newly_added_emails.push(user.get("email"))
+    }
+
+    let event_name = e.model.get("name") || "_error_"
+
+    for (let email of newly_added_emails) {
+        console.log("Sending test email")
+        const message = new MailerMessage({
+            from: {
+                address: $app.settings().meta.senderAddress,
+                name: $app.settings().meta.senderName,
+            },
+            to: [{ address: email }],
+            subject: "GeoAttendance - You've been added to an event.",
+            html: `<p>You've been added to the ${event_name} event at GeoAttendance.</p>`
+        })
+
+        $app.newMailClient().send(message)
+    }
+}, "events")
+
+
+/*
+* https://developers.google.com/maps/documentation/geocoding/requests-geocoding
+*/
+routerAdd("POST", "/geocode", async (c) => {
+    const address = $apis.requestInfo(c).data.address
+    const GEOCODER_API_KEY = process.env.GEOCODER_API_KEY || "Error!"
+    console.log("KEY: " + GEOCODER_API_KEY)
+    try {
+        let res = $http.send({
+            method: "GET",
+            url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GEOCODER_API_KEY}`,
+        })
+
+        if (!res.json) {
+            return c.json(500, {
+                "error": "Failed to fetch location"
+            })
+        }
+
+        let data = res.json
+        let location = data.results[0].geometry.location
+        let lat = location.lat
+        let lon = location.lng
+        return c.json(200, {
+            "lat": lat,
+            "lng": lon,
+        })
+    } catch (e) {
+        return c.json(500, {
+            "error": "Failed to fetch location",
+        })
+    }
 })

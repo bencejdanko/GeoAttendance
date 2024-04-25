@@ -159,29 +159,29 @@ const Dashboard = (props) => {
     }
 
 
-    const handleEventLocationClick = () => {
+    const handleEventLocationClick = async () => {
         setEventLocationError("");
-        // Set default response language and region.
-        // This sets default values for language and region for geocoding requests.
-        setDefaults({
-            key: API_KEY, // Your API key here.
-            language: "en", // Default language for responses.
-            region: "es", // Default region for responses.
+
+        console.log("EVNET LOCATION: "+ eventLocation)
+        let response = await fetch(process.env.REACT_APP_PB_URL + '/geocode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                address: eventLocation
+            })
         });
 
-        geocode(RequestType.ADDRESS, eventLocation)
-            .then(({ results }) => {
-                const { lat, lng } = results[0].geometry.location;
-                console.log(lat, lng);
-                setLat(lat);
-                setLng(lng);
-            })
-            .catch((error) => {
-                console.log(error);
-                setEventLocationError(error);
-            });
+        console.log(response.status, response.statusText)
 
+        let data = await response.json();
+        console.log(data);
+        console.log(data.lat, data.lng);
+        setLat(data.lat);
+        setLng(data.lng);
     }
+
     const handleLocationClick = () => {
         const options = {
             enableHighAccuracy: true,

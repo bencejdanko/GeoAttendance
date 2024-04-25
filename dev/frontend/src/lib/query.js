@@ -1,6 +1,8 @@
 import pb from './pocketbase.js'
 import * as geolib from 'geolib';
 
+const url = process.env.REACT_APP_PB_URL
+
 export default {
 
     login: async (data) => {
@@ -140,12 +142,10 @@ export default {
         }
 
         let event = events_pb[0]
-        console.log(event.id)
 
-        console.log("User lat: " + data.latitude)
-        console.log("User lon: " + data.longitude)
-        console.log("event lat: " + event.latitude)
-        console.log("Event long: " + event.longitude)
+        if (new Date(event.end_time).getTime() < new Date().getTime()) {
+            return new Error("Event has ended.");
+        }
 
         const isAccepted = geolib.isPointWithinRadius(
             { latitude: Number(data.latitude), longitude: Number(data.longitude) },
@@ -266,11 +266,21 @@ export default {
     getGroups: async (id) => {
         try {
             const groups = await pb.collection('groups').getFullList({
-                filter: `host='${id}'`
+                filter: `host='${id}'`,
+                expand: 'registered_attendees, event_id'
             })
             return groups;
         } catch (e) {
             return [];
+        }
+    },
+
+    getGroup: async (id) => {
+        try {
+            const group = await pb.collection('groups').getOne(id, { requestKey: null })
+            return group;
+        } catch (e) {
+            return new Error("An error occurred.");
         }
     },
 
@@ -397,6 +407,63 @@ export default {
             total += event.registered_attendees.length - event.checked_in_attendees.length
         })
         return total
-    }
+    },
+
+    removeGroupMember: async (groupId, memberId) => {
+    
+        try {
+            let group = await pb.collection('groups').getOne(groupId)
+            let registered_attendees = group.registered_attendees
+            let new_registered_attendees = registered_attendees.filter(attendee => attendee !== memberId)
+            let updated_group = await pb.collection('groups').update(groupId, {
+                registered_attendees: new_registered_attendees
+            })
+            return updated_group;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
+    getGroupMemberDetails: async (groupId) => {
+        let data = await fetch(url +  '/groups/' + groupId, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': pb.authStore.token
+        }})
+        return data.json()
+    },
+
+    // sendNotifyEmail: async (data) => {
+    //     console.log(url + '/notify')
+    //     let response = await fetch(url + '/notify', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': pb.authStore.token
+    //         },
+    //         body: {
+    //             users: data.users,
+    //         }
+    //     })
+    //     return response.json()
+    // },
+
+    deleteGroup: async (id) => {
+        let groups;
+
+        try {
+            groups = await pb.collection('groups').delete(id)
+        } catch (e) {
+            return [];
+        }
+
+        if (groups.length === 0) {
+            return new Error("Unable to delete nonexistent group.");
+        }
+
+        return groups;
+    },
+
 
 }
