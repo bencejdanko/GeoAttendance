@@ -55,13 +55,14 @@ migrate((db) => {
     group1.set("id", "g1")
     group1.set("host", 1)
     group1.set("name", "Bence's Group")
+    group1.set("capacity", "50")
 
     collection = dao.findCollectionByNameOrId("groups")
     let group2 = new Record(collection)
     group2.set("id", "g2")
     group2.set("host", 3)
     group2.set("name", "Jessica's Group")
-
+    group2.set("capacity", "50")
     /*
     EVENT DATA
     */

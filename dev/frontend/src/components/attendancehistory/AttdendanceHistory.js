@@ -20,9 +20,16 @@ const AttendanceHistory = (props) => {
                         ))
                     }
                     {
-                        props.attendanceHistory.total_check_ins.map(detail => (
-                            <AttendanceHistoryDetail detail={detail} key={detail.id} checkin={true}/>
-                        ))
+                        props.attendanceHistory.total_check_ins.map(detail => {
+                            const e = props.attendanceHistory.total_check_outs.filter(e => e.id === detail.id);
+                            if (e.length > 0) {
+                                return <AttendanceHistoryDetail detail={detail} key={detail.id} checkin={true} />
+                            } else {
+                                return <AttendanceHistoryDetail detail={detail} key={detail.id} absent={true} />                                
+                            }
+
+                        }
+                        )
                     }
                 </div>
             </div>

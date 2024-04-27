@@ -33,6 +33,23 @@ const EventDetails = () => {
         }))
         console.log(updatedAttendees)
         setAttendees(updatedAttendees)
+
+        if (events[index].group_id !== ""
+            && events[index].expand.group_id.expand
+            && events[index].expand.group_id.expand.registered_attendees !== []
+            && events[index].registered_attendees.length === 0) {
+            const attendeeIds = [];
+            events[index].expand.group_id.expand.registered_attendees.forEach(data => {
+                attendeeIds.push(data.id)
+            })
+            const updateResponse = async () => {
+                await query.updateEvent(events[index].id, {
+                    ...events[index],
+                    registered_attendees: attendeeIds
+                });
+            }
+            updateResponse()
+        }
     }, [])
 
     const closeModal = () => {
@@ -43,23 +60,53 @@ const EventDetails = () => {
         setIsOpen(index);
     }
 
-    const handleDeactivate = () => {
+    const handleDeactivate = async () => {
         const deletedUserId = isOpen;
         closeModal();
         const updatedAttendees = attendees.filter(attendee => attendee.id !== deletedUserId);
         setAttendees(updatedAttendees);
+        if (events[index].group_id !== "") {
+
+        } else { // does not have group
+            const tempCheckinArr = events[index].checked_in_attendees;
+            tempCheckinArr.pop(deletedUserId);
+            const tempCheckoutArr = events[index].checked_out_attendees;
+            tempCheckoutArr.pop(deletedUserId);
+            const tempRegisteredArr = events[index].registered_attendees;
+            tempRegisteredArr.pop(deletedUserId);
+            await query.updateEvent(events[index].id, {
+                ...events[index],
+                checked_in_attendees: tempCheckinArr,
+                checked_out_attendees: tempCheckoutArr,
+                registered_attendees: tempRegisteredArr
+            });
+        }
+
     }
 
-    const handleManualCheckIn = (index, option) => {
+    const handleManualCheckIn = async (idx, option) => {
         if (option === "check-in") {
             const updatedAttendees = [...attendees];
-            updatedAttendees[index].check_in = 1;
+            updatedAttendees[idx].check_in = 1;
             setAttendees(updatedAttendees);
+            const tempArr = events[index].checked_in_attendees;
+            tempArr.push(updatedAttendees[idx].id);
+            await query.updateEvent(events[index].id, {
+                ...events[index],
+                checked_in_attendees: tempArr
+            });
         } else {
             const updatedAttendees = [...attendees];
-            updatedAttendees[index].check_out = 1;
+            updatedAttendees[idx].check_out = 1;
             setAttendees(updatedAttendees);
+            const tempArr = events[index].checked_out_attendees;
+            tempArr.push(updatedAttendees[idx].id);
+            await query.updateEvent(events[index].id, {
+                ...events[index],
+                checked_out_attendees: tempArr
+            });
         }
+
 
     }
 
@@ -160,8 +207,8 @@ const EventDetails = () => {
                             </thead>
                             <tbody>
                                 {
-                                    attendees.map((attendee, index) => (
-                                        <tr key={index}>
+                                    attendees.map((attendee, idx) => (
+                                        <tr key={idx}>
                                             <td className="px-4 py-3">{attendee.id}</td>
                                             <td className="px-4 py-3">{attendee.first_name}</td>
                                             <td className="px-4 py-3">{attendee.last_name}</td>
@@ -171,7 +218,7 @@ const EventDetails = () => {
                                                 !attendee.check_in && (
                                                     <td className="px-4 py-3">Not Check-in
                                                         <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
-                                                            <button onClick={() => handleManualCheckIn(index)}>
+                                                            <button onClick={() => handleManualCheckIn(idx, "check-in")}>
                                                                 <img className="object-cover object-center rounded" src={blockIcon} alt="checkblockIconIcon" width={20} />
                                                             </button>
                                                         </div>
@@ -193,7 +240,7 @@ const EventDetails = () => {
                                                 !attendee.check_out && (
                                                     <td className="px-4 py-3">Not Check-out
                                                         <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
-                                                            <button onClick={() => handleManualCheckIn(index)}>
+                                                            <button onClick={() => handleManualCheckIn(idx, "check-out")}>
                                                                 <img className="object-cover object-center rounded" src={blockIcon} alt="checkblockIconIcon" width={20} />
                                                             </button>
                                                         </div>

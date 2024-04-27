@@ -142,9 +142,10 @@ export default {
         }
 
         let event = events_pb[0]
+        const curDate = new Date();
 
-        if (new Date(event.end_time).getTime() < new Date().getTime()) {
-            return new Error("Event has ended.");
+        if (new Date(event.end_time) < curDate || new Date(event.start_time) > curDate) {
+            return new Error("Please checkin during the event time window.");
         }
 
         const isAccepted = geolib.isPointWithinRadius(
@@ -197,12 +198,11 @@ export default {
         }
 
         let event = events_pb[0]
-        console.log(event.id)
+        const curDate = new Date();
 
-        console.log("User lat: " + latitude)
-        console.log("User lon: " + longitude)
-        console.log("event lat: " + event.latitude)
-        console.log("Event long: " + event.longitude)
+        if (new Date(event.end_time) < curDate || new Date(event.start_time) > curDate) {
+            return new Error("Please checkout during the event time window.");
+        }
 
         const isAccepted = geolib.isPointWithinRadius(
             { latitude: Number(latitude), longitude: Number(longitude) },

@@ -67,7 +67,7 @@ const Dashboard = (props) => {
         let data = {
             name: eventName,
             host: pb.authStore.model.id, //Current user ID
-            capacity: capacity,
+            capacity: capacity ? capacity : 1,
             checkin_code: eventCheckinCode,
             checkout_code: eventCheckoutCode,
             longitude: lng,
@@ -92,6 +92,7 @@ const Dashboard = (props) => {
                 host: pb.authStore.model.id, //Current user ID
                 name: groupName,
                 event_id: response.id,
+                capacity: capacity
             }
 
             const group = await query.createGroup(group_data);
@@ -112,7 +113,8 @@ const Dashboard = (props) => {
 
             const event = await query.updateEvent(response.id, {
                 group_id: tempGroup[0].id,
-                registered_attendees: tempGroup[0].registered_attendees
+                registered_attendees: tempGroup[0].registered_attendees,
+                capacity: tempGroup[0].capacity
             });
             if (event instanceof Error) {
                 setSuccessMessage("");
@@ -162,7 +164,7 @@ const Dashboard = (props) => {
     const handleEventLocationClick = async () => {
         setEventLocationError("");
 
-        console.log("EVNET LOCATION: "+ eventLocation)
+        console.log("EVNET LOCATION: " + eventLocation)
         let response = await fetch(process.env.REACT_APP_PB_URL + '/geocode', {
             method: 'POST',
             headers: {
@@ -296,7 +298,24 @@ const Dashboard = (props) => {
                                     type="text" id="new_group_nam" name="new_group_nam" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                             </div>
                         }
-                        <div className="relative mb-4">
+                        {
+                            (groupOptionSelected === "none"
+                            || groupOptionSelected === ""
+                            || groupOptionSelected === "new_group")
+                            && (
+                                <div className="relative mb-4">
+                                    <label for="capacity" className="leading-7 text-lg text-gray-400">Capacity</label>
+                                    <input
+                                        value={capacity}
+                                        onChange={(e) => setCapacity(e.target.value)}
+                                        type="number"
+                                        id="capacity"
+                                        name="capacity"
+                                        className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                </div>
+                            )
+                        }
+                        {/* <div className="relative mb-4">
                             <label for="capacity" className="leading-7 text-lg text-gray-400">Capacity</label>
                             <input
                                 value={capacity}
@@ -305,7 +324,7 @@ const Dashboard = (props) => {
                                 id="capacity"
                                 name="capacity"
                                 className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                        </div>
+                        </div> */}
                         <div className="relative mb-4">
                             <label for="radius" className="leading-7 text-lg text-gray-400">Radius</label>
                             <input

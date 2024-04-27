@@ -1,12 +1,25 @@
-import {React, useEffect, useState} from "react";
+import { React, useEffect, useState } from "react";
 import deleteIcon from "../../icons/delete.png";
 import pictureIcon from "../../icons/picture.png";
 import { Link } from 'react-router-dom';
 import query from "../../lib/query";
+import { useAuth } from "../auth/AuthProvider";
 
 const Event = (props) => {
     // const events = props.events;
     const event = props.events[props.index];
+    const [events, setEvents] = useState([]);
+    const { user } = useAuth();
+
+    useEffect(() => {
+        const getEvents = async () => {
+            const events = await query.getEvents(user.id);
+            props = events;
+            setEvents(events);
+        }
+
+        getEvents()
+    }, [events])
 
     const handleDeleteEvent = () => {
 
@@ -24,7 +37,7 @@ const Event = (props) => {
                 </button>
             </td> */}
             {
-                event.group_id && (<td className="px-4 py-3 text-xl">{ event.expand?.group_id?.name ? event.expand.group_id.name : props.name }</td>)
+                event.group_id && (<td className="px-4 py-3 text-xl">{event.expand?.group_id?.name ? event.expand.group_id.name : props.name}</td>)
             }
             {
                 !event.group_id && (<td className="px-4 py-3 text-xl">N/A</td>)
