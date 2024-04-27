@@ -465,5 +465,18 @@ export default {
         return groups;
     },
 
+    submitFeedback: async ({ name, email, message }) => {
+        try {
+            const feedback = await pb.collection('feedbacks').create({
+                name: name,
+                email: email,
+                message: message
+            })
+            return feedback;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    }
+
 
 }
