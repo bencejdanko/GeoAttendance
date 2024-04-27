@@ -38,7 +38,7 @@ const GroupHistoryDetail = (props) => {
             <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-5 flex-col items-center ">
                 <div className="flex items-center mb-3">
                     <h2 className="text-white text-lg title-font font-medium w-full p-2">{props.group.name}</h2>
-                    <button onClick={() => query.removeGroup(props.group.id)}><img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} /></button>
+                    <button onClick={() => query.deleteGroup(props.group.id)}><img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} /></button>
                 </div>
 
                 <div className="flex flex-grow p-3">
@@ -51,6 +51,7 @@ const GroupHistoryDetail = (props) => {
                             <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Name</th>
                             <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Status</th>
                             <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Checked-in</th>
+                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Checked-out</th>
                             <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Registered</th>
                         </tr>
                     </thead>
@@ -62,6 +63,7 @@ const GroupHistoryDetail = (props) => {
                                     <td className="px-4 py-3">{event.name}</td>
                                     <td className={`px-4 py-3 font-bold ${event.start_time < Date.now() ? "text-red-500" : "text-green-500"}`}>{event.start_time < Date.now() ? "Ended" : "Ongoing"}</td>
                                     <td className="px-4 py-3">{event.checked_in_attendees.length}</td>
+                                    <td className="px-4 py-3">{event.checked_out_attendees.length}</td>
                                     <td className="px-4 py-3">{event.registered_attendees.length}</td>
                                 </tr>
                             ))
@@ -78,6 +80,7 @@ const GroupHistoryDetail = (props) => {
                         <tr>
                             <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Name</th>
                             <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Checked-in</th>
+                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Checked-out</th>
                             <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Absent</th>
                         </tr>
                     </thead>
@@ -88,6 +91,7 @@ const GroupHistoryDetail = (props) => {
                                 <tr>
                                     <td className="px-4 py-3">{member.first_name} {member.member_name}</td>
                                     <td className="px-4 py-3">{member.checked_in}</td>
+                                    <td className="px-4 py-3">{member.checked_out}</td>
                                     <td className="px-4 py-3">{member.absent}</td>
                                 </tr>
                             ))

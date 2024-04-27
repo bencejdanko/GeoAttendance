@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import Footer from '../footer/Footer';
 import Header from '../header/Header';
+import query from '../../lib/query';
 
 const ContactUs = () => {
+
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [message, setMessage] = useState('')
+    const [status, setStatus] = useState('')
+
+    const handleSaveFeedback = async () => {
+        let response = await query.submitFeedback({ name, email, message })
+
+        if (response instanceof Error) {
+            console.log('Error', response)
+            setStatus(response.message)
+            return
+        }
+
+        setStatus('Feedback submitted successfully')
+    }
+
     return (
         <div className="flex flex-col h-screen">
             <Header />
@@ -17,23 +36,35 @@ const ContactUs = () => {
                             <div className="p-2 w-1/2">
                                 <div className="relative">
                                     <label for="name" className="leading-7 text-md text-gray-400">Name</label>
-                                    <input type="text" id="name" name="name" className="mt-5 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                    <input 
+                                    value = {name}
+                                    onChange = {(e) => setName(e.target.value)}
+                                    type="text" id="name" name="name" className="mt-5 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                                 </div>
                             </div>
                             <div className="p-2 w-1/2">
                                 <div className="relative">
                                     <label for="email" className="leading-7 text-md text-gray-400">Email</label>
-                                    <input type="email" id="email" name="email" className="mt-5 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                    <input 
+                                    value = {email}
+                                    onChange = {(e) => setEmail(e.target.value)}
+                                    type="email" id="email" name="email" className="mt-5 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                                 </div>
                             </div>
                             <div className="p-2 w-full">
                                 <div className="relative">
                                     <label for="message" className="leading-7 text-md text-gray-400">Message</label>
-                                    <textarea id="message" name="message" className="mt-5 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 h-32 text-base outline-none text-gray-100 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
+                                    <textarea 
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    id="message" name="message" className="mt-5 w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:bg-gray-900 focus:ring-2 focus:ring-blue-900 h-32 text-base outline-none text-gray-100 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
                                 </div>
                             </div>
                             <div className="p-2 mt-5 w-full">
-                                <button className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg">Send message</button>
+                                <button 
+                                onClick={handleSaveFeedback}
+                                className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg">Send message</button>
+                                 {status && <p className="text-center text-white mt-5">{status}</p>}
                             </div>
                         </div>
                     </div>
