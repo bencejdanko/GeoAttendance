@@ -38,7 +38,7 @@ const GroupHistoryDetail = (props) => {
             <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-5 flex-col items-center ">
                 <div className="flex items-center mb-3">
                     <h2 className="text-white text-lg title-font font-medium w-full p-2">{props.group.name}</h2>
-                    <button onClick={() => query.removeGroup(props.group.id)}><img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} /></button>
+                    <button onClick={() => query.deleteGroup(props.group.id)}><img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} /></button>
                 </div>
 
                 <div className="flex flex-grow p-3">
