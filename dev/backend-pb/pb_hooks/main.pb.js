@@ -121,6 +121,14 @@ routerAdd("GET", "/groups/:group_id", (c) => {
 
 }, $apis.activityLogger($app))
 
+onModelBeforeCreate(e => {
+    let start_time = e.model.get("start_time")
+    let end_time = e.model.get("end_time")
+    if (start_time > end_time) {
+        throw new Error("Start time must be before end time")
+    }
+}, "events")
+
 onModelAfterUpdate((e) => {
     let registered_attendees = e.model.get("registered_attendees")
     let old_registered_attendees = e.model.originalCopy().get("registered_attendees")
