@@ -183,12 +183,12 @@ export default {
 
     },
 
-    checkout: async (data) => {
+    checkout: async ({latitude, longitude, code}) => {
 
         let events_pb = []
         try {
             events_pb = await pb.collection('events').getFullList({
-                filter: `checkout_code='${data.code}'`
+                filter: `checkout_code='${code}'`
             })
         } catch (e) { }
 
@@ -199,13 +199,13 @@ export default {
         let event = events_pb[0]
         console.log(event.id)
 
-        console.log("User lat: " + data.latitude)
-        console.log("User lon: " + data.longitude)
+        console.log("User lat: " + latitude)
+        console.log("User lon: " + longitude)
         console.log("event lat: " + event.latitude)
         console.log("Event long: " + event.longitude)
 
         const isAccepted = geolib.isPointWithinRadius(
-            { latitude: Number(data.latitude), longitude: Number(data.longitude) },
+            { latitude: Number(latitude), longitude: Number(longitude) },
             { latitude: Number(event.latitude), longitude: Number(event.longitude) },
             Number(event.radius)
         );

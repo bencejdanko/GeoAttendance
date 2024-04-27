@@ -74,10 +74,11 @@ routerAdd("GET", "/groups/:group_id", (c) => {
     let events = arrayOf(new DynamicModel({
         "registered_attendees": [],
         "checked_in_attendees": [],
+        "checked_out_attendees": [],
     }))
 
     $app.dao().db()
-        .newQuery(`SELECT registered_attendees, checked_in_attendees FROM events WHERE group_id = '${group.id}'`)
+        .newQuery(`SELECT registered_attendees, checked_in_attendees, checked_out_attendees FROM events WHERE group_id = '${group.id}'`)
         .all(events)
 
     /**
@@ -89,7 +90,8 @@ routerAdd("GET", "/groups/:group_id", (c) => {
         let member = $app.dao().findRecordById("users", member_id)
 
         let total_registered = 0
-        let total_attended = 0
+        let total_check_in = 0
+        let total_check_out = 0
 
         for (let event of events) {
             let registered_attendees = event.registered_attendees || []
@@ -102,16 +104,23 @@ routerAdd("GET", "/groups/:group_id", (c) => {
             let checked_in_attendees = event.checked_in_attendees || []
             for (let attendee_id of checked_in_attendees) {
                 if (attendee_id === member_id) {
-                    total_attended += 1
+                    total_check_in += 1
+                }
+            }
+
+            let checked_out_attendees = event.checked_out_attendees || []
+            for (let attendee_id of checked_out_attendees) {
+                if (attendee_id === member_id) {
+                    total_check_out += 1
                 }
             }
         }
 
         member_data.push({
             "member_name": member.get("first_name") + " " + member.get("last_name"),
-            "checked_in": total_attended,
-            "checked_out": null,
-            "absent": total_registered - total_attended,
+            "checked_in": total_check_in,
+            "checked_out": total_check_out,
+            "absent": total_registered - total_check_out,
         })
     }
 
