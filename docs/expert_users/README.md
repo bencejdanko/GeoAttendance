@@ -15,72 +15,26 @@ Start the server with `sudo service postgresql start`
 
 For API testing
 
+### Deployment details
+
+The full deployment can be tested at at geoattendance.32kb.dev.
+
 ## Frontend Instructions
 
 1. Open the terminal and clone the repository: `git clone https://github.com/bencejdanko/GeoAttendance/`
 2. Navigate to GeoAttendance/dev/frontend
-3. Create a new .env file, and add a Google Maps API Key:
-    - Follow instructions at https://developers.google.com/maps/documentation/javascript/get-api-key
-    - Or, contact the developers for a key
-4. Install NodeJS NPM packages: `npm i`
-5. Start the server: `npm start`
-6. The website should now be displayed at the url: `http://localhost:3000`
+3. Install NodeJS NPM packages: `npm i`
+4. Start the server: `npm start`
+5. The website should now be displayed at the url: `http://localhost:3000`
 
 ## Backend testing
 1. Clone the repository `git clone https://github.com/bencejdanko/GeoAttendance/`
-2. Navigate to `cd dev/backend-pb`
-3. Download a pocketbase binary from https://github.com/pocketbase/pocketbase/releases, and you should see a `pocketbase` binary file
-4. Add `REACT_APP_PB_URL=http://127.0.0.1:8090` to the enviroment variables in `dev/frontend/.env`
-5. In `dev/backend-pb`, give permissions to the startup script, `chmod +x run.sh`
-6. Run with `./run.sh --clear`
-
-## Backend testing (Deprecated)
-1. Clone the repository `git clone https://github.com/bencejdanko/GeoAttendance/`
-2. Setup a Postgres Database and Superuser with a password
-
-Login as postgres
-    
-`sudo -u postgres -i`
-
-Create a database (Remember the name):
-
-`createdb mydatabase`
-
-Use and enter the database:
-
-`psql mydatabase`
-
- You should now see a #= prompt to indicate you are interacting with the database.
-
-Create a user:
-    
-`CREATE USER admin WITH PASSWORD 'password';`
-
-Give the user Superuser privileges:
-
-`ALTER USER admin WITH SUPERUSER;`
-
-Exit database prompt:
-
-`\q`
-
-Logout of postgres account:
-
-`exit`
-
-3. Update backend enviroment variables
-
-Create a new `.env` file in `/dev/backend` with PostgreSQL enviroment information:
-
-```
-PGUSER=            #The user we created
-PGPASSWORD=        #the password created
-PGDATABASE=        #the database name
-PGPORT=5432        #this is the default unless it is explicitly changed
-PGHOST=localhost    
-PORT=3001           #the port you would like the API server to run on
-
-JWT_SECRET_KEY=ga_secret_key #When user logs in, they recieve a key
-```
-
-4. Navigate to `GeoAttendance/dev/backend` and start the API server with `npm start`
+2. Add `REACT_APP_PB_URL=http://127.0.0.1:8090` as an enviroment variables in a new file in `dev/frontend/.env`.
+3. Add necessary enviroment variables to your pachine $PATH:
+    - Follow instructions at https://developers.google.com/maps/documentation/javascript/get-api-key
+    - Or, contact the developers for a key
+    - Add under `GEOCODER_API_KEY=`
+4. Navigate to `cd dev/backend-pb`
+5. Download a pocketbase binary from https://github.com/pocketbase/pocketbase/releases, and you should see a `pocketbase` binary file. Make sure this is located in `dev/backend-pb`
+6. Run the binary with `./pocketbase serve`
+7. The backend should now be interactable with the frontend. 
