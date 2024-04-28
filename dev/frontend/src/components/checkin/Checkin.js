@@ -71,7 +71,7 @@ const Checkin = () => {
     const handleGetCurrentLocation = () => {
         const options = {
             enableHighAccuracy: true,
-            timeout: 5000,
+            // timeout: 5000,
             maximumAge: 0,
         };
         if (navigator.geolocation) {
