@@ -34,6 +34,8 @@ The full deployment can be tested at at geoattendance.32kb.dev.
     - Follow instructions at https://developers.google.com/maps/documentation/javascript/get-api-key
     - Or, contact the developers for a key
     - Add under `GEOCODER_API_KEY=`
+    - Add a random pass under `GEOPB_ADMIN_PASSWORD=`
+    - Add a random username under `GEOPB_ADMIN_EMAIL=`
 4. Navigate to `cd dev/backend-pb`
 5. Download a pocketbase binary from https://github.com/pocketbase/pocketbase/releases, and you should see a `pocketbase` binary file. Make sure this is located in `dev/backend-pb`
 6. Run the binary with `./pocketbase serve`
