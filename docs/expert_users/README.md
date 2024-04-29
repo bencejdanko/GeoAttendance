@@ -5,15 +5,10 @@
 
 Download a binary at `https://nodejs.org/en/download`, and add the /bin/ folder to user PATH
 
-#### PostgreSQL server
 #### Linux   
 Linux machines can install via apt: `sudo apt update && sudo apt install postgresql`
 
 Start the server with `sudo service postgresql start`
-
-#### Postman
-
-For API testing
 
 ### Deployment details
 
