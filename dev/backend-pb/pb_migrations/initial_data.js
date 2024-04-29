@@ -71,7 +71,7 @@ migrate((db) => {
     record = new Record(collection)
 
     let start = new Date('2024-01-01T01:00:00');
-    let end = new Date('2025-01-01T01:00:00');
+    let end = new Date('2055-01-01T01:00:00');
 
     let event1 = new Record(collection)
     event1.set("id", "event1")
@@ -79,8 +79,8 @@ migrate((db) => {
     event1.set("host", 3)
     event1.set("start_time", start.toISOString())
     event1.set("end_time", end.toISOString())
-    event1.set("latitude", "-121.8821451")
-    event1.set("longitude", "37.3323527")
+    event1.set("latitude", "0")
+    event1.set("longitude", "0")
     event1.set("radius", 50)
     event1.set("capacity", 50)
     event1.set("checkin_code", "testing")
