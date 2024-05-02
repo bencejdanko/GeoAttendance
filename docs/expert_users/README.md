@@ -34,4 +34,10 @@ The full deployment can be tested at at geoattendance.32kb.dev.
 4. Navigate to `cd dev/backend-pb`
 5. Download a pocketbase binary from https://github.com/pocketbase/pocketbase/releases, and you should see a `pocketbase` binary file. Make sure this is located in `dev/backend-pb`
 6. Run the binary with `./pocketbase serve`
-7. The backend should now be interactable with the frontend. 
+7. The backend should now be interactable with the frontend.
+8. Enable emails
+    - navigate to the Pocketbase interface (default http://127.0.0.1:8090/_)
+    - Enter in Admin credentials (`GEOPB_ADMIN_PASSWORD=` and `GEOPB_ADMIN_EMAIL=`)
+    - Navigate to `Settings` on the left side
+    - Navigate to `Mail settings`
+    - Enter in your SMTP email server information (If credentials needed from developers, please contact us)
