@@ -22,8 +22,13 @@ const Event = (props) => {
         // getEvents()
     }, [])
 
-    const handleDeleteEvent = () => {
-
+    const handleDeleteEvent = async () => {
+        const response = await query.deleteEvent(event.id);
+        if (response instanceof Error) {
+            console.log(response);
+            return;
+        }
+        window.location.reload();
     }
 
     return (
