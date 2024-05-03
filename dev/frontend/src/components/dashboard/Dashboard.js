@@ -32,7 +32,8 @@ const Dashboard = (props) => {
     const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
-    const { user } = useAuth();
+    // const { user } = useAuth();
+    const user = JSON.parse(localStorage.getItem("pocketbase_auth")).model
 
 
     useEffect(() => {

@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 const Login = () => {
     const navigate = useNavigate();
     const [authLoginError, setAuthLoginError] = useState(null);
-    const { login } = useAuth();
+    // const { login } = useAuth();
     const { register, handleSubmit } = useForm();
 
     const handleLogin = async (data) => {
@@ -20,7 +20,7 @@ const Login = () => {
             setAuthLoginError(authData.message);
             return;
         }
-        login(authData.record);
+        // login(authData.record);
         navigate('/profile');
     }
     return (

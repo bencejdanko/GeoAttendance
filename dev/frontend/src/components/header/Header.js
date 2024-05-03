@@ -4,7 +4,9 @@ import { useAuth } from "../auth/AuthProvider";
 import { Link } from 'react-router-dom'
 
 const Header = () => {
-    const { user, logout } = useAuth();
+    // const { user, logout } = useAuth();
+    const { logout } = useAuth();
+    const user = JSON.parse(localStorage.getItem("pocketbase_auth"))?.model ? JSON.parse(localStorage.getItem("pocketbase_auth")).model : null
 
     return (
         <header className="text-gray-400 bg-gray-900 body-font">

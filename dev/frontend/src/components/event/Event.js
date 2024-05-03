@@ -9,7 +9,8 @@ const Event = (props) => {
     // const events = props.events;
     const event = props.events[props.index];
     const [events, setEvents] = useState([]);
-    const { user } = useAuth();
+    // const { user } = useAuth();
+    const user = JSON.parse(localStorage.getItem("pocketbase_auth")).model
 
     useEffect(() => {
         const getEvents = async () => {
