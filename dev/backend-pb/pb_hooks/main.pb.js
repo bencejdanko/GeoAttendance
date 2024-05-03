@@ -162,8 +162,11 @@ onModelAfterUpdate((e) => {
             subject: "GeoAttendance - You've been added to an event.",
             html: `<p>You've been added to the ${event_name} event at GeoAttendance.</p>`
         })
-
-        $app.newMailClient().send(message)
+        try {
+            $app.newMailClient().send(message)
+        } catch (e) {
+            console.error(e)
+        }
     }
 }, "events")
 
