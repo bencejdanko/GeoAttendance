@@ -44,7 +44,7 @@ const Checkin = () => {
                     setCheckInError(checkInData.message);
                 } else {
                     await query.saveCheckinTime(checkInData, user.id, new Date().toISOString());
-                    setCheckInSuccess("Successfully checked-in/checked-out.");
+                    setCheckInSuccess("Successfully checked-in.");
                 }
             }
 
@@ -59,7 +59,7 @@ const Checkin = () => {
                     setCheckInError(checkOutData.message);
                 } else {
                     await query.saveCheckoutTime(checkOutData, user.id, new Date().toISOString());
-                    setCheckInSuccess("Successfully checked-in/checked-out.");
+                    setCheckInSuccess("Successfully checked-out.");
                 }
             }
 
