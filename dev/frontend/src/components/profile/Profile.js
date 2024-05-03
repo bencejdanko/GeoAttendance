@@ -15,8 +15,9 @@ const Profile = () => {
     // const [totalAttendance, setTotalAttendance] = useState(0);
     // const [totalCheckIn, setTotalCheckIn] = useState(0);
     // const [totalAbsent, setTotalAbsent] = useState(0);
-    const { user } = useAuth();
+    // const { user } = useAuth();
     const [attedanceRate, setAttendanceRate] = useState(null);
+    const user = JSON.parse(localStorage.getItem("pocketbase_auth")).model
 
     /*
       useEffect(() => {

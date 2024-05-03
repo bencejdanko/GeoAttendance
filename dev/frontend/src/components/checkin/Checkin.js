@@ -14,7 +14,8 @@ const Checkin = () => {
         lat: "",
         lng: ""
     });
-    const {user} = useAuth();
+    // const {user} = useAuth();
+    const user = JSON.parse(localStorage.getItem("pocketbase_auth")).model
     
     const reset = () => {
         setEventCode("");
