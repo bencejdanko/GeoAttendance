@@ -1,15 +1,14 @@
 import React from "react";
 import logo from '../../../src/icons/logoIcon.svg'
-import { useAuth } from "../auth/AuthProvider";
 import { Link } from 'react-router-dom'
+import pb from "../../lib/pocketbase.js";
 
 const Header = () => {
-    // const { user, logout } = useAuth();
-    const { logout } = useAuth();
     const user = JSON.parse(localStorage.getItem("pocketbase_auth"))?.model ? JSON.parse(localStorage.getItem("pocketbase_auth")).model : null
 
-    if (user === null) {
-        logout();
+    const logout = () => {
+        pb.authStore.clear();
+        localStorage.clear();
     }
     return (
         <header className="text-gray-400 bg-gray-900 body-font">
