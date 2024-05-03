@@ -300,8 +300,8 @@ const Dashboard = (props) => {
                         }
                         {
                             (groupOptionSelected === "none"
-                            || groupOptionSelected === ""
-                            || groupOptionSelected === "new_group")
+                                || groupOptionSelected === ""
+                                || groupOptionSelected === "new_group")
                             && (
                                 <div className="relative mb-4">
                                     <label for="capacity" className="leading-7 text-lg text-gray-400">Capacity</label>
@@ -355,27 +355,32 @@ const Dashboard = (props) => {
                         {successMessage && <p className="text-xs text-green-600 text-opacity-90 mt-3">{successMessage}</p>}
                     </div>
                 </div>
-                <div className="lg:w-5/6 w-full mx-auto overflow-auto">
-                    <table className="table-auto w-full text-left whitespace-no-wrap">
-                        <thead>
-                            <tr>
-                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800 rounded-tl rounded-bl">Event Name</th>
-                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Checkin Code</th>
-                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Checkout Code</th>
-                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Capacity</th>
-                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Group Name</th>
-                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                events.map((event, idx) => (
-                                    <Event events={events} key={event.id} index={idx} name={groupOptionSelected} />
-                                ))
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                {
+                    events.length > 0 && (
+                        <div className="lg:w-5/6 w-full mx-auto overflow-auto">
+                            <table className="table-auto w-full text-left whitespace-no-wrap">
+                                <thead>
+                                    <tr>
+                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800 rounded-tl rounded-bl">Event Name</th>
+                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Checkin Code</th>
+                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Checkout Code</th>
+                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Capacity</th>
+                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Group Name</th>
+                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        events.map((event, idx) => (
+                                            <Event events={events} key={event.id} index={idx} name={groupOptionSelected} />
+                                        ))
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    )
+                }
+
             </section>
             <Footer />
         </div>

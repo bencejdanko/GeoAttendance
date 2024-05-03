@@ -13,25 +13,36 @@ const AttendanceHistory = (props) => {
                     </div>
                     <h1 className="text-white text-2xl title-font font-medium w-full">Attendance History</h1>
                 </div>
-                <div className="flex flex-wrap -m-4  mt-4">
-                    {
-                        props.attendanceHistory.total_absent.map(detail => (
-                            <AttendanceHistoryDetail detail={detail} key={detail.id} absent={true} />
-                        ))
-                    }
-                    {
-                        props.attendanceHistory.total_check_ins.map(detail => {
-                            const e = props.attendanceHistory.total_check_outs.filter(e => e.id === detail.id);
-                            if (e.length > 0) {
-                                return <AttendanceHistoryDetail detail={detail} key={detail.id} checkin={true} />
-                            } else {
-                                return <AttendanceHistoryDetail detail={detail} key={detail.id} absent={true} />                                
+                {
+                    props.attendanceHistory.total_events.length > 0 && (
+                        <div className="flex flex-wrap -m-4  mt-4">
+                            {
+                                props.attendanceHistory.total_absent.map(detail => (
+                                    <AttendanceHistoryDetail detail={detail} key={detail.id} absent={true} />
+                                ))
                             }
+                            {
+                                props.attendanceHistory.total_check_ins.map(detail => {
+                                    const e = props.attendanceHistory.total_check_outs.filter(e => e.id === detail.id);
+                                    if (e.length > 0) {
+                                        return <AttendanceHistoryDetail detail={detail} key={detail.id} checkin={true} />
+                                    } else {
+                                        return <AttendanceHistoryDetail detail={detail} key={detail.id} absent={true} />
+                                    }
 
-                        }
-                        )
-                    }
-                </div>
+                                }
+                                )
+                            }
+                        </div>
+                    )
+                }
+                {
+                    props.attendanceHistory.total_events.length === 0 && (
+                        <div className="flex flex-col text-center w-full">
+                            <p className="lg:w-full mx-auto leading-relaxed text-lg">No attendance associated with this user.</p>
+                        </div>
+                    )
+                }
             </div>
         </section>
     )

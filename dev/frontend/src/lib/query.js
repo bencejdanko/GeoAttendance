@@ -338,7 +338,7 @@ export default {
     getAttendeeAttendance: async (attendeeId) => {
         try {
             let events = await pb.collection('events').getFullList({
-                filter: 'registered_attendees~' + attendeeId,
+                filter: `registered_attendees~'${attendeeId}'`,
             })
 
             let total_events = events;

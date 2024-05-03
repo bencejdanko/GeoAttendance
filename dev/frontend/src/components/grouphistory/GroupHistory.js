@@ -29,22 +29,34 @@ const GroupHistory = () => {
                     </div>
                     <h1 className="text-white text-2xl title-font font-medium w-full">Groups</h1>
                 </div>
-                <div className="flex flex-wrap -m-4  mt-4">
-                    {
-                        // props.attendanceHistory.total_absent.map(detail => (
-                        //     <AttendanceHistoryDetail detail={detail} key={detail.id} absent={true} />
-                        // ))
-                        groups.map(group => (
-                            <GroupHistoryDetail group={group} />
-                        ))
-                    }
-                    {
-                        // props.attendanceHistory.total_check_ins.map(detail => (
-                        //     <AttendanceHistoryDetail detail={detail} key={detail.id} checkin={true}/>
-                        // ))
-                    }
-                </div>
+                {
+                    groups.length > 0 && (
+                        <div className="flex flex-wrap -m-4  mt-4">
+                            {
+                                // props.attendanceHistory.total_absent.map(detail => (
+                                //     <AttendanceHistoryDetail detail={detail} key={detail.id} absent={true} />
+                                // ))
+                                groups.map(group => (
+                                    <GroupHistoryDetail group={group} />
+                                ))
+                            }
+                            {
+                                // props.attendanceHistory.total_check_ins.map(detail => (
+                                //     <AttendanceHistoryDetail detail={detail} key={detail.id} checkin={true}/>
+                                // ))
+                            }
+                        </div>
+                    )
+                }
+                {
+                    groups.length === 0 && (
+                        <div className="flex flex-col text-center w-full">
+                            <p className="lg:w-full mx-auto leading-relaxed text-lg">No group associated with this user.</p>
+                        </div>
+                    )
+                }
             </div>
+
         </section>
     )
 }
