@@ -8,6 +8,9 @@ const Header = () => {
     const { logout } = useAuth();
     const user = JSON.parse(localStorage.getItem("pocketbase_auth"))?.model ? JSON.parse(localStorage.getItem("pocketbase_auth")).model : null
 
+    if (user === null) {
+        logout();
+    }
     return (
         <header className="text-gray-400 bg-gray-900 body-font">
             <div className="px-8 py-10 flex flex-wrap p-5 flex-col md:flex-row items-center">

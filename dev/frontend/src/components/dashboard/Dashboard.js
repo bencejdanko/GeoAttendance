@@ -35,7 +35,6 @@ const Dashboard = (props) => {
     // const { user } = useAuth();
     const user = JSON.parse(localStorage.getItem("pocketbase_auth")).model
 
-
     useEffect(() => {
         const getEvents = async () => {
             const events = await query.getEvents(user.id);

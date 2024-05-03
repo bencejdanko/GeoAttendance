@@ -9,48 +9,68 @@ import { Fragment } from 'react'
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import query from "../../lib/query";
+import { useParams } from 'react-router-dom';
 
 const EventDetails = () => {
     const fileInputRef = useRef();
-    const location = useLocation();
-    const { events, index } = location.state;
-    console.log(events[index].checked_in_attendees)
+    // const location = useLocation();
+    // const { events, index } = location.state;
+    const [event, setEvent] = useState({})
     // if event associted to a group, use group's registered attendees
     // if not, use event's registered attendees
     const [attendees, setAttendees] = useState(
-        events[index].expand?.group_id?.expand?.registered_attendees
-            ? events[index].expand.group_id.expand.registered_attendees
-            : (events[index].expand?.registered_attendees
-                ? events[index].expand.registered_attendees : [])
-    );
+        // event.expand?.group_id?.expand?.registered_attendees
+        //     ? event.expand.group_id.expand.registered_attendees
+        //     : (event.expand?.registered_attendees
+        //         ? event.expand.registered_attendees : 
+        [])
+    // );
     const [isOpen, setIsOpen] = useState(-1);
+    const { id } = useParams();
 
     useEffect(() => {
-        const updatedAttendees = attendees.map(attendee => ({
-            ...attendee,
-            check_in: events[index].checked_in_attendees.includes(attendee.id),
-            check_out: events[index].checked_out_attendees.includes(attendee.id)
-        }))
-        console.log(updatedAttendees)
-        setAttendees(updatedAttendees)
+        const fetchEvent = async () => {
+            const response = await query.getEvent(id);
+            console.log(response[0])
+            const tempAttendees = response[0].expand?.group_id?.expand?.registered_attendees
+                ? response[0].expand.group_id.expand.registered_attendees
+                : (response[0].expand?.registered_attendees
+                    ? response[0].expand.registered_attendees :
+                    []);
+            const updatedAttendees = tempAttendees.map(attendee => ({
+                ...attendee,
+                check_in: response[0].checked_in_attendees.includes(attendee.id),
+                check_out: response[0].checked_out_attendees.includes(attendee.id)
+            }))
+            console.log(updatedAttendees)
+            setAttendees(updatedAttendees)
 
-        if (events[index].group_id !== ""
-            && events[index].expand.group_id.expand
-            && events[index].expand.group_id.expand.registered_attendees !== []
-            && events[index].registered_attendees.length === 0) {
-            const attendeeIds = [];
-            events[index].expand.group_id.expand.registered_attendees.forEach(data => {
-                attendeeIds.push(data.id)
-            })
-            const updateResponse = async () => {
-                await query.updateEvent(events[index].id, {
-                    ...events[index],
-                    registered_attendees: attendeeIds
-                });
+            // if (response[0].group_id !== ""
+            //     && response[0].expand.group_id.expand
+            //     && response[0].expand.group_id.expand.registered_attendees !== []
+            //     && response[0].registered_attendees.length === 0) {
+            //     const attendeeIds = [];
+            //     response[0].expand.group_id.expand.registered_attendees.forEach(data => {
+            //         attendeeIds.push(data.id)
+            //     })
+            //     const updateResponse = async () => {
+            //         await query.updateEvent(event.id, {
+            //             ...event,
+            //             registered_attendees: attendeeIds
+            //         });
+            //     }
+            //     updateResponse()
+            // }
+            // Check if event has changed before updating
+            if (JSON.stringify(response[0]) !== JSON.stringify(event)) {
+                setEvent(response[0]);
             }
-            updateResponse()
+            // setEvent(response[0])
+
         }
-    }, [])
+
+        fetchEvent()
+    }, [event.registered_attendees])
 
     const closeModal = () => {
         setIsOpen(-1);
@@ -65,22 +85,23 @@ const EventDetails = () => {
         closeModal();
         const updatedAttendees = attendees.filter(attendee => attendee.id !== deletedUserId);
         setAttendees(updatedAttendees);
-        if (events[index].group_id !== "") {
-
-        } else { // does not have group
-            const tempCheckinArr = events[index].checked_in_attendees;
-            tempCheckinArr.pop(deletedUserId);
-            const tempCheckoutArr = events[index].checked_out_attendees;
-            tempCheckoutArr.pop(deletedUserId);
-            const tempRegisteredArr = events[index].registered_attendees;
-            tempRegisteredArr.pop(deletedUserId);
-            await query.updateEvent(events[index].id, {
-                ...events[index],
-                checked_in_attendees: tempCheckinArr,
-                checked_out_attendees: tempCheckoutArr,
-                registered_attendees: tempRegisteredArr
-            });
+        if (event.group_id !== "") {
+            await query.removeGroupMember(event.group_id, deletedUserId)
         }
+        // else { // does not have group
+        const tempCheckinArr = event.checked_in_attendees.filter(e => e != deletedUserId);
+        // tempCheckinArr.pop(deletedUserId);
+        const tempCheckoutArr = event.checked_out_attendees.filter(e => e != deletedUserId);
+        // tempCheckoutArr.pop(deletedUserId);
+        const tempRegisteredArr = event.registered_attendees.filter(e => e != deletedUserId);
+        // tempRegisteredArr.pop(deletedUserId);
+        await query.updateEvent(event.id, {
+            ...event,
+            checked_in_attendees: tempCheckinArr,
+            checked_out_attendees: tempCheckoutArr,
+            registered_attendees: tempRegisteredArr
+        });
+        // }
 
     }
 
@@ -89,20 +110,20 @@ const EventDetails = () => {
             const updatedAttendees = [...attendees];
             updatedAttendees[idx].check_in = 1;
             setAttendees(updatedAttendees);
-            const tempArr = events[index].checked_in_attendees;
+            const tempArr = event.checked_in_attendees;
             tempArr.push(updatedAttendees[idx].id);
-            await query.updateEvent(events[index].id, {
-                ...events[index],
+            await query.updateEvent(event.id, {
+                ...event,
                 checked_in_attendees: tempArr
             });
         } else {
             const updatedAttendees = [...attendees];
             updatedAttendees[idx].check_out = 1;
             setAttendees(updatedAttendees);
-            const tempArr = events[index].checked_out_attendees;
+            const tempArr = event.checked_out_attendees;
             tempArr.push(updatedAttendees[idx].id);
-            await query.updateEvent(events[index].id, {
-                ...events[index],
+            await query.updateEvent(event.id, {
+                ...event,
                 checked_out_attendees: tempArr
             });
         }
@@ -128,13 +149,13 @@ const EventDetails = () => {
                 }));
 
                 console.log(updatedParseData);
-                console.log(events[index])
+                console.log(event)
                 const attendeeIds = [];
                 updatedParseData.forEach(data => {
                     attendeeIds.push(data.No)
                 })
-                const response = await query.updateEvent(events[index].id, {
-                    ...events[index],
+                const response = await query.updateEvent(event.id, {
+                    ...event,
                     registered_attendees: attendeeIds
                 });
 
@@ -145,8 +166,8 @@ const EventDetails = () => {
                     return;
                 }
 
-                const eventResponse = await query.getEvent(events[index].id);
-
+                const eventResponse = await query.getEvent(event.id);
+                setEvent(eventResponse);
                 if (eventResponse instanceof Error) {
                     return;
                 }
@@ -154,20 +175,20 @@ const EventDetails = () => {
                 const updatedAttendees = eventResponse[0].expand.registered_attendees.map(attendee => ({
                     ...attendee,
                     check_in: response.checked_in_attendees.includes(attendee.id),
-                    check_out: events[index].checked_out_attendees.includes(attendee.id)
+                    check_out: event.checked_out_attendees.includes(attendee.id)
                 }))
                 console.log(updatedAttendees)
                 setAttendees(updatedAttendees)
 
                 // update group api
-                if (events[index].group_id !== "") {
+                if (event.group_id !== "") {
                     const newGroupData = {
-                        "event_id": events[index].expand.group_id.event_id,
-                        "host": events[index].expand.group_id.host,
-                        "name": events[index].expand.group_id.name,
+                        "event_id": event.expand.group_id.event_id,
+                        "host": event.expand.group_id.host,
+                        "name": event.expand.group_id.name,
                         "registered_attendees": attendeeIds
                     };
-                    const tempGroup = await query.updateGroup(events[index].group_id, newGroupData);
+                    const tempGroup = await query.updateGroup(event.group_id, newGroupData);
                     // handle error 
                     if (tempGroup instanceof Error) {
                         return;
@@ -184,7 +205,7 @@ const EventDetails = () => {
 
                 <div className="container px-5 py-10 mx-auto">
                     <div className="flex flex-col text-center w-full mb-10">
-                        <h1 className="sm:text-4xl text-3xl font-medium title-font mb-2 text-white">Event {events[index].name}</h1>
+                        <h1 className="sm:text-4xl text-3xl font-medium title-font mb-2 text-white">Event {event.name}</h1>
                         <div className="flex pl-4 mt-4 lg:w-full w-full mx-auto">
                             <button className="flex ml-auto text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded" onClick={() => fileInputRef.current.click()}>Add Attendees</button>
                             <input onChange={handleFileUpload} accept=".xlsx, .xls" multiple={false} ref={fileInputRef} type='file' hidden />
