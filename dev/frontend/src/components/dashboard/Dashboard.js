@@ -59,6 +59,11 @@ const Dashboard = (props) => {
         getGroups()
     }, [user.id])
 
+    const updateEvent = (eventId) => {
+        const updatedEvents = events.filter(e => e.id !== eventId);
+        setEvents(updatedEvents);
+    }
+
     const handleSaveEvent = async () => {
 
         let start = new Date(startTime);
@@ -373,7 +378,7 @@ const Dashboard = (props) => {
                                 <tbody>
                                     {
                                         events.map((event, idx) => (
-                                            <Event events={events} key={event.id} index={idx} name={groupOptionSelected} />
+                                            <Event events={events} key={event.id} index={idx} name={groupOptionSelected} deleteEvent={updateEvent} />
                                         ))
                                     }
                                 </tbody>
