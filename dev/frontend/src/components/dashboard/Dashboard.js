@@ -51,12 +51,6 @@ const Dashboard = (props) => {
             error => console.log(error)
         );
 
-        const getGroups = async () => {
-            const groups = await query.getGroups(user.id);
-            console.log(groups);
-            setGroups(groups);
-        }
-        getGroups()
     }, [user.id])
 
     const handleSaveEvent = async () => {
