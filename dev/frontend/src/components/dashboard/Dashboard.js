@@ -222,6 +222,11 @@ const Dashboard = (props) => {
         console.log(`Latitude: ${latitude}, longitude: ${longitude}`)
     }
 
+    const updateEvent = (eventId) => {
+        const updatedEvents = events.filter(e => e.id !== eventId);
+        setEvents(updatedEvents);
+    }
+
     return (
         <div className="flex flex-col h-screen">
             <Header />
@@ -373,7 +378,7 @@ const Dashboard = (props) => {
                                 <tbody>
                                     {
                                         events.map((event, idx) => (
-                                            <Event events={events} key={event.id} index={idx} name={groupOptionSelected} />
+                                            <Event events={events} key={event.id} index={idx} name={groupOptionSelected} deleteEvent={updateEvent} />
                                         ))
                                     }
                                 </tbody>

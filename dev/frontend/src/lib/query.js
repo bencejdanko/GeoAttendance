@@ -293,20 +293,17 @@ export default {
         }
     },
 
-    deleteEvent: async (id) => {
-        let events;
-
-        try {
-            events = await pb.collection('events').delete(id)
-        } catch (e) {
+    deleteEvent: function(id) {
+        return pb.collection('events').delete(id)
+        .then(events => {
+            if (events.length === 0) {
+                throw new Error("Unable to delete nonexistent event.");
+            }
+            return events;
+        })
+        .catch(e => {
             return [];
-        }
-
-        if (events.length === 0) {
-            return new Error("Unable to delete nonexistent event.");
-        }
-
-        return events;
+        });
     },
 
     getAttendanceRate: async () => {
