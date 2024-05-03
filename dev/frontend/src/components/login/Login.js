@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useAuth } from '../auth/AuthProvider';
 import Footer from '../footer/Footer';
 import Header from '../header/Header';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +9,6 @@ import { useForm } from "react-hook-form";
 const Login = () => {
     const navigate = useNavigate();
     const [authLoginError, setAuthLoginError] = useState(null);
-    // const { login } = useAuth();
     const { register, handleSubmit } = useForm();
 
     const handleLogin = async (data) => {
@@ -20,7 +18,6 @@ const Login = () => {
             setAuthLoginError(authData.message);
             return;
         }
-        // login(authData.record);
         navigate('/profile');
     }
     return (
