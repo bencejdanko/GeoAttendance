@@ -28,7 +28,7 @@ const Dashboard = (props) => {
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     // const { user } = useAuth();
-    const user = JSON.parse(localStorage.getItem("pocketbase_auth"))?.model
+    const user = JSON.parse(localStorage.getItem("pocketbase_auth"))?.model || null
 
     useEffect(() => {
         if (user && user.subscription === 1) {
@@ -385,7 +385,7 @@ const Dashboard = (props) => {
             }
             {
                 !(user && user.subscription === 1) && (
-                    <NoAccess/>
+                    <NoAccess title="Sorry, you don't have access to this page"/>
                 )
             }
             <Footer />

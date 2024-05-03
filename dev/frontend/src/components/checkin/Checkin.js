@@ -14,7 +14,7 @@ const Checkin = () => {
         lat: "",
         lng: ""
     });
-    const user = JSON.parse(localStorage.getItem("pocketbase_auth")).model
+    const user = JSON.parse(localStorage.getItem("pocketbase_auth"))?.model || null
 
     const reset = () => {
         setEventCode("");
@@ -157,7 +157,7 @@ const Checkin = () => {
             }
             {
                 !(user && user.subscription === 0) && (
-                    <NoAccess/>
+                    <NoAccess title="Sorry, you don't have access to this page"/>
                 )
             }
             <Footer />
