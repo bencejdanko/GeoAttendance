@@ -32,6 +32,8 @@ const Signup = () => {
             }
 
             signup(authData.record);
+
+            await query.uploadDefaultAvatar()
             navigate('/profile');
         }
     }

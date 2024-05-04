@@ -3,7 +3,7 @@ import bookIcon from "../../icons/book.png";
 import AttendanceHistoryDetail from "../attendancehistorydetail/AttendanceHistoryDetail";
 
 const AttendanceHistory = (props) => {
-    console.log(props.attendanceHistory)
+    //console.log(props.attendanceHistory)
     return (
         <section className="text-gray-400 bg-gray-900 body-font mt-8">
             <div className="container px-5 bg-gray-800 bg-opacity-40 rounded-lg py-10 mx-auto">

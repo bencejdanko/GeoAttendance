@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import bookIcon from "../../icons/book.png";
 import allIcon from "../../icons/all.png";
 import checkIcon from "../../icons/check.png";
@@ -9,6 +9,7 @@ import { useAuth } from "../auth/AuthProvider";
 import query from "../../lib/query.js";
 import AttendanceHistory from "../attendancehistory/AttdendanceHistory";
 import GroupHistory from "../grouphistory/GroupHistory";
+import pb from "../../lib/pocketbase.js";
 
 const Profile = () => {
 
@@ -17,7 +18,9 @@ const Profile = () => {
     // const [totalAbsent, setTotalAbsent] = useState(0);
     // const { user } = useAuth();
     const [attedanceRate, setAttendanceRate] = useState(null);
+    const [avatar, setAvatar] = useState(pb.files.getUrl(pb.authStore.model, pb.authStore.model.avatar));
     const user = JSON.parse(localStorage.getItem("pocketbase_auth")).model
+    const inputAvatar = useRef(null);
 
     /*
       useEffect(() => {
@@ -44,8 +47,25 @@ const Profile = () => {
             setAttendanceRate(rate);
         }
 
+        if (inputAvatar.current) {
+            const handleFileChange = (event) => {
+                const selectedFile = event.target.files[0];
+                query.uploadAvatar(selectedFile)
+                    .then(() => {
+                        setAvatar(pb.files.getUrl(pb.authStore.model, pb.authStore.model.avatar));
+                    })
+                    .catch(err => {
+                        console.log('error uploading', err);
+                    });
+            };
+    
+            inputAvatar.current.addEventListener('change', handleFileChange);
+        }
+
         getAttendanceRate()
     }, [user.id])
+
+
     return (
         <div className="flex flex-col h-screen">
             <Header />
@@ -59,12 +79,18 @@ const Profile = () => {
                     </div>
                     <div className="flex flex-col sm:flex-row mt-10">
                         <div className="my-auto sm:w-1/5 text-center sm:pr-8 sm:py-8 mr-20 ml-10">
-                            <div className="w-40 h-40 rounded-full inline-flex items-center justify-center bg-gray-800 text-gray-600">
-                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-10 h-10" viewBox="0 0 24 24">
-                                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </div>
+
+                            {
+                                pb.authStore.model.avatar
+                                    ? <img class='rounded-full w-40 h-40' src={avatar} alt="avatar" />
+                                    : <div className="w-40 h-40 rounded-full inline-flex items-center justify-center bg-gray-800 text-gray-600">
+                                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-10 h-10" viewBox="0 0 24 24">
+                                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                    </div>
+                            }
+                            <input ref={inputAvatar} class='mt-4' type="file" id="avatarUpload" name="avatarUpload" accept="image/*" />
                         </div>
                         <div className="">
                             <h1 className="text-white text-2xl title-font font-medium w-full mb-5">{user.first_name} {user.last_name}</h1>

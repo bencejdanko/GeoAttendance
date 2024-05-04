@@ -128,6 +128,35 @@ export default {
         }
     },
 
+    uploadDefaultAvatar: async () => {
+        try {
+            const response = await fetch('Stefan.jpg');
+            const blob = await response.blob();
+            await pb.collection('users').update(pb.authStore.model.id, { avatar: blob });
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
+    uploadAvatar: async (blob) => {
+        try {
+            await pb.collection('users').update(pb.authStore.model.id, { avatar: blob })
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
+    getAvatarURL: async () => {
+        try {
+            const data = await pb.collection('users').getOne(pb.authStore.model.id);
+            let file_name = data.avatar
+            let file_url = `${url}/files/users/${pb.authStore.model.id}/avatar/${file_name}`
+            return file_url;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
     checkin: async (data) => {
 
         let events_pb = []
