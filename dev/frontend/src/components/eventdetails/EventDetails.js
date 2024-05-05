@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useLocation } from 'react-router-dom'
 import * as XLSX from "xlsx";
 import deleteIcon from "../../icons/delete.png";
 import checkIcon from "../../icons/check.png";
@@ -10,6 +9,7 @@ import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import query from "../../lib/query";
 import { useParams } from 'react-router-dom';
+import NoAccess from "../noaccess/NoAccess";
 
 const EventDetails = () => {
     const fileInputRef = useRef();
@@ -27,6 +27,8 @@ const EventDetails = () => {
     // );
     const [isOpen, setIsOpen] = useState(-1);
     const { id } = useParams();
+    const user = JSON.parse(localStorage.getItem("pocketbase_auth"))?.model || null
+
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -89,11 +91,11 @@ const EventDetails = () => {
             await query.removeGroupMember(event.group_id, deletedUserId)
         }
         // else { // does not have group
-        const tempCheckinArr = event.checked_in_attendees.filter(e => e != deletedUserId);
+        const tempCheckinArr = event.checked_in_attendees.filter(e => e !== deletedUserId);
         // tempCheckinArr.pop(deletedUserId);
-        const tempCheckoutArr = event.checked_out_attendees.filter(e => e != deletedUserId);
+        const tempCheckoutArr = event.checked_out_attendees.filter(e => e !== deletedUserId);
         // tempCheckoutArr.pop(deletedUserId);
-        const tempRegisteredArr = event.registered_attendees.filter(e => e != deletedUserId);
+        const tempRegisteredArr = event.registered_attendees.filter(e => e !== deletedUserId);
         // tempRegisteredArr.pop(deletedUserId);
         await query.updateEvent(event.id, {
             ...event,
@@ -201,179 +203,188 @@ const EventDetails = () => {
     return (
         <div className="flex flex-col h-screen">
             <Header />
-            <section className="text-gray-400 bg-gray-900 body-font flex-grow">
+            {
+                user && (
+                    <section className="text-gray-400 bg-gray-900 body-font flex-grow">
 
-                <div className="container px-5 py-10 mx-auto">
-                    <div className="flex flex-col text-center w-full mb-10">
-                        <h1 className="sm:text-4xl text-3xl font-medium title-font mb-2 text-white">Event {event.name}</h1>
-                        <div className="flex pl-4 mt-4 lg:w-full w-full mx-auto">
-                            <button className="flex ml-auto text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded" onClick={() => fileInputRef.current.click()}>Add Attendees</button>
-                            <input onChange={handleFileUpload} accept=".xlsx, .xls" multiple={false} ref={fileInputRef} type='file' hidden />
-                        </div>
-                    </div>
+                        <div className="container px-5 py-10 mx-auto">
+                            <div className="flex flex-col text-center w-full mb-10">
+                                <h1 className="sm:text-4xl text-3xl font-medium title-font mb-2 text-white">Event {event.name}</h1>
+                                <div className="flex pl-4 mt-4 lg:w-full w-full mx-auto">
+                                    <button className="flex ml-auto text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded" onClick={() => fileInputRef.current.click()}>Add Attendees</button>
+                                    <input onChange={handleFileUpload} accept=".xlsx, .xls" multiple={false} ref={fileInputRef} type='file' hidden />
+                                </div>
+                            </div>
 
 
-                    <div className="lg:w-full w-full mx-auto overflow-auto">
-                        <table className="table-auto w-full text-left whitespace-no-wrap">
-                            <thead>
-                                <tr>
-                                    <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800 rounded-tl rounded-bl">Id</th>
-                                    <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800 rounded-tl rounded-bl">First Name</th>
-                                    <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Last Name</th>
-                                    <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Username</th>
-                                    <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Check-in</th>
-                                    <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Check-out</th>
-                                    <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Delete</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    attendees.map((attendee, idx) => (
-                                        <tr key={idx}>
-                                            <td className="px-4 py-3">{attendee.id}</td>
-                                            <td className="px-4 py-3">{attendee.first_name}</td>
-                                            <td className="px-4 py-3">{attendee.last_name}</td>
-                                            <td className="px-4 py-3">{attendee.username}</td>
-                                            {/* <td className="px-4 py-3">{attendee.Email}</td> */}
-                                            {
-                                                !attendee.check_in && (
-                                                    <td className="px-4 py-3">Not Check-in
-                                                        <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
-                                                            <button onClick={() => handleManualCheckIn(idx, "check-in")}>
-                                                                <img className="object-cover object-center rounded" src={blockIcon} alt="checkblockIconIcon" width={20} />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                )
-                                            }
-                                            {
-                                                attendee.check_in && (
-                                                    <td className="px-4 py-3">Checked-in
-                                                        <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
-                                                            <button>
-                                                                <img className="object-cover object-center rounded" src={checkIcon} alt="checkIcon" width={20} />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                )
-                                            }
-                                            {
-                                                !attendee.check_out && (
-                                                    <td className="px-4 py-3">Not Check-out
-                                                        <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
-                                                            <button onClick={() => handleManualCheckIn(idx, "check-out")}>
-                                                                <img className="object-cover object-center rounded" src={blockIcon} alt="checkblockIconIcon" width={20} />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                )
-                                            }
-                                            {
-                                                attendee.check_out && (
-                                                    <td className="px-4 py-3">Checked-out
-                                                        <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
-                                                            <button>
-                                                                <img className="object-cover object-center rounded" src={checkIcon} alt="checkIcon" width={20} />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                )
-                                            }
-                                            <td className="px-4 py-3">
-                                                <button onClick={() => openModal(attendee.id)}>
-                                                    <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={20} />
-                                                </button>
-
-                                            </td>
+                            <div className="lg:w-full w-full mx-auto overflow-auto">
+                                <table className="table-auto w-full text-left whitespace-no-wrap">
+                                    <thead>
+                                        <tr>
+                                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800 rounded-tl rounded-bl">Id</th>
+                                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800 rounded-tl rounded-bl">First Name</th>
+                                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Last Name</th>
+                                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Username</th>
+                                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Check-in</th>
+                                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Check-out</th>
+                                            <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-sm bg-gray-800">Delete</th>
                                         </tr>
-                                    ))
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                    {/* <div className="flex pl-4 mt-4 lg:w-full w-full mx-auto">
-        <a className="text-blue-400 inline-flex items-center md:mb-2 lg:mb-0">Learn More
-            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-4 h-4 ml-2" viewBox="0 0 24 24">
-                <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
-        </a>
-        <button className="flex ml-auto text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded" onClick={() => fileInputRef.current.click()}>Add More</button>
-        <input onChange={handleFileUpload} accept=".xlsx, .xls" multiple={false} ref={fileInputRef} type='file' hidden />
-    </div> */}
-                </div>
-                <Transition appear show={isOpen !== -1} as={Fragment}>
-                    <Dialog as="div" className="relative z-10" onClose={closeModal}>
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                        >
-                            <div className="fixed inset-0 bg-black/25" />
-                        </Transition.Child>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            attendees.map((attendee, idx) => (
+                                                <tr key={idx}>
+                                                    <td className="px-4 py-3">{attendee.id}</td>
+                                                    <td className="px-4 py-3">{attendee.first_name}</td>
+                                                    <td className="px-4 py-3">{attendee.last_name}</td>
+                                                    <td className="px-4 py-3">{attendee.username}</td>
+                                                    {/* <td className="px-4 py-3">{attendee.Email}</td> */}
+                                                    {
+                                                        !attendee.check_in && (
+                                                            <td className="px-4 py-3">Not Check-in
+                                                                <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
+                                                                    <button onClick={() => handleManualCheckIn(idx, "check-in")}>
+                                                                        <img className="object-cover object-center rounded" src={blockIcon} alt="checkblockIconIcon" width={20} />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        )
+                                                    }
+                                                    {
+                                                        attendee.check_in && (
+                                                            <td className="px-4 py-3">Checked-in
+                                                                <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
+                                                                    <button>
+                                                                        <img className="object-cover object-center rounded" src={checkIcon} alt="checkIcon" width={20} />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        )
+                                                    }
+                                                    {
+                                                        !attendee.check_out && (
+                                                            <td className="px-4 py-3">Not Check-out
+                                                                <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
+                                                                    <button onClick={() => handleManualCheckIn(idx, "check-out")}>
+                                                                        <img className="object-cover object-center rounded" src={blockIcon} alt="checkblockIconIcon" width={20} />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        )
+                                                    }
+                                                    {
+                                                        attendee.check_out && (
+                                                            <td className="px-4 py-3">Checked-out
+                                                                <div className="w-8 h-8 ml-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
+                                                                    <button>
+                                                                        <img className="object-cover object-center rounded" src={checkIcon} alt="checkIcon" width={20} />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        )
+                                                    }
+                                                    <td className="px-4 py-3">
+                                                        <button onClick={() => openModal(attendee.id)}>
+                                                            <img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={20} />
+                                                        </button>
 
-                        <div className="fixed inset-0 overflow-y-auto">
-                            <div className="flex min-h-full items-center justify-center p-4 text-center">
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            {/* <div className="flex pl-4 mt-4 lg:w-full w-full mx-auto">
+                <a className="text-blue-400 inline-flex items-center md:mb-2 lg:mb-0">Learn More
+                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-4 h-4 ml-2" viewBox="0 0 24 24">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+                <button className="flex ml-auto text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded" onClick={() => fileInputRef.current.click()}>Add More</button>
+                <input onChange={handleFileUpload} accept=".xlsx, .xls" multiple={false} ref={fileInputRef} type='file' hidden />
+            </div> */}
+                        </div>
+                        <Transition appear show={isOpen !== -1} as={Fragment}>
+                            <Dialog as="div" className="relative z-10" onClose={closeModal}>
                                 <Transition.Child
                                     as={Fragment}
                                     enter="ease-out duration-300"
-                                    enterFrom="opacity-0 scale-95"
-                                    enterTo="opacity-100 scale-100"
+                                    enterFrom="opacity-0"
+                                    enterTo="opacity-100"
                                     leave="ease-in duration-200"
-                                    leaveFrom="opacity-100 scale-100"
-                                    leaveTo="opacity-0 scale-95"
+                                    leaveFrom="opacity-100"
+                                    leaveTo="opacity-0"
                                 >
-                                    <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                        {/* <div className="flex flex-wrap -m-2">
-                            <div className="p-2 w-1/2">
-                                <div className="relative">
-                                    <label for="name" className="leading-7 text-md">Name</label>
-                                    <input type="text" id="name" name="name" className="mt-5 w-full bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                                </div>
-                            </div>
-                            <div className="p-2 w-1/2">
-                                <div className="relative">
-                                    <label for="email" className="leading-7 text-md">Email</label>
-                                    <input type="email" id="email" name="email" className="mt-5 w-full bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                                </div>
-                            </div>
-                        </div> */}
-
-                                        <Dialog.Title
-                                            as="h3"
-                                            className="text-lg font-medium leading-6 text-gray-900">Deactivate account</Dialog.Title>
-                                        <div className="mt-2">
-                                            <p className="text-sm text-gray-500">
-                                                Are you sure you want to deactivate your account? All of your data
-                                                will be permanently removed. This action cannot be undone.
-                                            </p>
-                                        </div>
-                                        <div className="mt-4 text-center">
-                                            <button
-                                                type="button"
-                                                className="inline-flex justify-center rounded-md border border-gray bg-white-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                                onClick={closeModal}
-                                            >
-                                                Cancel
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="ml-2 inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                                onClick={handleDeactivate}
-                                            >
-                                                Deactivate
-                                            </button>
-                                        </div>
-                                    </Dialog.Panel>
+                                    <div className="fixed inset-0 bg-black/25" />
                                 </Transition.Child>
-                            </div>
-                        </div>
-                    </Dialog>
-                </Transition>
-            </section>
+
+                                <div className="fixed inset-0 overflow-y-auto">
+                                    <div className="flex min-h-full items-center justify-center p-4 text-center">
+                                        <Transition.Child
+                                            as={Fragment}
+                                            enter="ease-out duration-300"
+                                            enterFrom="opacity-0 scale-95"
+                                            enterTo="opacity-100 scale-100"
+                                            leave="ease-in duration-200"
+                                            leaveFrom="opacity-100 scale-100"
+                                            leaveTo="opacity-0 scale-95"
+                                        >
+                                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                                {/* <div className="flex flex-wrap -m-2">
+                                    <div className="p-2 w-1/2">
+                                        <div className="relative">
+                                            <label for="name" className="leading-7 text-md">Name</label>
+                                            <input type="text" id="name" name="name" className="mt-5 w-full bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                        </div>
+                                    </div>
+                                    <div className="p-2 w-1/2">
+                                        <div className="relative">
+                                            <label for="email" className="leading-7 text-md">Email</label>
+                                            <input type="email" id="email" name="email" className="mt-5 w-full bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                        </div>
+                                    </div>
+                                </div> */}
+
+                                                <Dialog.Title
+                                                    as="h3"
+                                                    className="text-lg font-medium leading-6 text-gray-900">Deactivate account</Dialog.Title>
+                                                <div className="mt-2">
+                                                    <p className="text-sm text-gray-500">
+                                                        Are you sure you want to deactivate your account? All of your data
+                                                        will be permanently removed. This action cannot be undone.
+                                                    </p>
+                                                </div>
+                                                <div className="mt-4 text-center">
+                                                    <button
+                                                        type="button"
+                                                        className="inline-flex justify-center rounded-md border border-gray bg-white-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                                        onClick={closeModal}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="ml-2 inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                                        onClick={handleDeactivate}
+                                                    >
+                                                        Deactivate
+                                                    </button>
+                                                </div>
+                                            </Dialog.Panel>
+                                        </Transition.Child>
+                                    </div>
+                                </div>
+                            </Dialog>
+                        </Transition>
+                    </section>
+                )
+            }
+            {
+                !user && (
+                    <NoAccess title="Sorry, you don't have access to this page"/>
+                )
+            }
             <Footer />
         </div>
 
