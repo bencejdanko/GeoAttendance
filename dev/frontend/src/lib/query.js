@@ -540,13 +540,13 @@ export default {
             let new_registered_attendees = registered_attendees.filter(attendee => attendee !== memberId)
             let checked_in_attendees = event.checked_in_attendees
             let new_checked_in_attendees = checked_in_attendees.filter(attendee => attendee !== memberId)
-            let checked_out_attendees = event.registered_attendees
-            let new_checked_put_attendees = checked_out_attendees.filter(attendee => attendee !== memberId)
+            let checked_out_attendees = event.checked_out_attendees
+            let new_checked_out_attendees = checked_out_attendees.filter(attendee => attendee !== memberId)
             let updated_event = await pb.collection('events').update(eventId, {
                 ...event,
                 registered_attendees: new_registered_attendees,
                 checked_in_attendees: new_checked_in_attendees,
-                checked_out_attendees: new_checked_put_attendees
+                checked_out_attendees: new_checked_out_attendees
             })
             return updated_event;
         } catch (e) {
