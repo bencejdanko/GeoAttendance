@@ -111,13 +111,17 @@ const GroupHistoryDetail = (props) => {
 
     }, [])
 
-
+    const handleDeleteGroup = async () => {
+        await query.deleteGroup(props.group.id)
+        props.deleteGroup(props.group.id)
+    }
+    
     return (
         <div className="p-4 lg:w-1/2 md:w-full sm:w-full">
             <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-5 flex-col items-center ">
                 <div className="flex items-center mb-3">
                     <h2 className="text-white text-lg title-font font-medium w-full p-2">{props.group.name}</h2>
-                    <button onClick={() => query.deleteGroup(props.group.id)}><img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} /></button>
+                    <button onClick={handleDeleteGroup}><img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} /></button>
                 </div>
 
                 <div className="flex flex-grow p-3">

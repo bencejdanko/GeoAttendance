@@ -13,22 +13,22 @@ const Event = (props) => {
     const user = JSON.parse(localStorage.getItem("pocketbase_auth")).model
 
     useEffect(() => {
-        const getEvents = async () => {
-            const events = await query.getEvents(user.id);
-            props = events;
-            setEvents(events);
-        }
+        // const getEvents = async () => {
+        //     const events = await query.getEvents(user.id);
+        //     props = events;
+        //     setEvents(events);
+        // }
 
-        getEvents()
-    }, [events])
+        // getEvents()
+    }, [])
 
     const handleDeleteEvent = () => {
-
+        props.deleteEvent(event.id);
     }
 
     return (
         <tr>
-            <td className="px-4 py-3 text-xl text-blue-600 underline cursor-pointer"><Link to={'/events/' + event.id} state={props}>{event.name}</Link></td>
+            <td className="px-4 py-3 text-xl text-blue-600 underline cursor-pointer"><Link to={'/events/' + event.id} >{event.name}</Link></td>
             <td className="px-4 py-3 text-xl">{event.checkin_code}</td>
             <td className="px-4 py-3 text-xl">{event.checkout_code}</td>
             <td className="px-4 py-3 text-xl">{event.capacity}</td>
