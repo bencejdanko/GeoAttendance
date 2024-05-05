@@ -21,7 +21,6 @@ const GroupHistoryDetail = (props) => {
     const openMemberModal = (member) => {
         setMemberModalOpen(true)
         setMemberModalMembers(member)
-
         const checkedIn = [];
         const checkedOut = [];
         const missed = [];
@@ -77,7 +76,6 @@ const GroupHistoryDetail = (props) => {
 
     const handleNotify = async () => {
         let response = await query.sendNotifyEmail(props.group.id)
-        console.log(response)
     }
 
     const handleDeleteEvent = async (event_id) => {
@@ -99,33 +97,41 @@ const GroupHistoryDetail = (props) => {
             } else {
                 let rate = 0
                 events = events.map(event => {
-                    let checkedIn = event.checked_in_attendees.length
-                    let checkedOut = event.checked_out_attendees.length
-                    rate = checkedIn > 0 ? checkedOut / checkedIn * 100 : 0
-                    event.attendanceRate = rate
+                    let checkedIn = event.checked_in_attendees
+                    let checkedOut = event.checked_out_attendees
+                    let checked = checkedIn.filter(id => checkedOut.includes(id)).length
+                    console.log(`registered: ${event.registered_attendees.length} checked: ${checked.length}`)
+                    let registered = event.registered_attendees.length
+
+
+                    rate = registered > 0 ? checked / registered * 100 : 0
+                    event.attendanceRate = rate.toFixed(0)
                     return event;
                 })
 
                 setEvents(events)
+                return events
             }
 
         }
 
-        const getMembers = async () => {
-            let members = await query.getGroupMemberDetails(props.group.id)
-            members = members.members
-            members = members.map(member => {
-                member.record = JSON.parse(member.record)
-                let eventsInGroupRegistered = events?.filter(event => event.registered_attendees.includes(member.record.id)).length || 0
-                let eventsInGroupAttended = events?.filter(event => event.checked_out_attendees.includes(member.record.id) && event.checked_in_attendees.includes(member.record.id))
-                let rate = eventsInGroupRegistered.length > 0 ? eventsInGroupAttended.length / eventsInGroupRegistered.length * 100 : 0
-                member.attendanceRate = rate
-                return member
-            })
-            setMembers(members)
+        const getMembers = (events) => {
+            query.getGroupMemberDetails(props.group.id)
+                .then((members) => {
+                    members = members.members
+                    members = members.map(member => {
+                        member.record = JSON.parse(member.record)
+                        let eventsInGroupRegistered = events.filter(event => event.registered_attendees.includes(member.record.id)) || []
+                        let eventsInGroupAttended = events.filter(event => event.checked_out_attendees.includes(member.record.id) && event.checked_in_attendees.includes(member.record.id))
+                        let rate = eventsInGroupRegistered.length > 0 ? eventsInGroupAttended.length / eventsInGroupRegistered.length * 100 : 0
+                        member.attendanceRate = rate.toFixed(0)
+                        return member
+                    })
+                    setMembers(members)
+                })
         }
-        getMembers()
-        getEvents()
+        let loadedEvents = getEvents()
+        getMembers(loadedEvents)
 
     }, [])
 
@@ -234,10 +240,9 @@ const GroupHistoryDetail = (props) => {
 
 
                                     </td>
-                                    <td className={`px-4 py-3 font-bold ${
-                                        member.attendanceRate <= 50 ? 'text-red-500' :
-                                        member.attendanceRate <= 75 ? 'text-orange-500' :
-                                            'text-green-500'
+                                    <td className={`px-4 py-3 font-bold ${member.attendanceRate <= 50 ? 'text-red-500' :
+                                            member.attendanceRate <= 75 ? 'text-orange-500' :
+                                                'text-green-500'
                                         }`}>{member.attendanceRate}%</td>
                                     <td>
                                         <button onClick={() => { handleDeleteMember(member.record.id) }}><img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} /></button>
@@ -367,7 +372,7 @@ const GroupHistoryDetail = (props) => {
                         <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                    {memberModalOpen.record.first_name} {memberModalOpen.record.last_name}
+                                    {memberModalMembers.record.first_name} {memberModalMembers.record.last_name}
                                 </h3>
                             </div>
 
