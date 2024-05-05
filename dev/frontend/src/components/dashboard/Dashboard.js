@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import searchIcon from "../../icons/search.png"
-import {
-    setDefaults,
-    geocode,
-    RequestType,
-} from "react-geocode";
 import Event from "../event/Event";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
-import { useAuth } from "../auth/AuthProvider";
 import pb from "../../lib/pocketbase.js";
 import query from "../../lib/query.js";
+import NoAccess from "../noaccess/NoAccess";
 
 const Dashboard = (props) => {
     const API_KEY = process.env.REACT_APP_GEOCODER_API_KEY;
@@ -33,30 +28,31 @@ const Dashboard = (props) => {
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     // const { user } = useAuth();
-    const user = JSON.parse(localStorage.getItem("pocketbase_auth")).model
-
+    const user = JSON.parse(localStorage.getItem("pocketbase_auth"))?.model || null
 
     useEffect(() => {
-        const getEvents = async () => {
-            const events = await query.getEvents(user.id);
-            setEvents(events);
-        }
+        if (user && user.subscription === 1) {
+            const getEvents = async () => {
+                const events = await query.getEvents(user.id);
+                setEvents(events);
+            }
 
-        getEvents()
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                setLat(position.coords.latitude);
-                setLng(position.coords.longitude);
-            },
-            error => console.log(error)
-        );
+            getEvents()
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    setLat(position.coords.latitude);
+                    setLng(position.coords.longitude);
+                },
+                error => console.log(error)
+            );
 
-        const getGroups = async () => {
-            const groups = await query.getGroups(user.id);
-            console.log(groups);
-            setGroups(groups);
+            const getGroups = async () => {
+                const groups = await query.getGroups(user.id);
+                console.log(groups);
+                setGroups(groups);
+            }
+            getGroups()
         }
-        getGroups()
     }, [user.id])
 
     const handleSaveEvent = async () => {
@@ -230,167 +226,175 @@ const Dashboard = (props) => {
     return (
         <div className="flex flex-col h-screen">
             <Header />
-            <section className="text-gray-400 bg-gray-900 body-font relative flex-grow">
-                <div className="container px-5 py-10 mx-auto flex sm:flex-nowrap flex-wrap">
-                    <div className="lg:w-2/3 md:w-1/2 bg-gray-900 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
-                        <iframe width="100%" height="100%" title="map" className="absolute inset-0" frameborder="0" marginheight="0" marginwidth="0" scrolling="no" allow="geolocation" src={`https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`} style={{ filter: '' }}></iframe>
-                    </div>
-                    <div className="lg:w-1/3 md:w-1/2 flex flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0">
-                        <h2 className="text-white text-2xl mb-8 font-medium title-font">Create New Event</h2>
-                        <div className="relative mb-4">
-                            <label for="code" className="leading-7 text-lg text-gray-400">Event name</label>
-                            <input
-                                value={eventName}
-                                onChange={(e) => setEventName(e.target.value)}
-                                type="text"
-                                id="event-name"
-                                name="event-name"
-                                className="w-full bg-gray-800 rounded border border-gray-700 mt-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                        </div>
-                        <div className="relative mb-4">
-                            <label for="code" className="leading-7 text-lg text-gray-400">Event location</label>
-                            <div className="relative mb-4 flex items-center">
-                                <input type="code" id="code" name="code" className="w-5/6 bg-gray-800 rounded border border-gray-700 mt-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" onChange={handleEventLocationChange} />
-                                <span className="mt-4 mx-auto">
-                                    <button onClick={handleEventLocationClick}>
-                                        <img className="object-cover object-center rounded" src={searchIcon} alt="searchIcon" width={30} />
-                                    </button>
-                                </span>
+            {
+                user && user.subscription === 1 && (
+                    <section className="text-gray-400 bg-gray-900 body-font relative flex-grow">
+                        <div className="container px-5 py-10 mx-auto flex sm:flex-nowrap flex-wrap">
+                            <div className="lg:w-2/3 md:w-1/2 bg-gray-900 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
+                                <iframe width="100%" height="100%" title="map" className="absolute inset-0" frameborder="0" marginheight="0" marginwidth="0" scrolling="no" allow="geolocation" src={`https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`} style={{ filter: '' }}></iframe>
                             </div>
-                            <p className="leading-relaxed text-lg text-blue-600"><button onClick={handleLocationClick}>Or get current location</button></p>
-
-                            {eventLocationError !== "" && (
-                                <p className="text-xs text-red-600 text-opacity-90 mt-3">Could not find the location based on the provided address.</p>
-                            )}
-
-                        </div>
-                        <div className="relative mb-4">
-                            <label for="event-checkin-code" className="leading-7 text-lg text-gray-400">Event checkin code</label>
-                            <input
-                                value={eventCheckinCode}
-                                onChange={(e) => setEventCheckinCode(e.target.value)}
-                                type="text"
-                                id="event-checkin-code"
-                                name="event-checkin-code"
-                                className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                        </div>
-                        <div className="relative mb-4">
-                            <label for="event-checkout-code" className="leading-7 text-lg text-gray-400">Event checkout code</label>
-                            <input
-                                value={eventCheckoutCode}
-                                onChange={(e) => setEventCheckoutCode(e.target.value)}
-                                type="text"
-                                id="event-checkout-code"
-                                name="event-checkout-code"
-                                className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                        </div>
-                        {/* <div class="flex ml-6 items-center"> */}
-                        <div className="relative mb-4">Group</div>
-                        <select value={groupOptionSelected} onChange={handleOptionChange} className="w-full bg-gray-800 rounded border mb-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-3 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                            <option value="none">None</option>
-                            <option value="new_group">Add new group</option>
-                            {
-                                groups.map(group => (
-                                    <option key={group.id} value={group.name}>{group.name}</option>
-                                ))
-                            }
-                        </select>
-                        {isCreateNewGroup &&
-                            <div className="relative mb-4">
-                                <label for="new_group_name" className="leading-7 text-lg text-gray-400">New Group Name</label>
-                                <input
-                                    value={groupName}
-                                    onChange={(e) => setGroupName(e.target.value)}
-                                    type="text" id="new_group_nam" name="new_group_nam" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                            </div>
-                        }
-                        {
-                            (groupOptionSelected === "none"
-                                || groupOptionSelected === ""
-                                || groupOptionSelected === "new_group")
-                            && (
+                            <div className="lg:w-1/3 md:w-1/2 flex flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0">
+                                <h2 className="text-white text-2xl mb-8 font-medium title-font">Create New Event</h2>
                                 <div className="relative mb-4">
-                                    <label for="capacity" className="leading-7 text-lg text-gray-400">Capacity</label>
+                                    <label for="code" className="leading-7 text-lg text-gray-400">Event name</label>
                                     <input
-                                        value={capacity}
-                                        onChange={(e) => setCapacity(e.target.value)}
-                                        type="number"
-                                        id="capacity"
-                                        name="capacity"
+                                        value={eventName}
+                                        onChange={(e) => setEventName(e.target.value)}
+                                        type="text"
+                                        id="event-name"
+                                        name="event-name"
+                                        className="w-full bg-gray-800 rounded border border-gray-700 mt-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                </div>
+                                <div className="relative mb-4">
+                                    <label for="code" className="leading-7 text-lg text-gray-400">Event location</label>
+                                    <div className="relative mb-4 flex items-center">
+                                        <input type="code" id="code" name="code" className="w-5/6 bg-gray-800 rounded border border-gray-700 mt-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" onChange={handleEventLocationChange} />
+                                        <span className="mt-4 mx-auto">
+                                            <button onClick={handleEventLocationClick}>
+                                                <img className="object-cover object-center rounded" src={searchIcon} alt="searchIcon" width={30} />
+                                            </button>
+                                        </span>
+                                    </div>
+                                    <p className="leading-relaxed text-lg text-blue-600"><button onClick={handleLocationClick}>Or get current location</button></p>
+
+                                    {eventLocationError !== "" && (
+                                        <p className="text-xs text-red-600 text-opacity-90 mt-3">Could not find the location based on the provided address.</p>
+                                    )}
+
+                                </div>
+                                <div className="relative mb-4">
+                                    <label for="event-checkin-code" className="leading-7 text-lg text-gray-400">Event checkin code</label>
+                                    <input
+                                        value={eventCheckinCode}
+                                        onChange={(e) => setEventCheckinCode(e.target.value)}
+                                        type="text"
+                                        id="event-checkin-code"
+                                        name="event-checkin-code"
                                         className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                </div>
+                                <div className="relative mb-4">
+                                    <label for="event-checkout-code" className="leading-7 text-lg text-gray-400">Event checkout code</label>
+                                    <input
+                                        value={eventCheckoutCode}
+                                        onChange={(e) => setEventCheckoutCode(e.target.value)}
+                                        type="text"
+                                        id="event-checkout-code"
+                                        name="event-checkout-code"
+                                        className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                </div>
+                                {/* <div class="flex ml-6 items-center"> */}
+                                <div className="relative mb-4">Group</div>
+                                <select value={groupOptionSelected} onChange={handleOptionChange} className="w-full bg-gray-800 rounded border mb-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-3 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                                    <option value="none">None</option>
+                                    <option value="new_group">Add new group</option>
+                                    {
+                                        groups.map(group => (
+                                            <option key={group.id} value={group.name}>{group.name}</option>
+                                        ))
+                                    }
+                                </select>
+                                {isCreateNewGroup &&
+                                    <div className="relative mb-4">
+                                        <label for="new_group_name" className="leading-7 text-lg text-gray-400">New Group Name</label>
+                                        <input
+                                            value={groupName}
+                                            onChange={(e) => setGroupName(e.target.value)}
+                                            type="text" id="new_group_nam" name="new_group_nam" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                    </div>
+                                }
+                                {
+                                    (groupOptionSelected === "none"
+                                        || groupOptionSelected === ""
+                                        || groupOptionSelected === "new_group")
+                                    && (
+                                        <div className="relative mb-4">
+                                            <label for="capacity" className="leading-7 text-lg text-gray-400">Capacity</label>
+                                            <input
+                                                value={capacity}
+                                                onChange={(e) => setCapacity(e.target.value)}
+                                                type="number"
+                                                id="capacity"
+                                                name="capacity"
+                                                className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                        </div>
+                                    )
+                                }
+                                {/* <div className="relative mb-4">
+                                <label for="capacity" className="leading-7 text-lg text-gray-400">Capacity</label>
+                                <input
+                                    value={capacity}
+                                    onChange={(e) => setCapacity(e.target.value)}
+                                    type="number"
+                                    id="capacity"
+                                    name="capacity"
+                                    className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                            </div> */}
+                                <div className="relative mb-4">
+                                    <label for="radius" className="leading-7 text-lg text-gray-400">Radius</label>
+                                    <input
+                                        value={radius}
+                                        onChange={(e) => setRadius(e.target.value)}
+
+                                        type="radius" id="radius" name="radius" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                </div>
+                                <div className="relative mb-4">
+                                    <label for="message" className="leading-7 text-lg text-gray-400">Check-in Time</label>
+                                    <input
+                                        id="start-time"
+                                        type="datetime-local"
+                                        name="datetime-picker"
+                                        className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                        value={startTime}
+                                        onChange={handleStartTimeChange} />
+                                    <input
+                                        id="end-time"
+                                        type="datetime-local"
+                                        name="datetime-picker"
+                                        className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                        value={endTime}
+                                        onChange={handleEndTimeChange} />
+                                </div>
+                                <button onClick={handleSaveEvent} className="text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">Save</button>
+                                {error && <p className="text-xs text-red-600 text-opacity-90 mt-3">{error}</p>}
+                                {successMessage && <p className="text-xs text-green-600 text-opacity-90 mt-3">{successMessage}</p>}
+                            </div>
+                        </div>
+                        {
+                            events.length > 0 && (
+                                <div className="lg:w-5/6 w-full mx-auto overflow-auto">
+                                    <table className="table-auto w-full text-left whitespace-no-wrap">
+                                        <thead>
+                                            <tr>
+                                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800 rounded-tl rounded-bl">Event Name</th>
+                                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Checkin Code</th>
+                                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Checkout Code</th>
+                                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Capacity</th>
+                                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Group Name</th>
+                                                <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Delete</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                events.map((event, idx) => (
+                                                    <Event events={events} key={event.id} index={idx} name={groupOptionSelected} deleteEvent={updateEvent} />
+                                                ))
+                                            }
+                                        </tbody>
+                                    </table>
                                 </div>
                             )
                         }
-                        {/* <div className="relative mb-4">
-                            <label for="capacity" className="leading-7 text-lg text-gray-400">Capacity</label>
-                            <input
-                                value={capacity}
-                                onChange={(e) => setCapacity(e.target.value)}
-                                type="number"
-                                id="capacity"
-                                name="capacity"
-                                className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                        </div> */}
-                        <div className="relative mb-4">
-                            <label for="radius" className="leading-7 text-lg text-gray-400">Radius</label>
-                            <input
-                                value={radius}
-                                onChange={(e) => setRadius(e.target.value)}
 
-                                type="radius" id="radius" name="radius" className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                        </div>
-                        <div className="relative mb-4">
-                            <label for="message" className="leading-7 text-lg text-gray-400">Check-in Time</label>
-                            <input
-                                id="start-time"
-                                type="datetime-local"
-                                name="datetime-picker"
-                                className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                value={startTime}
-                                onChange={handleStartTimeChange} />
-                            <input
-                                id="end-time"
-                                type="datetime-local"
-                                name="datetime-picker"
-                                className="w-full bg-gray-800 rounded border mt-4 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                value={endTime}
-                                onChange={handleEndTimeChange} />
-                        </div>
-                        <button onClick={handleSaveEvent} className="text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">Save</button>
-                        {error && <p className="text-xs text-red-600 text-opacity-90 mt-3">{error}</p>}
-                        {successMessage && <p className="text-xs text-green-600 text-opacity-90 mt-3">{successMessage}</p>}
-                    </div>
-                </div>
-                {
-                    events.length > 0 && (
-                        <div className="lg:w-5/6 w-full mx-auto overflow-auto">
-                            <table className="table-auto w-full text-left whitespace-no-wrap">
-                                <thead>
-                                    <tr>
-                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800 rounded-tl rounded-bl">Event Name</th>
-                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Checkin Code</th>
-                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Checkout Code</th>
-                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Capacity</th>
-                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Group Name</th>
-                                        <th className="px-4 py-3 title-font tracking-wider font-medium text-white text-xl bg-gray-800">Delete</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        events.map((event, idx) => (
-                                            <Event events={events} key={event.id} index={idx} name={groupOptionSelected} deleteEvent={updateEvent} />
-                                        ))
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    )
-                }
-
-            </section>
+                    </section>
+                )
+            }
+            {
+                !(user && user.subscription === 1) && (
+                    <NoAccess title="Sorry, you don't have access to this page"/>
+                )
+            }
             <Footer />
         </div>
-
     )
 }
 

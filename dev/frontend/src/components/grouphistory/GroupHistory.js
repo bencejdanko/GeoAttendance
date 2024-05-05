@@ -17,8 +17,12 @@ const GroupHistory = () => {
 
         getGroups()
 
-
     }, [])
+
+    const updateGroup = (groupId) => {
+        const updatedGroups = groups.filter(g => g.id !== groupId)
+        setGroups(updatedGroups);
+    }
 
     return (
         <section className="text-gray-400 bg-gray-900 body-font mt-8">
@@ -37,7 +41,7 @@ const GroupHistory = () => {
                                 //     <AttendanceHistoryDetail detail={detail} key={detail.id} absent={true} />
                                 // ))
                                 groups.map(group => (
-                                    <GroupHistoryDetail group={group} />
+                                    <GroupHistoryDetail group={group} deleteGroup={updateGroup}/>
                                 ))
                             }
                             {

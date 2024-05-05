@@ -13,14 +13,14 @@ const Event = (props) => {
     const user = JSON.parse(localStorage.getItem("pocketbase_auth")).model
 
     useEffect(() => {
-        const getEvents = async () => {
-            const events = await query.getEvents(user.id);
-            props = events;
-            setEvents(events);
-        }
+        // const getEvents = async () => {
+        //     const events = await query.getEvents(user.id);
+        //     props = events;
+        //     setEvents(events);
+        // }
 
-        getEvents()
-    }, [events])
+        // getEvents()
+    }, [])
 
     const handleDeleteEvent = () => {
         query.deleteEvent(event.id)
