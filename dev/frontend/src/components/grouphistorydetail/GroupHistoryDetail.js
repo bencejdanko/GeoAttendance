@@ -103,7 +103,6 @@ const GroupHistoryDetail = (props) => {
                     console.log(`registered: ${event.registered_attendees.length} checked: ${checked.length}`)
                     let registered = event.registered_attendees.length
 
-
                     rate = registered > 0 ? checked / registered * 100 : 0
                     event.attendanceRate = rate.toFixed(0)
                     return event;
@@ -116,11 +115,19 @@ const GroupHistoryDetail = (props) => {
         }
 
         const getMembers = (events) => {
+
             query.getGroupMemberDetails(props.group.id)
                 .then((members) => {
                     members = members.members
                     members = members.map(member => {
+                        
                         member.record = JSON.parse(member.record)
+                        
+                        if (!events || events.length === 0) {
+                            member.attendanceRate = 0
+                            return member
+                        } 
+
                         let eventsInGroupRegistered = events.filter(event => event.registered_attendees.includes(member.record.id)) || []
                         let eventsInGroupAttended = events.filter(event => event.checked_out_attendees.includes(member.record.id) && event.checked_in_attendees.includes(member.record.id))
                         let rate = eventsInGroupRegistered.length > 0 ? eventsInGroupAttended.length / eventsInGroupRegistered.length * 100 : 0
