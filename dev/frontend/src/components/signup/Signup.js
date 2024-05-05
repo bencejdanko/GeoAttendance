@@ -30,6 +30,7 @@ const Signup = () => {
                 return;
             }
 
+            await query.uploadDefaultAvatar()
             navigate('/profile');
         }
     }

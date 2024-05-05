@@ -128,6 +128,35 @@ export default {
         }
     },
 
+    uploadDefaultAvatar: async () => {
+        try {
+            const response = await fetch('Stefan.jpg');
+            const blob = await response.blob();
+            await pb.collection('users').update(pb.authStore.model.id, { avatar: blob });
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
+    uploadAvatar: async (blob) => {
+        try {
+            await pb.collection('users').update(pb.authStore.model.id, { avatar: blob })
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
+    getAvatarURL: async () => {
+        try {
+            const data = await pb.collection('users').getOne(pb.authStore.model.id);
+            let file_name = data.avatar
+            let file_url = `${url}/files/users/${pb.authStore.model.id}/avatar/${file_name}`
+            return file_url;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
     checkin: async (data) => {
 
         let events_pb = []
@@ -293,6 +322,26 @@ export default {
         }
     },
 
+    removeEventFromGroup: async (groupId, eventId) => {
+        try {
+            let group = await pb.collection('groups').getOne(groupId)
+            let event_ids = group.event_id
+            let new_event_ids = event_ids.filter(event => event !== eventId)
+            console.log(new_event_ids)
+            let updated_group = await pb.collection('groups').update(groupId, {
+                event_id: new_event_ids
+            })
+            
+            let updated_event = await pb.collection('events').update(eventId, {
+                group_id: null
+            })
+            
+            return updated_group;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
     deleteEvent: function(id) {
         return pb.collection('events').delete(id)
         .then(events => {
@@ -416,6 +465,27 @@ export default {
                 registered_attendees: new_registered_attendees
             })
             return updated_group;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
+    updateGroupEventsWithNewMembers: async (groupId, newMembersIds) => {
+        try {
+            let group = await pb.collection('groups').getOne(groupId)
+            let event_ids = group.event_id
+            let updated_events = []
+            for (let event_id of event_ids) {
+                let event = await pb.collection('events').getOne(event_id)
+                let registered_attendees = event.registered_attendees
+                let new_registered_attendees = Array.from(new Set(registered_attendees.concat(newMembersIds)))
+                let updated_event = await pb.collection('events').update(event_id, {
+                    registered_attendees: new_registered_attendees
+                })
+                console.log(`Updated event ${event_id} with new members: ${JSON.stringify(new_registered_attendees)}`)
+                updated_events.push(updated_event)
+            }
+            return updated_events;
         } catch (e) {
             return new Error(e.message);
         }

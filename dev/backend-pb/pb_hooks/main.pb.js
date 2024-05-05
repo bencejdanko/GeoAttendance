@@ -117,6 +117,7 @@ routerAdd("GET", "/groups/:group_id", (c) => {
         }
 
         member_data.push({
+            "record": JSON.stringify(member),
             "member_name": member.get("first_name") + " " + member.get("last_name"),
             "checked_in": total_check_in,
             "checked_out": total_check_out,
@@ -163,7 +164,11 @@ onModelAfterUpdate((e) => {
             html: `<p>You've been added to the ${event_name} event at GeoAttendance.</p>`
         })
 
-        $app.newMailClient().send(message)
+        try {
+            $app.newMailClient().send(message)
+        } catch (e) {
+            console.error("Failed to send email", e)
+        }
     }
 }, "events")
 
