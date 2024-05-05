@@ -322,6 +322,21 @@ export default {
         }
     },
 
+    removeEventFromGroup: async (groupId, eventId) => {
+        try {
+            let group = await pb.collection('groups').getOne(groupId)
+            let event_ids = group.event_id
+            let new_event_ids = event_ids.filter(event => event !== eventId)
+            console.log(new_event_ids)
+            let updated_group = await pb.collection('groups').update(groupId, {
+                event_id: new_event_ids
+            })
+            return updated_group;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
     deleteEvent: async (id) => {
         let events;
 

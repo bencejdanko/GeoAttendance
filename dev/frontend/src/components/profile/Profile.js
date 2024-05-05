@@ -90,7 +90,7 @@ const Profile = () => {
                                         </svg>
                                     </div>
                             }
-                            <input ref={inputAvatar} class='mt-4' type="file" id="avatarUpload" name="avatarUpload" accept="image/*" />
+                            <input ref={inputAvatar} class='mt-10' type="file" id="avatarUpload" name="avatarUpload" accept="image/*" />
                         </div>
                         <div className="">
                             <h1 className="text-white text-2xl title-font font-medium w-full mb-5">{user.first_name} {user.last_name}</h1>
