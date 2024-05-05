@@ -76,7 +76,7 @@ const Login = () => {
                 </section>
             )}
             {
-                user && <NoAccess title="Sorry, you don't have access to this page" />
+                user && <NoAccess title="You already logged in" />
             }
             <Footer />
         </div>
