@@ -331,6 +331,11 @@ export default {
             let updated_group = await pb.collection('groups').update(groupId, {
                 event_id: new_event_ids
             })
+            
+            let updated_event = await pb.collection('events').update(eventId, {
+                group_id: null
+            })
+            
             return updated_group;
         } catch (e) {
             return new Error(e.message);
