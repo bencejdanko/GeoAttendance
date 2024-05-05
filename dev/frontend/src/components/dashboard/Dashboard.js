@@ -218,6 +218,11 @@ const Dashboard = (props) => {
         console.log(`Latitude: ${latitude}, longitude: ${longitude}`)
     }
 
+    const updateEvent = (eventId) => {
+        const updatedEvents = events.filter(e => e.id !== eventId);
+        setEvents(updatedEvents);
+    }
+
     return (
         <div className="flex flex-col h-screen">
             <Header />
@@ -371,11 +376,15 @@ const Dashboard = (props) => {
                                         <tbody>
                                             {
                                                 events.map((event, idx) => (
-                                                    <Event events={events} key={event.id} index={idx} name={groupOptionSelected} />
+                                                    <Event events={events} key={event.id} index={idx} name={groupOptionSelected} deleteEvent={updateEvent} />
                                                 ))
                                             }
                                         </tbody>
                                     </table>
+                                </div>
+                            ) || (
+                                <div className="flex flex-col text-center w-full">
+                                    <p className="lg:w-full mx-auto leading-relaxed text-lg">No events associated with this user.</p>
                                 </div>
                             )
                         }
@@ -385,7 +394,7 @@ const Dashboard = (props) => {
             }
             {
                 !(user && user.subscription === 1) && (
-                    <NoAccess title="Sorry, you don't have access to this page"/>
+                    <NoAccess title="Sorry, you don't have access to this page" />
                 )
             }
             <Footer />

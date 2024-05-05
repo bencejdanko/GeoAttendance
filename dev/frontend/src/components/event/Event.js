@@ -23,7 +23,8 @@ const Event = (props) => {
     }, [])
 
     const handleDeleteEvent = () => {
-
+        query.deleteEvent(event.id)
+        props.deleteEvent(event.id);
     }
 
     return (
