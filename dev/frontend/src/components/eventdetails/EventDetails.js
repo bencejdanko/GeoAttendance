@@ -139,7 +139,9 @@ const EventDetails = () => {
 
                 const response = await query.updateEvent(event.id, {
                     ...event,
-                    registered_attendees: attendeeIds
+                    registered_attendees: attendeeIds,
+                    checked_in_attendees: [],
+                    checked_out_attendees: []
                 });
 
                 console.log(response)
