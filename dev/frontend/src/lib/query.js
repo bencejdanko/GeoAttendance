@@ -465,6 +465,27 @@ export default {
         }
     },
 
+    updateGroupEventsWithNewMembers: async (groupId, newMembersIds) => {
+        try {
+            let group = await pb.collection('groups').getOne(groupId)
+            let event_ids = group.event_id
+            let updated_events = []
+            for (let event_id of event_ids) {
+                let event = await pb.collection('events').getOne(event_id)
+                let registered_attendees = event.registered_attendees
+                let new_registered_attendees = Array.from(new Set(registered_attendees.concat(newMembersIds)))
+                let updated_event = await pb.collection('events').update(event_id, {
+                    registered_attendees: new_registered_attendees
+                })
+                console.log(`Updated event ${event_id} with new members: ${JSON.stringify(new_registered_attendees)}`)
+                updated_events.push(updated_event)
+            }
+            return updated_events;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
     getGroupMemberDetails: async (groupId) => {
         let data = await fetch(url +  '/groups/' + groupId, {
             method: 'GET',

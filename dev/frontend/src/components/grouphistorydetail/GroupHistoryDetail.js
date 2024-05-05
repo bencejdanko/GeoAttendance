@@ -26,7 +26,7 @@ const GroupHistoryDetail = (props) => {
         const checkedOut = [];
         const missed = [];
         events.forEach(event => {
-            let memberId = JSON.parse(member.record).id
+            let memberId = member.record.id
             if (event.checked_out_attendees.includes(memberId)) {
                 checkedOut.push(event);
             }
@@ -56,7 +56,7 @@ const GroupHistoryDetail = (props) => {
         const checkedOut = [];
 
         members.forEach(member => {
-            let memberId = JSON.parse(member.record).id
+            let memberId = member.record.id
             if (event.checked_out_attendees.includes(memberId)) {
                 checkedOut.push(member);
             }
@@ -97,6 +97,15 @@ const GroupHistoryDetail = (props) => {
             if (!events) {
                 setEvents([])
             } else {
+                let rate = 0
+                events = events.map(event => {
+                    let checkedIn = event.checked_in_attendees.length
+                    let checkedOut = event.checked_out_attendees.length
+                    rate = checkedIn > 0 ? checkedOut / checkedIn * 100 : 0
+                    event.attendanceRate = rate
+                    return event;
+                })
+
                 setEvents(events)
             }
 
@@ -104,7 +113,16 @@ const GroupHistoryDetail = (props) => {
 
         const getMembers = async () => {
             let members = await query.getGroupMemberDetails(props.group.id)
-            setMembers(members.members)
+            members = members.members
+            members = members.map(member => {
+                member.record = JSON.parse(member.record)
+                let eventsInGroupRegistered = events?.filter(event => event.registered_attendees.includes(member.record.id)).length || 0
+                let eventsInGroupAttended = events?.filter(event => event.checked_out_attendees.includes(member.record.id) && event.checked_in_attendees.includes(member.record.id))
+                let rate = eventsInGroupRegistered.length > 0 ? eventsInGroupAttended.length / eventsInGroupRegistered.length * 100 : 0
+                member.attendanceRate = rate
+                return member
+            })
+            setMembers(members)
         }
         getMembers()
         getEvents()
@@ -115,7 +133,7 @@ const GroupHistoryDetail = (props) => {
         await query.deleteGroup(props.group.id)
         props.deleteGroup(props.group.id)
     }
-    
+
     return (
         <div className="p-4 lg:w-1/2 md:w-full sm:w-full">
             <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-5 flex-col items-center ">
@@ -152,16 +170,13 @@ const GroupHistoryDetail = (props) => {
                                     {/* <td className="px-4 py-3">{event.checked_out_attendees.length}</td> */}
 
 
-                                    <td className={`px-4 py-3 font-bold ${((members.filter(member => event.registered_attendees.includes(JSON.parse(member.record).id)).length > 0 ?
-                                            members.filter(member => event.checked_out_attendees.includes(JSON.parse(member.record).id)).length / members.filter(member => event.registered_attendees.includes(JSON.parse(member.record).id)).length * 100 : 0) <= 50) ? 'text-red-500' :
-                                            ((members.filter(member => event.registered_attendees.includes(JSON.parse(member.record).id)).length > 0 ?
-                                            members.filter(member => event.checked_out_attendees.includes(JSON.parse(member.record).id)).length / members.filter(member => event.registered_attendees.includes(JSON.parse(member.record).id)).length * 100 : 0) <= 75) ? 'text-orange-500' :
-                                                'text-green-500'
+                                    <td className={`px-4 py-3 font-bold ${event.attendanceRate <= 50 ? 'text-red-500' :
+                                        event.attendanceRate <= 75 ? 'text-orange-500' :
+                                            'text-green-500'
                                         }`}>{
-                                            members.filter(member => event.registered_attendees.includes(JSON.parse(member.record).id)).length > 0 ?
-                                            members.filter(member => event.checked_out_attendees.includes(JSON.parse(member.record).id)).length / members.filter(member => event.registered_attendees.includes(JSON.parse(member.record).id)).length * 100 : 0
+                                            event.attendanceRate
 
-                                                
+
                                         }%</td>
                                     <td>
                                         <button onClick={() => { handleDeleteEvent(event.id) }}><img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} /></button>
@@ -202,8 +217,8 @@ const GroupHistoryDetail = (props) => {
                                     <td className='px-4 py-3'>
 
                                         {
-                                            JSON.parse(member.record).avatar ?
-                                                <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`http://127.0.0.1:8090/api/files/users/${JSON.parse(member.record).id}/${JSON.parse(member.record).avatar}`} alt="avatar" width={30} />
+                                            member.record.avatar ?
+                                                <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`http://127.0.0.1:8090/api/files/users/${member.record.id}/${member.record.avatar}`} alt="avatar" width={30} />
                                                 : <div className=" rounded-full inline-flex items-center justify-center bg-gray-800 text-gray-600">
                                                     <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-10 h-10" viewBox="0 0 24 24">
                                                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
@@ -214,17 +229,18 @@ const GroupHistoryDetail = (props) => {
                                     </td>
                                     <td className="px-4 py-3">
 
-                                        {JSON.parse(member.record).first_name += " "}
-                                        {JSON.parse(member.record).last_name}
+                                        {member.record.first_name += " "}
+                                        {member.record.last_name}
 
 
                                     </td>
-                                    <td className={`px-4 py-3 font-bold ${(member.checked_out / events.length * 100) <= 50 ? 'text-red-500' :
-                                        (member.checked_out / events.length * 100) <= 75 ? 'text-orange-500' :
+                                    <td className={`px-4 py-3 font-bold ${
+                                        member.attendanceRate <= 50 ? 'text-red-500' :
+                                        member.attendanceRate <= 75 ? 'text-orange-500' :
                                             'text-green-500'
-                                        }`}>{member.checked_out / events.length * 100}%</td>
+                                        }`}>{member.attendanceRate}%</td>
                                     <td>
-                                        <button onClick={() => { handleDeleteMember(JSON.parse(member.record).id) }}><img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} /></button>
+                                        <button onClick={() => { handleDeleteMember(member.record.id) }}><img className="object-cover object-center rounded" src={deleteIcon} alt="deleteIcon" width={30} /></button>
                                     </td>
                                     <td>
                                         <button onClick={() => { openMemberModal(member) }}>
@@ -262,8 +278,8 @@ const GroupHistoryDetail = (props) => {
                                                     <tr>
                                                         <td className='px-4 py-3'>
                                                             {
-                                                                JSON.parse(member.record).avatar ?
-                                                                    <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`http://127.0.0.1:8090/api/files/users/${JSON.parse(member.record).id}/${JSON.parse(member.record).avatar}`} alt="avatar" width={30} />
+                                                                member.record.avatar ?
+                                                                    <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`http://127.0.0.1:8090/api/files/users/${member.record.id}/${member.record.avatar}`} alt="avatar" width={30} />
                                                                     : <div className=" rounded-full inline-flex items-center justify-center text-gray-600">
                                                                         <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-10 h-10" viewBox="0 0 24 24">
                                                                             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
@@ -274,8 +290,8 @@ const GroupHistoryDetail = (props) => {
                                                             }
                                                         </td>
                                                         <td className="px-4 py-3">
-                                                            {JSON.parse(member.record).first_name += " "}
-                                                            {JSON.parse(member.record).last_name}
+                                                            {member.record.first_name += " "}
+                                                            {member.record.last_name}
                                                         </td>
                                                     </tr>
 
@@ -302,8 +318,8 @@ const GroupHistoryDetail = (props) => {
                                                     <tr>
                                                         <td className='px-4 py-3'>
                                                             {
-                                                                JSON.parse(member.record).avatar ?
-                                                                    <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`http://127.0.0.1:8090/api/files/users/${JSON.parse(member.record).id}/${JSON.parse(member.record).avatar}`} alt="avatar" width={30} />
+                                                                member.record.avatar ?
+                                                                    <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`http://127.0.0.1:8090/api/files/users/${member.record.id}/${member.record.avatar}`} alt="avatar" width={30} />
                                                                     : <div className=" rounded-full inline-flex items-center justify-center text-gray-600">
                                                                         <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-10 h-10" viewBox="0 0 24 24">
                                                                             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
@@ -314,8 +330,8 @@ const GroupHistoryDetail = (props) => {
                                                             }
                                                         </td>
                                                         <td className="px-4 py-3">
-                                                            {JSON.parse(member.record).first_name += " "}
-                                                            {JSON.parse(member.record).last_name}
+                                                            {member.record.first_name += " "}
+                                                            {member.record.last_name}
                                                         </td>
                                                     </tr>
 
@@ -351,7 +367,7 @@ const GroupHistoryDetail = (props) => {
                         <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                    {JSON.parse(memberModalMembers?.record).first_name} {JSON.parse(memberModalMembers?.record).last_name}
+                                    {memberModalOpen.record.first_name} {memberModalOpen.record.last_name}
                                 </h3>
                             </div>
 

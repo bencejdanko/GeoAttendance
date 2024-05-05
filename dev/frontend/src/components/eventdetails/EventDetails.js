@@ -47,22 +47,22 @@ const EventDetails = () => {
             console.log(updatedAttendees)
             setAttendees(updatedAttendees)
 
-            // if (response[0].group_id !== ""
-            //     && response[0].expand.group_id.expand
-            //     && response[0].expand.group_id.expand.registered_attendees !== []
-            //     && response[0].registered_attendees.length === 0) {
-            //     const attendeeIds = [];
-            //     response[0].expand.group_id.expand.registered_attendees.forEach(data => {
-            //         attendeeIds.push(data.id)
-            //     })
-            //     const updateResponse = async () => {
-            //         await query.updateEvent(event.id, {
-            //             ...event,
-            //             registered_attendees: attendeeIds
-            //         });
-            //     }
-            //     updateResponse()
-            // }
+            if (response[0].group_id !== ""
+                && response[0].expand.group_id.expand
+                && response[0].expand.group_id.expand.registered_attendees !== []
+                && response[0].registered_attendees.length === 0) {
+                const attendeeIds = [];
+                response[0].expand.group_id.expand.registered_attendees.forEach(data => {
+                    attendeeIds.push(data.id)
+                })
+                const updateResponse = async () => {
+                    await query.updateEvent(event.id, {
+                        ...event,
+                        registered_attendees: attendeeIds
+                    });
+                }
+                updateResponse()
+            }
             // Check if event has changed before updating
             if (JSON.stringify(response[0]) !== JSON.stringify(event)) {
                 setEvent(response[0]);
@@ -150,12 +150,15 @@ const EventDetails = () => {
                     check_out: false
                 }));
 
-                console.log(updatedParseData);
-                console.log(event)
                 const attendeeIds = [];
                 updatedParseData.forEach(data => {
                     attendeeIds.push(data.No)
                 })
+
+
+                let noValues = updatedParseData.map(item => item.No);
+                await query.updateGroupEventsWithNewMembers(event.expand.group_id.id, noValues)
+
                 const response = await query.updateEvent(event.id, {
                     ...event,
                     registered_attendees: attendeeIds
@@ -179,6 +182,9 @@ const EventDetails = () => {
                     check_in: response.checked_in_attendees.includes(attendee.id),
                     check_out: event.checked_out_attendees.includes(attendee.id)
                 }))
+
+
+
                 console.log(updatedAttendees)
                 setAttendees(updatedAttendees)
 
