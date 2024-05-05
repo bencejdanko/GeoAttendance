@@ -84,7 +84,7 @@ const GroupHistoryDetail = (props) => {
     }
 
     const handleDeleteMember = async (member_id) => {
-        let response = await query.removeGroupMember(props.group.id, member_id)
+        let response = await query.removeAEventMemberInGroupANdAllGroupEvents(props.group.id, member_id)
         window.location.reload()
     }
 
