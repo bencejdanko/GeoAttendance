@@ -43,7 +43,7 @@ const Profile = () => {
                                 <h1 className="text-white text-2xl title-font font-medium w-full">Account Details</h1>
                             </div>
                             <div className="flex flex-col sm:flex-row mt-10">
-                                <div className="my-auto sm:w-1/5 text-center sm:pr-8 sm:py-8 mr-20 ml-10">
+                                <div className="my-auto sm:w-1/5 text-center sm:pr-8 sm:py-8 mr-20 ml-10 xs:ml-16">
                                     <div className="w-40 h-40 rounded-full inline-flex items-center justify-center bg-gray-800 text-gray-600">
                                         <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-10 h-10" viewBox="0 0 24 24">
                                             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
@@ -51,12 +51,12 @@ const Profile = () => {
                                         </svg>
                                     </div>
                                 </div>
-                                <div className="">
+                                <div className="xs:mt-12">
                                     <h1 className="text-white text-2xl title-font font-medium w-full mb-5">{user.first_name} {user.last_name}</h1>
                                     <div className="container py-10 mx-auto">
                                         <div className="-my-8 divide-gray-800">
                                             <div className="py-4 flex flex-wrap md:flex-nowrap">
-                                                <div className="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
+                                                <div className="md:w-64 md:mb-0 sm:w-40 sm:mb-0    xs:w-28 xs:mb-0 mb-6 flex-shrink-0 flex flex-col">
                                                     <span className="font-semibold title-font text-white">ID</span>
                                                 </div>
                                                 <div className="md:flex-grow">
@@ -64,15 +64,15 @@ const Profile = () => {
                                                 </div>
                                             </div>
                                             <div className="py-4 flex flex-wrap md:flex-nowrap">
-                                                <div className="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
-                                                    <span className="font-semibold title-font text-white">Email Address</span>
+                                                <div className="md:w-64 md:mb-0 sm:w-40 sm:mb-0    xs:w-28 xs:mb-0 mb-6 flex-shrink-0 flex flex-col">
+                                                    <span className="font-semibold title-font text-white">Email</span>
                                                 </div>
                                                 <div className="md:flex-grow">
                                                     <p className="">{user.email}</p>
                                                 </div>
                                             </div>
                                             <div className="py-4 flex border-gray-800 flex-wrap md:flex-nowrap">
-                                                <div className="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
+                                                <div className="md:w-64 md:mb-0 sm:w-40 sm:mb-0    xs:w-28 xs:mb-0 mb-6 flex-shrink-0 flex flex-col">
                                                     <span className="font-semibold title-font text-white">Username</span>
                                                 </div>
                                                 <div className="md:flex-grow">
@@ -80,7 +80,7 @@ const Profile = () => {
                                                 </div>
                                             </div>
                                             <div className="py-4 flex border-gray-800 flex-wrap md:flex-nowrap">
-                                                <div className="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
+                                                <div className="md:w-64 md:mb-0 sm:w-40 sm:mb-0    xs:w-28 xs:mb-0 mb-6 flex-shrink-0 flex flex-col">
                                                     <span className="font-semibold title-font text-white">Password</span>
                                                 </div>
                                                 <div className="md:flex-grow">
@@ -90,7 +90,7 @@ const Profile = () => {
                                         </div>
                                     </div>
                                     {user.subscription === 0 && attedanceRate && <div className="flex flex-wrap -m-4  mt-4">
-                                        <div className="p-4 md:w-1/4 sm:w-full">
+                                        <div className="p-2 lg:w-1/4 md:w-1/2 sm:w-full flex-grow">
                                             <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col">
                                                 <div className="flex items-center mb-3">
                                                     <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-blue-500 text-white flex-shrink-0">
@@ -103,7 +103,7 @@ const Profile = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="p-4 md:w-1/4 sm:w-full">
+                                        <div className="p-2 lg:w-1/4 md:w-1/2 sm:w-full flex-grow">
                                             <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col px-auto">
                                                 <div className="flex items-center mb-3">
                                                     <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
@@ -116,7 +116,7 @@ const Profile = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="p-4 md:w-1/4 sm:w-full">
+                                        <div className="p-2 lg:w-1/4 md:w-1/2 sm:w-full flex-grow">
                                             <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col px-auto">
                                                 <div className="flex items-center mb-3">
                                                     <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
@@ -129,7 +129,7 @@ const Profile = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="p-4 md:w-1/4 sm:w-full">
+                                        <div className="p-2 lg:w-1/4 md:w-1/2 sm:w-full flex-grow">
                                             <div className="flex rounded-lg bg-gray-800 bg-opacity-60 p-4 flex-col">
                                                 <div className="flex items-center mb-3">
                                                     <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full text-white flex-shrink-0">
