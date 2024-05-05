@@ -213,6 +213,42 @@ export default {
 
     },
 
+    manualCheckin: async (eventId, memberId) => {
+        try {
+            const tempEvent = await pb.collection('events').getOne(eventId)
+            let event_checked_in_attendees = tempEvent.checked_in_attendees
+            event_checked_in_attendees.push(memberId)
+            // let event_checked_out_attendees = e.checked_out_attendees
+            // let new_event_checked_out_attendees = event_checked_out_attendees.filter(attendee => attendee !== memberId)
+            const response= await pb.collection('events').update(eventId, {
+                ...tempEvent,
+                checked_in_attendees: event_checked_in_attendees,
+                longitude: 0,
+                latitude: 0,
+            })
+            return response;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
+    manualCheckout: async (eventId, memberId) => {
+        try {
+            const tempEvent = await pb.collection('events').getOne(eventId)
+            let event_checked_out_attendees = tempEvent.checked_out_attendees
+            event_checked_out_attendees.push(memberId)
+            const response= await pb.collection('events').update(eventId, {
+                ...tempEvent,
+                checked_out_attendees: event_checked_out_attendees,
+                longitude: 0,
+                latitude: 0,
+            })
+            return response;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
     checkout: async ({ latitude, longitude, code }) => {
 
         let events_pb = []
@@ -331,18 +367,18 @@ export default {
             let updated_group = await pb.collection('groups').update(groupId, {
                 event_id: new_event_ids
             })
-            
+
             let updated_event = await pb.collection('events').update(eventId, {
                 group_id: null
             })
-            
+
             return updated_group;
         } catch (e) {
             return new Error(e.message);
         }
     },
 
-    deleteEvent: function(id) {
+    deleteEvent: function (id) {
         return pb.collection('events').delete(id)
             .then(events => {
                 if (events.length === 0) {

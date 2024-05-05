@@ -101,25 +101,13 @@ const EventDetails = () => {
             const updatedAttendees = [...attendees];
             updatedAttendees[idx].check_in = 1;
             setAttendees(updatedAttendees);
-            const tempArr = event.checked_in_attendees;
-            tempArr.push(updatedAttendees[idx].id);
-            await query.updateEvent(event.id, {
-                ...event,
-                checked_in_attendees: tempArr
-            });
+            await query.manualCheckin(event.id, updatedAttendees[idx].id)
         } else {
             const updatedAttendees = [...attendees];
             updatedAttendees[idx].check_out = 1;
             setAttendees(updatedAttendees);
-            const tempArr = event.checked_out_attendees;
-            tempArr.push(updatedAttendees[idx].id);
-            await query.updateEvent(event.id, {
-                ...event,
-                checked_out_attendees: tempArr
-            });
+            await query.manualCheckout(event.id, updatedAttendees[idx].id)
         }
-
-
     }
 
     const handleFileUpload = (e) => {
