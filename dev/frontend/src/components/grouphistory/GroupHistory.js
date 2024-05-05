@@ -24,6 +24,11 @@ const GroupHistory = () => {
         setGroups(updatedGroups);
     }
 
+    const updateAllGroups = async () => {
+        let groups = await query.getGroups(pb.authStore.model.id)
+        setGroups(groups);
+    }
+
     return (
         <section className="text-gray-400 bg-gray-900 body-font mt-8">
             <div className="container px-5 bg-gray-800 bg-opacity-40 rounded-lg py-10 mx-auto">
@@ -41,7 +46,7 @@ const GroupHistory = () => {
                                 //     <AttendanceHistoryDetail detail={detail} key={detail.id} absent={true} />
                                 // ))
                                 groups.map(group => (
-                                    <GroupHistoryDetail group={group} deleteGroup={updateGroup}/>
+                                    <GroupHistoryDetail group={group} deleteGroup={updateGroup} updateAllGroups={updateAllGroups}/>
                                 ))
                             }
                             {

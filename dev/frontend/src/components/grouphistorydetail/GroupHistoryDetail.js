@@ -80,13 +80,14 @@ const GroupHistoryDetail = (props) => {
 
     const handleDeleteEvent = async (event_id) => {
         let response = await query.removeEventFromGroup(props.group.id, event_id)
+        setEvents(events.filter(event => event.id !== event_id))
         //window.location.reload()
     }
 
     const handleDeleteMember = (member_id) => {
         let response = query.removeAEventMemberInGroupANdAllGroupEvents(props.group.id, member_id)
         .then(() => {
-            //window.location.reload()
+            setMembers(members.filter(member => member.record.id !== member_id))
         })
     }
 
@@ -111,42 +112,50 @@ const GroupHistoryDetail = (props) => {
                 })
 
                 setEvents(events)
-                return events
             }
 
         }
 
-        const getMembers = (events) => {
+        const getMembers = () => {
+            let events = props.group.expand?.event_id
+            let members = props.group.expand?.registered_attendees
 
-            query.getGroupMemberDetails(props.group.id)
-                .then((members) => {
-                    members = members.members
-                    members = members.map(member => {
-                        
-                        member.record = JSON.parse(member.record)
-                        
-                        if (!events || events.length === 0) {
-                            member.attendanceRate = 0
-                            return member
-                        } 
+            //console.log(`members: ${JSON.stringify(props.group.expand?.registered_attendees, null, 2)}`)
 
-                        let eventsInGroupRegistered = events.filter(event => event.registered_attendees.includes(member.record.id)) || []
-                        let eventsInGroupAttended = events.filter(event => event.checked_out_attendees.includes(member.record.id) && event.checked_in_attendees.includes(member.record.id))
-                        let rate = eventsInGroupRegistered.length > 0 ? eventsInGroupAttended.length / eventsInGroupRegistered.length * 100 : 0
-                        member.attendanceRate = rate.toFixed(0)
-                        return member
-                    })
-                    setMembers(members)
-                })
+            if (!members || members.length === 0) {
+                setMembers([])
+                return
+            }
+
+            members = members.map(member => {
+                member.record = member
+                if (!events || events.length === 0) {
+                    member.attendanceRate = 0
+                    return member
+                } 
+
+                let eventsInGroupRegistered = events.filter(event => event.registered_attendees.includes(member.record.id)) || []
+                let eventsInGroupAttended = events.filter(event => event.checked_out_attendees.includes(member.record.id) && event.checked_in_attendees.includes(member.record.id))
+                let rate = eventsInGroupRegistered.length > 0 ? eventsInGroupAttended.length / eventsInGroupRegistered.length * 100 : 0
+                member.attendanceRate = rate.toFixed(0)
+                return member
+            })
+            setMembers(members)
+                
         }
-        let loadedEvents = getEvents()
-        getMembers(loadedEvents)
+
+        getEvents()
+        getMembers()
 
     }, [])
 
     const handleDeleteGroup = async () => {
         await query.deleteGroup(props.group.id)
         props.deleteGroup(props.group.id)
+    }
+
+    const handleDeleteItem = async () => {
+        await props.updateAllGroups()
     }
 
     return (
