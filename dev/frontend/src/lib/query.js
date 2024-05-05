@@ -256,7 +256,7 @@ export default {
         try {
             const event = await pb.collection('events').getFullList({
                 filter: `id='${eventId}'`,
-                expand: 'registered_attendees'
+                expand: 'registered_attendees,group_id.registered_attendees'
             })
             return event;
         } catch (e) {
@@ -363,7 +363,7 @@ export default {
                 }
             }
 
-            total_absent = total_events.filter(event => !total_check_ins.includes(event));
+            total_absent = total_events.filter(event => !(total_check_ins.includes(event) && total_check_outs.includes(event)));
             return {
                 total_check_ins: total_check_ins,
                 total_events: total_events,

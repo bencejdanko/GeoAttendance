@@ -14,6 +14,7 @@ import Dashboard from './components/dashboard/Dashboard';
 import EventDetails from './components/eventdetails/EventDetails';
 import { AuthProvider } from './components/auth/AuthProvider';
 import Checkin from './components/checkin/Checkin';
+import Events from './components/events/Events';
 
 function App() {
   const dateTimeCoverter = () => {
@@ -52,6 +53,7 @@ function App() {
               element={<Checkin />}
             />
             <Route path="/events/:id" element={<EventDetails />} />
+            <Route path="/events" element={<Events/>}/>           
           </Routes>
         </Router>
       </div>
