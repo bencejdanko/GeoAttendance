@@ -146,10 +146,6 @@ const EventDetails = () => {
                     attendeeIds.push(data.No)
                 })
 
-
-                let noValues = updatedParseData.map(item => item.No);
-                await query.updateGroupEventsWithNewMembers(event.expand.group_id.id, noValues)
-
                 const response = await query.updateEvent(event.id, {
                     ...event,
                     registered_attendees: attendeeIds
