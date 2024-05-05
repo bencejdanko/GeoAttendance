@@ -285,7 +285,7 @@ export default {
         try {
             const event = await pb.collection('events').getFullList({
                 filter: `id='${eventId}'`,
-                expand: 'registered_attendees'
+                expand: 'registered_attendees,group_id.registered_attendees'
             })
             return event;
         } catch (e) {
@@ -337,20 +337,17 @@ export default {
         }
     },
 
-    deleteEvent: async (id) => {
-        let events;
-
-        try {
-            events = await pb.collection('events').delete(id)
-        } catch (e) {
+    deleteEvent: function(id) {
+        return pb.collection('events').delete(id)
+        .then(events => {
+            if (events.length === 0) {
+                throw new Error("Unable to delete nonexistent event.");
+            }
+            return events;
+        })
+        .catch(e => {
             return [];
-        }
-
-        if (events.length === 0) {
-            return new Error("Unable to delete nonexistent event.");
-        }
-
-        return events;
+        });
     },
 
     getAttendanceRate: async () => {
@@ -407,7 +404,7 @@ export default {
                 }
             }
 
-            total_absent = total_events.filter(event => !total_check_ins.includes(event));
+            total_absent = total_events.filter(event => !(total_check_ins.includes(event) && total_check_outs.includes(event)));
             return {
                 total_check_ins: total_check_ins,
                 total_events: total_events,
