@@ -220,7 +220,7 @@ export default {
             event_checked_in_attendees.push(memberId)
             // let event_checked_out_attendees = e.checked_out_attendees
             // let new_event_checked_out_attendees = event_checked_out_attendees.filter(attendee => attendee !== memberId)
-            const response= await pb.collection('events').update(eventId, {
+            const response = await pb.collection('events').update(eventId, {
                 ...tempEvent,
                 checked_in_attendees: event_checked_in_attendees,
                 longitude: 0,
@@ -237,7 +237,7 @@ export default {
             const tempEvent = await pb.collection('events').getOne(eventId)
             let event_checked_out_attendees = tempEvent.checked_out_attendees
             event_checked_out_attendees.push(memberId)
-            const response= await pb.collection('events').update(eventId, {
+            const response = await pb.collection('events').update(eventId, {
                 ...tempEvent,
                 checked_out_attendees: event_checked_out_attendees,
                 longitude: 0,
@@ -560,15 +560,14 @@ export default {
             let event_ids = group.event_id
             let updated_events = []
             for (let event_id of event_ids) {
-                let event = await pb.collection('events').getOne(event_id)
-                let registered_attendees = event.registered_attendees
-                let new_registered_attendees = Array.from(new Set(registered_attendees.concat(newMembersIds)))
                 let updated_event = await pb.collection('events').update(event_id, {
-                    registered_attendees: new_registered_attendees
+                    registered_attendees: newMembersIds
                 })
-                console.log(`Updated event ${event_id} with new members: ${JSON.stringify(new_registered_attendees)}`)
                 updated_events.push(updated_event)
             }
+            await pb.collection('groups').update(groupId, {
+                registered_attendees: newMembersIds
+            })
             return updated_events;
         } catch (e) {
             return new Error(e.message);

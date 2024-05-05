@@ -10,6 +10,7 @@ import Footer from "../footer/Footer";
 import query from "../../lib/query";
 import { useParams } from 'react-router-dom';
 import NoAccess from "../noaccess/NoAccess";
+import pb from "../../lib/pocketbase";
 
 const EventDetails = () => {
     const fileInputRef = useRef();
@@ -132,23 +133,21 @@ const EventDetails = () => {
                     attendeeIds.push(data.No)
                 })
 
-                if (event.group_id !== "") {
-                    let noValues = updatedParseData.map(item => item.No);
-                    await query.updateGroupEventsWithNewMembers(event.expand.group_id.id, noValues)
-                }
+                let noValues = updatedParseData.map(item => item.No.toString());
 
-                const response = await query.updateEvent(event.id, {
+                let registered_attendees = event.registered_attendees
+                let combined_registered = Array.from(new Set(registered_attendees.concat(noValues)))
+
+                await query.updateEvent(event.id, {
                     ...event,
-                    registered_attendees: attendeeIds,
-                    checked_in_attendees: [],
-                    checked_out_attendees: []
+                    registered_attendees: combined_registered
                 });
 
-                console.log(response)
-                console.log(updatedParseData)
-                // handle error 
-                if (response instanceof Error) {
-                    return;
+                if (event.group_id !== "") {
+                    await query.updateGroupEventsWithNewMembers(event.expand.group_id.id, combined_registered)
+                    await pb.collection('groups').update(event.group_id, {
+                        registered_attendees: combined_registered
+                    })
                 }
 
                 const eventResponse = await query.getEvent(event.id);
@@ -159,29 +158,12 @@ const EventDetails = () => {
 
                 const updatedAttendees = eventResponse[0].expand.registered_attendees.map(attendee => ({
                     ...attendee,
-                    check_in: response.checked_in_attendees.includes(attendee.id),
+                    check_in: event.checked_in_attendees.includes(attendee.id),
                     check_out: event.checked_out_attendees.includes(attendee.id)
                 }))
 
-
-
                 console.log(updatedAttendees)
                 setAttendees(updatedAttendees)
-
-                // update group api
-                if (event.group_id !== "") {
-                    const newGroupData = {
-                        "event_id": event.expand.group_id.event_id,
-                        "host": event.expand.group_id.host,
-                        "name": event.expand.group_id.name,
-                        "registered_attendees": attendeeIds
-                    };
-                    const tempGroup = await query.updateGroup(event.group_id, newGroupData);
-                    // handle error 
-                    if (tempGroup instanceof Error) {
-                        return;
-                    }
-                }
             }
         }
 

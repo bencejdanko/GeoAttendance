@@ -80,12 +80,14 @@ const GroupHistoryDetail = (props) => {
 
     const handleDeleteEvent = async (event_id) => {
         let response = await query.removeEventFromGroup(props.group.id, event_id)
-        window.location.reload()
+        //window.location.reload()
     }
 
-    const handleDeleteMember = async (member_id) => {
-        let response = await query.removeAEventMemberInGroupANdAllGroupEvents(props.group.id, member_id)
-        window.location.reload()
+    const handleDeleteMember = (member_id) => {
+        let response = query.removeAEventMemberInGroupANdAllGroupEvents(props.group.id, member_id)
+        .then(() => {
+            //window.location.reload()
+        })
     }
 
     useEffect(() => {
