@@ -53,7 +53,7 @@ const Dashboard = (props) => {
             }
             getGroups()
         }
-    }, [])
+    }, [user.id])
 
     const handleSaveEvent = async () => {
 
