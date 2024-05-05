@@ -219,6 +219,7 @@ const Dashboard = (props) => {
     }
 
     const updateEvent = (eventId) => {
+        query.deleteEvent(eventId)
         const updatedEvents = events.filter(e => e.id !== eventId);
         setEvents(updatedEvents);
     }
