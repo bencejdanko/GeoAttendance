@@ -88,22 +88,11 @@ const EventDetails = () => {
         const updatedAttendees = attendees.filter(attendee => attendee.id !== deletedUserId);
         setAttendees(updatedAttendees);
         if (event.group_id !== "") {
-            await query.removeGroupMember(event.group_id, deletedUserId)
+            await query.removeAEventMemberInGroupANdAllGroupEvents(event.group_id, deletedUserId)
         }
-        // else { // does not have group
-        const tempCheckinArr = event.checked_in_attendees.filter(e => e !== deletedUserId);
-        // tempCheckinArr.pop(deletedUserId);
-        const tempCheckoutArr = event.checked_out_attendees.filter(e => e !== deletedUserId);
-        // tempCheckoutArr.pop(deletedUserId);
-        const tempRegisteredArr = event.registered_attendees.filter(e => e !== deletedUserId);
-        // tempRegisteredArr.pop(deletedUserId);
-        await query.updateEvent(event.id, {
-            ...event,
-            checked_in_attendees: tempCheckinArr,
-            checked_out_attendees: tempCheckoutArr,
-            registered_attendees: tempRegisteredArr
-        });
-        // }
+        else { // does not have group
+            await query.removeEventMember(event.id, deletedUserId);
+        }
 
     }
 
@@ -388,7 +377,7 @@ const EventDetails = () => {
             }
             {
                 !user && (
-                    <NoAccess title="Sorry, you don't have access to this page"/>
+                    <NoAccess title="Sorry, you don't have access to this page" />
                 )
             }
             <Footer />

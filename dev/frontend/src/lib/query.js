@@ -213,7 +213,7 @@ export default {
 
     },
 
-    checkout: async ({latitude, longitude, code}) => {
+    checkout: async ({ latitude, longitude, code }) => {
 
         let events_pb = []
         try {
@@ -344,15 +344,15 @@ export default {
 
     deleteEvent: function(id) {
         return pb.collection('events').delete(id)
-        .then(events => {
-            if (events.length === 0) {
-                throw new Error("Unable to delete nonexistent event.");
-            }
-            return events;
-        })
-        .catch(e => {
-            return [];
-        });
+            .then(events => {
+                if (events.length === 0) {
+                    throw new Error("Unable to delete nonexistent event.");
+                }
+                return events;
+            })
+            .catch(e => {
+                return [];
+            });
     },
 
     getAttendanceRate: async () => {
@@ -375,7 +375,7 @@ export default {
                 }
             }
 
-            console.log (total_attended / total_events)
+            console.log(total_attended / total_events)
         } catch (e) {
             console.log(e)
         }
@@ -421,15 +421,15 @@ export default {
         }
     },
 
-    getTotalCheckIn: async() => {
+    getTotalCheckIn: async () => {
         let events = []
         try {
             events = await pb.collection("events").getFullList()
         } catch (e) {
             console.log(e)
         }
-        
-        
+
+
         let total = 0
         events.forEach(event => {
             total += event.checked_in_attendees.length
@@ -437,17 +437,15 @@ export default {
         return total
     },
 
-    getTotalAbsent: async() => {
+    getTotalAbsent: async () => {
 
         let events = []
-        
+
         try {
             events = await pb.collection("events").getFullList()
         } catch (e) {
             console.log(e)
         }
-        
-        
         let total = 0
         events.forEach(event => {
             total += event.registered_attendees.length - event.checked_in_attendees.length
@@ -456,7 +454,6 @@ export default {
     },
 
     removeGroupMember: async (groupId, memberId) => {
-    
         try {
             let group = await pb.collection('groups').getOne(groupId)
             let registered_attendees = group.registered_attendees
@@ -465,6 +462,57 @@ export default {
                 registered_attendees: new_registered_attendees
             })
             return updated_group;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+    removeAEventMemberInGroupANdAllGroupEvents: async (groupId, memberId) => {
+
+        try {
+            let group = await pb.collection('groups').getOne(groupId)
+            let registered_attendees = group.registered_attendees
+            let new_registered_attendees = registered_attendees.filter(attendee => attendee !== memberId)
+            let updated_group = await pb.collection('groups').update(groupId, {
+                ...group,
+                registered_attendees: new_registered_attendees
+            })
+            updated_group.event_id.forEach(async e => {
+                let event = await pb.collection('events').getOne(e)
+                let event_registered_attendees = event.registered_attendees
+                let new_event_registered_attendees = event_registered_attendees.filter(attendee => attendee !== memberId)
+                let event_checked_in_attendees = event.checked_in_attendees
+                let new_event_checked_in_attendees = event_checked_in_attendees.filter(attendee => attendee !== memberId)
+                let event_checked_out_attendees = event.checked_out_attendees
+                let new_event_checked_out_attendees = event_checked_out_attendees.filter(attendee => attendee !== memberId)
+                await pb.collection('events').update(e, {
+                    ...event,
+                    registered_attendees: new_event_registered_attendees,
+                    checked_in_attendees: new_event_checked_in_attendees,
+                    checked_out_attendees: new_event_checked_out_attendees
+                })
+            })
+            return updated_group;
+        } catch (e) {
+            return new Error(e.message);
+        }
+    },
+
+    removeEventMember: async (eventId, memberId) => {
+        try {
+            let event = await pb.collection('events').getOne(eventId)
+            let registered_attendees = event.registered_attendees
+            let new_registered_attendees = registered_attendees.filter(attendee => attendee !== memberId)
+            let checked_in_attendees = event.checked_in_attendees
+            let new_checked_in_attendees = checked_in_attendees.filter(attendee => attendee !== memberId)
+            let checked_out_attendees = event.registered_attendees
+            let new_checked_put_attendees = checked_out_attendees.filter(attendee => attendee !== memberId)
+            let updated_event = await pb.collection('events').update(eventId, {
+                ...event,
+                registered_attendees: new_registered_attendees,
+                checked_in_attendees: new_checked_in_attendees,
+                checked_out_attendees: new_checked_put_attendees
+            })
+            return updated_event;
         } catch (e) {
             return new Error(e.message);
         }
@@ -492,12 +540,13 @@ export default {
     },
 
     getGroupMemberDetails: async (groupId) => {
-        let data = await fetch(url +  '/groups/' + groupId, {
+        let data = await fetch(url + '/groups/' + groupId, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': pb.authStore.token
-        }})
+            }
+        })
         return data.json()
     },
 
