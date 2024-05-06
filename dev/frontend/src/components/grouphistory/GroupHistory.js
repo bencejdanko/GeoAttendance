@@ -11,13 +11,14 @@ const GroupHistory = () => {
     useEffect(() => {
 
         const getGroups = async () => {
-            let groups = await query.getGroups(pb.authStore.model.id)
-            setGroups(groups)
+            debugger
+            let response = await query.getGroups(pb.authStore.model.id)
+            if (JSON.stringify(response) !== JSON.stringify(groups)) {
+                setGroups(response)
+            }
         }
-
         getGroups()
-
-    }, [])
+    }, [groups])
 
     const updateGroup = (groupId) => {
         const updatedGroups = groups.filter(g => g.id !== groupId)
@@ -41,7 +42,7 @@ const GroupHistory = () => {
                                 //     <AttendanceHistoryDetail detail={detail} key={detail.id} absent={true} />
                                 // ))
                                 groups.map(group => (
-                                    <GroupHistoryDetail group={group} deleteGroup={updateGroup}/>
+                                    <GroupHistoryDetail group={group} deleteGroup={updateGroup} />
                                 ))
                             }
                             {

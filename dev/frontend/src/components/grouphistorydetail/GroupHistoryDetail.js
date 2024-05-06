@@ -79,15 +79,15 @@ const GroupHistoryDetail = (props) => {
     }
 
     const handleDeleteEvent = async (event_id) => {
+        debugger
         let response = await query.removeEventFromGroup(props.group.id, event_id)
+        setEvents(events.filter(event => event.id !== event_id))
         //window.location.reload()
     }
 
     const handleDeleteMember = (member_id) => {
         let response = query.removeAEventMemberInGroupANdAllGroupEvents(props.group.id, member_id)
-        .then(() => {
-            //window.location.reload()
-        })
+        setMembers(members.filter(member => member.record.id !== member_id))
     }
 
     useEffect(() => {
