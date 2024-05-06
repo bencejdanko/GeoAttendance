@@ -232,7 +232,7 @@ const GroupHistoryDetail = (props) => {
 
                                         {
                                             member.record.avatar ?
-                                                <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`http://127.0.0.1:8090/api/files/users/${member.record.id}/${member.record.avatar}`} alt="avatar" width={30} />
+                                                <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`${process.env.REACT_APP_PB_URL}/api/files/users/${member.record.id}/${member.record.avatar}`} alt="avatar" width={30} />
                                                 : <div className=" rounded-full inline-flex items-center justify-center bg-gray-800 text-gray-600">
                                                     <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-10 h-10" viewBox="0 0 24 24">
                                                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
@@ -292,7 +292,7 @@ const GroupHistoryDetail = (props) => {
                                                         <td className='px-4 py-3'>
                                                             {
                                                                 member.record.avatar ?
-                                                                    <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`http://127.0.0.1:8090/api/files/users/${member.record.id}/${member.record.avatar}`} alt="avatar" width={30} />
+                                                                    <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`${process.env.REACT_APP_PB_URL}/api/files/users/${member.record.id}/${member.record.avatar}`} alt="avatar" width={30} />
                                                                     : <div className=" rounded-full inline-flex items-center justify-center text-gray-600">
                                                                         <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-10 h-10" viewBox="0 0 24 24">
                                                                             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
@@ -332,7 +332,7 @@ const GroupHistoryDetail = (props) => {
                                                         <td className='px-4 py-3'>
                                                             {
                                                                 member.record.avatar ?
-                                                                    <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`http://127.0.0.1:8090/api/files/users/${member.record.id}/${member.record.avatar}`} alt="avatar" width={30} />
+                                                                    <img className="w-11 h-11 shrink-0 grow-0 rounded-full" src={`${process.env.REACT_APP_PB_URL}/api/files/users/${member.record.id}/${member.record.avatar}`} alt="avatar" width={30} />
                                                                     : <div className=" rounded-full inline-flex items-center justify-center text-gray-600">
                                                                         <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-10 h-10" viewBox="0 0 24 24">
                                                                             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
