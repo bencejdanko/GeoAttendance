@@ -1,5 +1,8 @@
 ## A. Team GeoUnity
 
+### Deployment Links
+https://geoattendance.32kb.dev
+
 ### Team Members
 Bence Danko (Next Lead), Da Thao Trinh (Lead)
 
@@ -25,7 +28,7 @@ Milestones:
 
 ## E. Technologies Used
   #### [Frontend] HTML, CSS, React, JavaScript
-  #### [Backend] Nodejs, PostgreSQL
+  #### [Backend] Pocketbase, Javascript
 
   
 ## F. Algorithms/AI Schemes
