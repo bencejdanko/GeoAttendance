@@ -79,7 +79,6 @@ const GroupHistoryDetail = (props) => {
     }
 
     const handleDeleteEvent = async (event_id) => {
-        debugger
         let response = await query.removeEventFromGroup(props.group.id, event_id)
         setEvents(events.filter(event => event.id !== event_id))
         //window.location.reload()

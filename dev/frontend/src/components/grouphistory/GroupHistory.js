@@ -11,7 +11,6 @@ const GroupHistory = () => {
     useEffect(() => {
 
         const getGroups = async () => {
-            debugger
             let response = await query.getGroups(pb.authStore.model.id)
             if (JSON.stringify(response) !== JSON.stringify(groups)) {
                 setGroups(response)
