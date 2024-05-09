@@ -45,6 +45,9 @@ const Checkin = () => {
                 } else {
                     await query.saveCheckinTime(checkInData, user.id, new Date().toISOString());
                     setCheckInSuccess("Successfully checked-in.");
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000)
                 }
             }
 
@@ -60,6 +63,9 @@ const Checkin = () => {
                 } else {
                     await query.saveCheckoutTime(checkOutData, user.id, new Date().toISOString());
                     setCheckInSuccess("Successfully checked-out.");
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000)
                 }
             }
 
@@ -157,7 +163,7 @@ const Checkin = () => {
             }
             {
                 !(user && user.subscription === 0) && (
-                    <NoAccess title="Sorry, you don't have access to this page"/>
+                    <NoAccess title="Sorry, you don't have access to this page" />
                 )
             }
             <Footer />
